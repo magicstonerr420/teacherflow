@@ -1,0 +1,503 @@
+import { ageBand, normalizeSlides, type Slide } from "@/lib/lesson-schema";
+import type { LessonPackage, LessonRequestInput } from "@/lib/lesson-schema";
+
+/** Safe, useful file name: TeacherFlow_Present_Perfect_B1.pptx */
+export function presentationFileName(request: LessonRequestInput): string {
+  const topic = (request.topic || "Lesson")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 60);
+  const level = (request.level || "").replace(/[^a-zA-Z0-9]/g, "");
+  return ["TeacherFlow", topic || "Lesson", level].filter(Boolean).join("_") + ".pptx";
+}
+
+export type Band = "Kids" | "Teens" | "Adults";
+
+export interface Theme {
+  ink: string;
+  title: string;
+  accent: string;
+  accentSoft: string;
+  panel: string;
+  muted: string;
+  highlight: string;
+  titleFont: string;
+  bodyFont: string;
+  titleSize: number;
+  bodySize: number;
+}
+
+/** Age-appropriate visual identity for the deck. */
+export function themeFor(band: Band): Theme {
+  if (band === "Kids") {
+    return {
+      ink: "20303A",
+      title: "0B4F6C",
+      accent: "F4A300",
+      accentSoft: "FFF3D6",
+      panel: "F2FAFF",
+      muted: "5B7280",
+      highlight: "D62828",
+      titleFont: "Trebuchet MS",
+      bodyFont: "Verdana",
+      titleSize: 36,
+      bodySize: 24,
+    };
+  }
+  if (band === "Teens") {
+    return {
+      ink: "1B2430",
+      title: "12324F",
+      accent: "2563C9",
+      accentSoft: "E4EEFC",
+      panel: "F5F8FC",
+      muted: "63707F",
+      highlight: "D62828",
+      titleFont: "Trebuchet MS",
+      bodyFont: "Calibri",
+      titleSize: 32,
+      bodySize: 20,
+    };
+  }
+  return {
+    ink: "1C2B2D",
+    title: "10312B",
+    accent: "0F766E",
+    accentSoft: "E3EFEC",
+    panel: "F6F5F1",
+    muted: "6B7B79",
+    highlight: "C1272D",
+    titleFont: "Georgia",
+    bodyFont: "Calibri",
+    titleSize: 30,
+    bodySize: 19,
+  };
+}
+
+export function bandOfRequest(request: LessonRequestInput): Band {
+  return ageBand(request.studentAge);
+}
+
+/** Splits a line into runs so highlighted target language prints in red. */
+export function splitHighlights(
+  text: string,
+  words: string[],
+): { text: string; highlight: boolean }[] {
+  const clean = (words ?? []).map((w) => w.trim()).filter((w) => w.length > 1);
+  if (!clean.length || !text) return [{ text, highlight: false }];
+  const escaped = clean
+    .sort((a, b) => b.length - a.length)
+    .map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const re = new RegExp(`(${escaped.join("|")})`, "gi");
+  return text
+    .split(re)
+    .filter((part) => part !== "")
+    .map((part) => ({ text: part, highlight: re.test(part) && clean.some((w) => w.toLowerCase() === part.toLowerCase()) }));
+}
+
+/** Keeps projected text readable: shrinks as content grows, never below 14pt. */
+function bodySizeFor(theme: Theme, chars: number, lines: number): number {
+  let size = theme.bodySize;
+  if (chars > 260 || lines > 5) size -= 4;
+  if (chars > 420 || lines > 7) size -= 3;
+  return Math.max(14, size);
+}
+
+export interface SlideImages {
+  /** Map of imagePrompt -> data URL. Optional; slides render fine without images. */
+  [prompt: string]: string;
+}
+
+/**
+ * Builds a real .pptx from the lesson's generated presentation.
+ * Student-facing content goes on the slides; teacher notes go into
+ * PowerPoint speaker notes so they never clutter the projected slide.
+ */
+export async function buildPresentationBlob(
+  lesson: LessonPackage,
+  request: LessonRequestInput,
+  images: SlideImages = {},
+): Promise<Blob> {
+  const { default: PptxGenJS } = await import("pptxgenjs");
+  const pptx = new PptxGenJS();
+  pptx.layout = "LAYOUT_16x9";
+  pptx.author = "TeacherFlow";
+  pptx.title = `${request.topic} — ${request.level}`;
+
+  const band = bandOfRequest(request);
+  const t = themeFor(band);
+  const slides: Slide[] = normalizeSlides(lesson.presentation);
+
+  const W = 10;
+  const H = 5.625;
+
+  // ---------------------------------------------------------------- Title
+  const title = pptx.addSlide();
+  title.background = { color: t.title };
+  title.addShape("rect", { x: 0, y: H - 0.35, w: W, h: 0.35, fill: { color: t.accent } });
+  title.addText(request.topic, {
+    x: 0.7,
+    y: 1.5,
+    w: W - 1.4,
+    h: 1.3,
+    fontSize: 40,
+    bold: true,
+    color: "FFFFFF",
+    fontFace: t.titleFont,
+    fit: "shrink",
+    valign: "middle",
+  });
+  title.addText(lesson.overview?.learningObjective ?? request.learningObjective, {
+    x: 0.7,
+    y: 2.9,
+    w: W - 1.4,
+    h: 1.1,
+    fontSize: 17,
+    color: "EAF2F1",
+    fontFace: t.bodyFont,
+    fit: "shrink",
+    valign: "top",
+  });
+  title.addText(
+    [
+      request.level,
+      `Ages ${request.studentAge}`,
+      `${request.durationMinutes} min`,
+      request.mainSkill,
+      request.secondarySkill ? `+ ${request.secondarySkill}` : "",
+    ]
+      .filter(Boolean)
+      .join("   •   "),
+    { x: 0.7, y: 4.2, w: W - 1.4, h: 0.5, fontSize: 13, color: "C9D8D5", fontFace: t.bodyFont },
+  );
+
+  // -------------------------------------------------------------- Content
+  for (const slide of slides) {
+    if (slide.layout === "vocabulary" && slide.vocabulary.length) {
+      addVocabularySlides(pptx, slide, t, images, W, H);
+      continue;
+    }
+    addStandardSlide(pptx, slide, t, images, W, H);
+  }
+
+  const blob = (await pptx.write({ outputType: "blob" })) as Blob;
+  return repairPresentationXml(blob);
+}
+
+/**
+ * pptxgenjs writes <p:notesMasterIdLst> after <p:sldIdLst>, which strict Office
+ * validators reject. Move it back to its schema position so the deck is valid
+ * everywhere, not just in forgiving viewers.
+ */
+async function repairPresentationXml(blob: Blob): Promise<Blob> {
+  try {
+    const { default: JSZip } = await import("jszip");
+    const zip = await JSZip.loadAsync(await blob.arrayBuffer());
+    const file = zip.file("ppt/presentation.xml");
+    if (!file) return blob;
+    const xml = await file.async("string");
+    const match = xml.match(/<p:notesMasterIdLst>[\s\S]*?<\/p:notesMasterIdLst>/);
+    if (!match) return blob;
+    const without = xml.replace(match[0], "");
+    if (!without.includes("<p:sldIdLst>")) return blob;
+    const fixed = without.replace("<p:sldIdLst>", `${match[0]}<p:sldIdLst>`);
+    zip.file("ppt/presentation.xml", fixed);
+    return (await zip.generateAsync({
+      type: "blob",
+      mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      compression: "DEFLATE",
+    })) as Blob;
+  } catch {
+    return blob;
+  }
+}
+
+
+function slideHeader(s: any, slide: Slide, t: Theme, W: number) {
+  s.background = { color: "FFFFFF" };
+  s.addShape("rect", { x: 0, y: 0, w: W, h: 0.18, fill: { color: t.accent } });
+  s.addText(slide.title, {
+    x: 0.55,
+    y: 0.38,
+    w: W - 1.6,
+    h: 0.85,
+    fontSize: t.titleSize,
+    bold: true,
+    color: t.title,
+    fontFace: t.titleFont,
+    fit: "shrink",
+    valign: "middle",
+  });
+}
+
+function slideFooter(s: any, slide: Slide, t: Theme, W: number, H: number) {
+  s.addText(String(slide.number), {
+    x: W - 0.75,
+    y: H - 0.45,
+    w: 0.5,
+    h: 0.32,
+    fontSize: 11,
+    color: t.muted,
+    align: "right",
+    fontFace: t.bodyFont,
+  });
+  const notes = [
+    slide.teacherNote ? `Teacher note: ${slide.teacherNote}` : "",
+    slide.interaction ? `Student task: ${slide.interaction}` : "",
+    slide.purpose ? `Purpose: ${slide.purpose}` : "",
+    slide.visualSuggestion ? `Visual: ${slide.visualSuggestion}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+  if (notes) s.addNotes(notes);
+}
+
+function addStandardSlide(
+  pptx: any,
+  slide: Slide,
+  t: Theme,
+  images: SlideImages,
+  W: number,
+  H: number,
+) {
+  const s = pptx.addSlide();
+  slideHeader(s, slide, t, W);
+
+  const image = slide.imagePrompt ? images[slide.imagePrompt] : undefined;
+  const hasInteraction = Boolean(slide.interaction);
+
+  const bodyTop = 1.35;
+  const bodyBottom = hasInteraction ? H - 1.45 : H - 0.55;
+  const bodyH = bodyBottom - bodyTop;
+  const bodyW = image ? (W - 1.1) * 0.56 : W - 1.1;
+
+  const lines: string[] = [];
+  if (slide.studentText.trim()) lines.push(slide.studentText.trim());
+  for (const b of slide.bullets) if (b.trim()) lines.push(b.trim());
+
+  s.addShape("rect", {
+    x: 0.55,
+    y: bodyTop,
+    w: bodyW,
+    h: bodyH,
+    fill: { color: t.panel },
+    line: { color: t.panel },
+  });
+
+  const chars = lines.join(" ").length;
+  const size = bodySizeFor(t, chars, lines.length);
+  const useBullets = lines.length > 1;
+
+  const runs = lines.flatMap((line, i) => {
+    const parts = splitHighlights(line, slide.highlightWords);
+    return parts.map((p, j) => ({
+      text: p.text,
+      options: {
+        color: p.highlight ? t.highlight : t.ink,
+        bold: p.highlight,
+        ...(j === 0 && useBullets ? { bullet: true } : {}),
+        ...(j === parts.length - 1 && i < lines.length - 1 ? { breakLine: true } : {}),
+      },
+    }));
+  });
+
+  s.addText(runs.length ? runs : [{ text: " " }], {
+    x: 0.85,
+    y: bodyTop + 0.22,
+    w: bodyW - 0.6,
+    h: bodyH - 0.44,
+    fontSize: size,
+    fontFace: t.bodyFont,
+    color: t.ink,
+    valign: "top",
+    fit: "shrink",
+    lineSpacingMultiple: 1.15,
+  });
+
+  if (image) {
+    const imgX = 0.55 + bodyW + 0.3;
+    s.addImage({
+      data: image,
+      x: imgX,
+      y: bodyTop,
+      w: W - 0.55 - imgX,
+      h: bodyH,
+      sizing: { type: "contain", w: W - 0.55 - imgX, h: bodyH },
+    });
+  }
+
+  if (hasInteraction) {
+    s.addShape("roundRect", {
+      x: 0.55,
+      y: H - 1.28,
+      w: W - 1.1,
+      h: 0.8,
+      fill: { color: t.accentSoft },
+      line: { color: t.accent },
+      rectRadius: 0.08,
+    });
+    s.addText(slide.interaction, {
+      x: 0.75,
+      y: H - 1.22,
+      w: W - 1.5,
+      h: 0.68,
+      fontSize: 15,
+      bold: true,
+      color: t.title,
+      fontFace: t.bodyFont,
+      valign: "middle",
+      fit: "shrink",
+    });
+  }
+
+  slideFooter(s, slide, t, W, H);
+}
+
+/** One slide per vocabulary word keeps word, image, definition and example readable. */
+function addVocabularySlides(
+  pptx: any,
+  slide: Slide,
+  t: Theme,
+  images: SlideImages,
+  W: number,
+  H: number,
+) {
+  slide.vocabulary.forEach((v, index) => {
+    const s = pptx.addSlide();
+    slideHeader(
+      s,
+      { ...slide, title: slide.vocabulary.length > 1 ? `${slide.title} (${index + 1}/${slide.vocabulary.length})` : slide.title },
+      t,
+      W,
+    );
+
+    const image = v.imagePrompt ? images[v.imagePrompt] : undefined;
+    const top = 1.35;
+    const bottom = slide.interaction ? H - 1.45 : H - 0.55;
+    const h = bottom - top;
+    const textW = image ? (W - 1.1) * 0.55 : W - 1.1;
+
+    s.addShape("rect", { x: 0.55, y: top, w: textW, h, fill: { color: t.panel }, line: { color: t.panel } });
+    s.addText(v.word, {
+      x: 0.85,
+      y: top + 0.18,
+      w: textW - 0.6,
+      h: 0.75,
+      fontSize: 34,
+      bold: true,
+      color: t.highlight,
+      fontFace: t.titleFont,
+      fit: "shrink",
+    });
+    s.addText(v.definition, {
+      x: 0.85,
+      y: top + 1.0,
+      w: textW - 0.6,
+      h: h - 1.9,
+      fontSize: Math.max(15, t.bodySize - 2),
+      color: t.ink,
+      fontFace: t.bodyFont,
+      valign: "top",
+      fit: "shrink",
+    });
+    if (v.example) {
+      s.addText(`"${v.example}"`, {
+        x: 0.85,
+        y: top + h - 0.85,
+        w: textW - 0.6,
+        h: 0.65,
+        fontSize: 15,
+        italic: true,
+        color: t.muted,
+        fontFace: t.bodyFont,
+        fit: "shrink",
+      });
+    }
+
+    if (image) {
+      const imgX = 0.55 + textW + 0.3;
+      s.addImage({
+        data: image,
+        x: imgX,
+        y: top,
+        w: W - 0.55 - imgX,
+        h,
+        sizing: { type: "contain", w: W - 0.55 - imgX, h },
+      });
+    }
+
+    if (slide.interaction && index === slide.vocabulary.length - 1) {
+      s.addShape("roundRect", {
+        x: 0.55,
+        y: H - 1.28,
+        w: W - 1.1,
+        h: 0.8,
+        fill: { color: t.accentSoft },
+        line: { color: t.accent },
+        rectRadius: 0.08,
+      });
+      s.addText(slide.interaction, {
+        x: 0.75,
+        y: H - 1.22,
+        w: W - 1.5,
+        h: 0.68,
+        fontSize: 15,
+        bold: true,
+        color: t.title,
+        fontFace: t.bodyFont,
+        valign: "middle",
+        fit: "shrink",
+      });
+    }
+
+    slideFooter(s, slide, t, W, H);
+  });
+}
+
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/** Collects every illustration prompt in the deck, in slide order. */
+export function collectImagePrompts(lesson: LessonPackage, max = 6): string[] {
+  const prompts: string[] = [];
+  for (const slide of normalizeSlides(lesson.presentation)) {
+    for (const v of slide.vocabulary) if (v.imagePrompt) prompts.push(v.imagePrompt);
+    if (slide.imagePrompt && slide.layout !== "vocabulary") prompts.push(slide.imagePrompt);
+  }
+  return [...new Set(prompts)].slice(0, max);
+}
+
+/** Generates illustrations through the app's own endpoint. Failures are skipped. */
+export async function generateSlideImages(prompts: string[], request: LessonRequestInput): Promise<SlideImages> {
+  const { supabase } = await import('@/integrations/supabase/client');
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+  const results = await Promise.all(
+    prompts.map(async (prompt) => {
+      try {
+        const res = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...(token ? {Authorization: `Bearer ${token}`} : {}) },
+          body: JSON.stringify({ prompt, request, studentAge: request.studentAge, level: request.level }),
+        });
+        if (!res.ok) return null;
+        const json = (await res.json()) as { dataUrl?: string };
+        return json.dataUrl ? ([prompt, json.dataUrl] as const) : null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+  if (results.some(result => !result)) throw new Error("Some illustrations could not be generated. Retry or turn off illustrations to export the slides without them.");
+  return Object.fromEntries(results.filter(Boolean) as (readonly [string, string])[]);
+}

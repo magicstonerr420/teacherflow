@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: teacherflow-beta
+    runtime: node
+    plan: starter
+    region: virginia
+    numInstances: 1
+    buildCommand: npx --yes pnpm@10.17.1 install --frozen-lockfile && npm run build
+    startCommand: node .output/server/index.mjs
+    healthCheckPath: /
+    disk:
+      name: teacherflow-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: TEACHERFLOW_AI_PROVIDER
+        value: openrouter
+      - key: OPENROUTER_MODEL
+        value: openai/gpt-5.4-mini
+      - key: OPENROUTER_IMAGE_MODEL
+        value: google/gemini-3.1-flash-image-preview
+      - key: TEACHERFLOW_READING
+        value: "false"
+      - key: VITE_TEACHERFLOW_READING
+        value: "false"
+      - key: VITE_LOCAL_AI
+        value: "false"
+      - key: VITE_GOOGLE_AUTH_ENABLED
+        value: "false"
+      - key: TEACHERFLOW_BETA
+        value: "true"
+      - key: TEACHERFLOW_BETA_DB
+        value: /var/data/beta.sqlite
+      - key: TEACHERFLOW_READING_DB
+        value: /var/data/readings.sqlite
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: TEACHERFLOW_OWNER_USER_ID
+        sync: false
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
+        sync: false
