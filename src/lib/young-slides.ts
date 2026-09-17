@@ -1,4 +1,42 @@
 import type { Slide } from "./lesson-schema";
+import { presentationParagraphs } from "./presentation-text.ts";
+
+export const YOUNG_LINE_STEP = 0.34;
+export const YOUNG_PARAGRAPH_GAP = 0.2;
+const BODY_HEIGHT = 2.45;
+
+/** Prepared slides use a blank line between ideas, and a single newline for wrapping. */
+export function youngSlideRows(text: string): { text: string; offset: number }[] {
+  let offset = 0;
+  return text.split(/\n\s*\n/).filter(Boolean).flatMap((paragraph, index) => {
+    if (index) offset += YOUNG_PARAGRAPH_GAP;
+    return paragraph.split('\n').filter(Boolean).map(text => {
+      const row = { text, offset };
+      offset += YOUNG_LINE_STEP;
+      return row;
+    });
+  });
+}
+
+function textPages(paragraphs: string[]): string[] {
+  const pages: string[] = [];
+  let blocks: string[] = [];
+  let height = 0;
+  const flush = () => { pages.push(blocks.join('\n\n')); blocks = []; height = 0; };
+  const maxRows = Math.floor(BODY_HEIGHT / YOUNG_LINE_STEP);
+  for (const paragraph of paragraphs) {
+    const rows = wrapSlideText(paragraph, 4.35);
+    for (let start = 0; start < rows.length; start += maxRows) {
+      const chunk = rows.slice(start, start + maxRows);
+      const textHeight = chunk.length * YOUNG_LINE_STEP;
+      if (blocks.length && height + YOUNG_PARAGRAPH_GAP + textHeight > BODY_HEIGHT) flush();
+      height += (blocks.length ? YOUNG_PARAGRAPH_GAP : 0) + textHeight;
+      blocks.push(chunk.join('\n'));
+    }
+  }
+  if (blocks.length || !pages.length) flush();
+  return pages;
+}
 
 // Measure before export: PowerPoint viewers do not all honour shrink-to-fit.
 export function wrapSlideText(text: string, widthInches: number, points = 18): string[] {
@@ -22,29 +60,23 @@ export function wrapSlideText(text: string, widthInches: number, points = 18): s
 }
 export function youngSlidePages(slide: Slide): Slide[] {
   if (slide.layout === "vocabulary" && slide.vocabulary.length) return [slide];
-  const rows = [slide.studentText, ...slide.bullets]
-    .filter(Boolean)
-    .flatMap((t) => wrapSlideText(t, 4.35));
-  const pages: Slide[] = [];
-  for (let start = 0; start < Math.max(1, rows.length); start += 7) {
-    pages.push({
+  const texts = textPages([slide.studentText, ...slide.bullets].flatMap(presentationParagraphs));
+  const pages: Slide[] = texts.map((studentText, index) => ({
       ...slide,
-      studentText: rows.slice(start, start + 7).join("\n"),
+      studentText,
       bullets: [],
       title:
         slide.title +
-        (rows.length > 7 ? ` (${Math.floor(start / 7) + 1}/${Math.ceil(rows.length / 7)})` : ""),
-      interaction: start + 7 >= rows.length ? slide.interaction : "",
-    });
-  }
+        (texts.length > 1 ? ` (${index + 1}/${texts.length})` : ""),
+      interaction: index === texts.length - 1 ? slide.interaction : "",
+    }));
   if (slide.interaction && wrapSlideText(slide.interaction, 8.5, 12).length > 3) {
     pages[pages.length - 1]!.interaction = "";
-    const taskRows = wrapSlideText(slide.interaction, 4.35);
-    for (let start = 0; start < taskRows.length; start += 7)
+    for (const studentText of textPages(presentationParagraphs(slide.interaction)))
       pages.push({
         ...slide,
         title: "Your turn",
-        studentText: taskRows.slice(start, start + 7).join("\n"),
+        studentText,
         bullets: [],
         interaction: "",
       });

@@ -94,7 +94,7 @@ A matching task must present genuinely different clues and options; a naming tas
 For body vocabulary, supported printable item.visual keywords are: ${BODY_VISUALS.join(", ")}. Use them on EVERY item that depends on a body picture, including Version B. Each visual must identify the correct answer, not simply match the topic. These pictures are included in the worksheet and PDF automatically.
 For farm vocabulary, printable picture cues cow, pig, duck, sheep and horse are also available on every item that needs one.
 For other topics, use only these supported picture keywords: ${PICTURE_KEYS.join(", ")}; if no supplied picture can identify an answer, write a self-contained meaningful task instead of referring to an absent picture.
-Section C must practise a useful distinct task aligned to the objective, not repeat Section B's word-copy task. For example, recognise a word among options after practising writing it; only use action vocabulary if those actions were taught. Do not add unknown language just to make a task different.
+Section C must practice a useful distinct task aligned to the objective, not repeat Section B's word-copy task. For example, recognize a word among options after practicing writing it; only use action vocabulary if those actions were taught. Do not add unknown language just to make a task different.
 Keep slide studentText/bullets concise. Put adult instructions in teacherNote, not studentText. Slides should teach one idea each.
 If any plan, activity or presentation mentions flashcards, include each required word in presentation vocabulary with its own imagePrompt. Use at most five target flashcard words for this age. The application supplies picture-front/word-back cards; never tell the teacher to draw or source cards.
 `;

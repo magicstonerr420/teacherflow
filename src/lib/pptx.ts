@@ -1,8 +1,10 @@
 import {repairDrawingParagraphs} from './pptx-xml';
+import { americanEnglishContent } from './american-english';
 import { loadPresentationTools } from './presentation-tools';
 import { lessonImagePrompts } from "./image-plan";
 import { isYoungA1, picturePng, youngPresentationIssues } from "./young-learners";
-import { youngSlidePages, wrapSlideText } from "./young-slides";
+import { youngSlidePages, youngSlideRows, wrapSlideText } from "./young-slides";
+import { capitalizeHeading, presentationParagraphs } from "./presentation-text";
 import { ageBand, normalizeSlides, type Slide } from "@/lib/lesson-schema";
 import type { LessonPackage, LessonRequestInput } from "@/lib/lesson-schema";
 
@@ -149,6 +151,7 @@ export async function buildPresentationBlob(
       await img.decode();
       imageRatios.set(data, img.naturalWidth / img.naturalHeight);
     }
+  lesson = americanEnglishContent(lesson);
   const band = bandOfRequest(request);
   const t = themeFor(band);
   const slides: Slide[] = normalizeSlides(lesson.presentation).flatMap((s) =>
@@ -162,7 +165,7 @@ export async function buildPresentationBlob(
   const title = pptx.addSlide();
   title.background = { color: t.title };
   title.addShape("rect", { x: 0, y: H - 0.35, w: W, h: 0.35, fill: { color: t.accent } });
-  title.addText(request.topic, {
+  title.addText(capitalizeHeading(request.topic), {
     x: 0.7,
     y: 1.5,
     w: W - 1.4,
@@ -251,7 +254,7 @@ export async function buildPresentationBlob(
     );
     const back = pptx.addSlide();
     back.background = { color: "FFFFFF" };
-    back.addText(card.word, {
+    back.addText(capitalizeHeading(card.word), {
       x: 1,
       y: 2,
       w: 8,
@@ -300,7 +303,7 @@ async function repairPresentationXml(blob: Blob): Promise<Blob> {
 function slideHeader(s: any, slide: Slide, t: Theme, W: number) {
   s.background = { color: "FFFFFF" };
   s.addShape("rect", { x: 0, y: 0, w: W, h: 0.18, fill: { color: t.accent } });
-  s.addText(slide.title, {
+  s.addText(capitalizeHeading(slide.title), {
     x: 0.55,
     y: 0.38,
     w: W - 1.6,
@@ -352,12 +355,13 @@ function addYoungStandardSlide(
   H: number,
 ) {
   const s = pptx.addSlide();
+  const heading = capitalizeHeading(slide.title);
   let titleSize = 24;
-  while (titleSize > 16 && wrapSlideText(slide.title, 8.1, titleSize).length > 2) titleSize -= 2;
+  while (titleSize > 16 && wrapSlideText(heading, 8.1, titleSize).length > 2) titleSize -= 2;
   const titleTheme = { ...t, titleSize };
   slideHeader(
     s,
-    { ...slide, title: wrapSlideText(slide.title, 8.1, titleSize).join("\n") },
+    { ...slide, title: wrapSlideText(heading, 8.1, titleSize).join("\n") },
     titleTheme,
     W,
   );
@@ -371,16 +375,16 @@ function addYoungStandardSlide(
     fill: { color: t.panel },
     line: { color: t.panel },
   });
-  const rows = slide.studentText.split("\n");
-  rows.forEach((row, i) =>
+  const rows = youngSlideRows(slide.studentText);
+  rows.forEach((row) =>
     s.addText(
-      splitHighlights(row, slide.highlightWords).map((p) => ({
+      splitHighlights(row.text, slide.highlightWords).map((p) => ({
         text: p.text,
         options: { bold: p.highlight, color: p.highlight ? t.highlight : t.ink },
       })),
       {
         x: 0.85,
-        y: 1.55 + i * 0.34,
+        y: 1.55 + row.offset,
         w: width - 0.6,
         h: 0.32,
         fontSize: 18,
@@ -439,9 +443,7 @@ function addStandardSlide(
   const bodyH = bodyBottom - bodyTop;
   const bodyW = image ? (W - 1.1) * 0.56 : W - 1.1;
 
-  const lines: string[] = [];
-  if (slide.studentText.trim()) lines.push(slide.studentText.trim());
-  for (const b of slide.bullets) if (b.trim()) lines.push(b.trim());
+  const lines = [slide.studentText, ...slide.bullets].flatMap(presentationParagraphs);
 
   s.addShape("rect", {
     x: 0.55,
@@ -480,6 +482,8 @@ function addStandardSlide(
     valign: "top",
     fit: "shrink",
     lineSpacingMultiple: 1.15,
+    paraSpaceAfter: 12,
+    margin: 0,
   });
 
   if (image) {
@@ -559,7 +563,7 @@ function addVocabularySlides(
       fill: { color: t.panel },
       line: { color: t.panel },
     });
-    s.addText(v.word, {
+    s.addText(capitalizeHeading(v.word), {
       x: 0.85,
       y: top + 0.18,
       w: textW - 0.6,

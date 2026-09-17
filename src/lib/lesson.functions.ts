@@ -1,4 +1,5 @@
 import {alternateWorksheetIssue, ALTERNATE_RULES} from './worksheet-versions';
+import { americanEnglishContent } from './american-english';
 import { isYoungA1, youngWorksheetIssues, youngPresentationIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
@@ -47,7 +48,7 @@ async function generateNoTechSafe<T>(args: {
     system: args.system,
     input: args.input,
   });
-  if (!args.noTech) return first as T;
+  if (!args.noTech) return americanEnglishContent(first) as T;
 
   let current = first;
   for (let attempt = 0; attempt < 1; attempt++) {
@@ -63,7 +64,7 @@ async function generateNoTechSafe<T>(args: {
       )}\n\n${noTechRepairInstruction(found)}`,
     });
   }
-  return current as T;
+  return americanEnglishContent(current) as T;
 }
 
 

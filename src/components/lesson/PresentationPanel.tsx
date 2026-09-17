@@ -1,6 +1,8 @@
 import { isYoungA1, pictureUrl } from "@/lib/young-learners";
+import { americanEnglishContent } from "@/lib/american-english";
 import { youngSlidePages } from "@/lib/young-slides";
 import { loadPresentationTools } from "@/lib/presentation-tools";
+import { capitalizeHeading, presentationParagraphs } from "@/lib/presentation-text";
 import {
   AlertCircle,
   CheckCircle2,
@@ -36,8 +38,10 @@ import {
 } from "@/lib/lesson-schema";
 
 /** Renders one slide roughly as it will look in PowerPoint. */
-function SlidePreview({ slide, theme }: { slide: Slide; theme: ReturnType<typeof themeFor> }) {
-  const lines = [slide.studentText, ...slide.bullets].map((l) => l.trim()).filter(Boolean);
+function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType<typeof themeFor>; young: boolean }) {
+  const lines = young
+    ? [slide.studentText, ...slide.bullets].flatMap(text => text.split(/\n\s*\n/)).filter(Boolean)
+    : [slide.studentText, ...slide.bullets].flatMap(presentationParagraphs);
 
   return (
     <div
@@ -48,7 +52,7 @@ function SlidePreview({ slide, theme }: { slide: Slide; theme: ReturnType<typeof
       <div className="p-5">
         <div className="mb-3 flex items-baseline justify-between gap-3">
           <h3 className="text-lg font-bold" style={{ color: `#${theme.title}` }}>
-            {slide.title}
+            {capitalizeHeading(slide.title)}
           </h3>
           <span className="text-xs font-medium" style={{ color: `#${theme.muted}` }}>
             {slide.layout} · slide {slide.number}
@@ -64,7 +68,7 @@ function SlidePreview({ slide, theme }: { slide: Slide; theme: ReturnType<typeof
                 style={{ backgroundColor: `#${theme.panel}` }}
               >
                 <p className="text-base font-bold" style={{ color: `#${theme.highlight}` }}>
-                  {v.word}
+                  {capitalizeHeading(v.word)}
                 </p>
                 <p className="mt-1 text-sm" style={{ color: `#${theme.ink}` }}>
                   {v.definition}
@@ -81,7 +85,7 @@ function SlidePreview({ slide, theme }: { slide: Slide; theme: ReturnType<typeof
 
         {lines.length ? (
           <div
-            className="mt-3 space-y-1.5 rounded-lg p-4 text-sm leading-relaxed"
+            className="mt-3 space-y-5 rounded-lg p-4 text-sm leading-relaxed"
             style={{ backgroundColor: `#${theme.panel}`, color: `#${theme.ink}` }}
           >
             {lines.map((line, i) => (
@@ -164,7 +168,7 @@ export function PresentationActions({
   const theme = useMemo(() => themeFor(bandOfRequest(request)), [request]);
   const slides = useMemo(
     () =>
-      normalizeSlides(lesson.presentation).flatMap((s) =>
+      normalizeSlides(americanEnglishContent(lesson.presentation)).flatMap((s) =>
         isYoungA1(request) ? youngSlidePages(s) : [s],
       ),
     [lesson, request],
@@ -173,7 +177,7 @@ export function PresentationActions({
   const exportCount = isYoungA1(request)
     ? 1 +
       slides.reduce(
-        (n, s) => n + (s.layout === "vocabulary" ? Math.max(1, s.vocabulary.length) : 1),
+        (n, s) => n + (s.layout === "vocabulary" && s.vocabulary.length ? s.vocabulary.reduce((count, v) => count + youngSlidePages({ ...s, title: v.word, layout: "content", studentText: v.definition, bullets: v.example ? [v.example] : [], vocabulary: [] }).length, 0) : 1),
         0,
       ) +
       cards.length * 2
@@ -377,14 +381,14 @@ export function PresentationActions({
               </div>
               <div className="flex flex-col items-center justify-center">
                 <p className="text-sm">Card {i + 1} · Back</p>
-                <p className="text-3xl font-bold">{card.word}</p>
+                <p className="text-3xl font-bold">{capitalizeHeading(card.word)}</p>
               </div>
             </div>
           ))}
         </section>
       ) : null}
       {slides.map((slide, index) => (
-        <SlidePreview key={index} slide={slide} theme={theme} />
+        <SlidePreview key={index} slide={slide} theme={theme} young={isYoungA1(request)} />
       ))}
     </div>
   );
