@@ -1,6 +1,6 @@
 import {ALTERNATE_RULES} from '../lib/worksheet-versions';
 import { AMERICAN_ENGLISH_RULES } from '../lib/american-english';
-import { isYoungA1, YOUNG_A1_RULES } from '../lib/young-learners';
+import { isYoungA1, YOUNG_A1_RULES, PICTURE_KEYS } from '../lib/young-learners';
 /**
  * ============================================================================
  * TEACHERFLOW — MASTER INSTRUCTIONAL DESIGN PROMPT (CONFIGURATION)
@@ -249,8 +249,9 @@ ${
   bandOf(input.studentAge) === "Kids" && (Number.parseInt(input.studentAge.trim(), 10) || 99) <= 9
     ? `
 YOUNG CHILDREN (age ${input.studentAge}): use the worksheet item "visual" field wherever a keyword
-from the allowed list genuinely matches that item's content or the lesson topic. Never force a
-keyword that does not match — use "" instead. Item prompts must always be written words a child
+from the allowed list supplies that item's actual clue. Include it on EVERY picture-dependent item,
+not only the example or first question. Never use a decorative or unrelated picture. If no supported
+picture fits, rewrite the task with a complete text clue. Item prompts must always be written words a child
 can read (with "______" for blanks); never an emoji, symbol or picture on its own.`
     : ""
 }
@@ -390,14 +391,15 @@ content: never answers, never teacher notes, never explanations of the design.
   multiple-choice items, where each item has its own distinct options; otherwise an empty array),
   answerLines = how many blank writing lines to print
   (0 for multiple choice, 1 for short items, 2-6 for extended writing), and visual.
-- visual: ONLY for children aged 5-9. One lowercase keyword for a small picture cue that is
-  genuinely related to this item or to the lesson topic, chosen from: star, heart, smile, sun,
-  rocket, ball, car, cat, dog, bird, fish, tree, flower, apple, cake, book, pencil, school,
-  house, clock, music, game, gift, balloon, rainbow. For A1 ages 5-7,
-  the special requirements in the CLASS BRIEF extend this list with body, farm, weather and clothing pictures
-  and take precedence: include a picture on EVERY item that depends on one. For other young
-  children, use pictures only where useful. Never use an unrelated decorative cue. Empty string
-  "" for all other ages and for items with sufficient text clues that need no picture.
+- visual: use picture clues for children aged 5-9. Choose one lowercase keyword from the
+  supplied printable library: ${PICTURE_KEYS.join(', ')}.
+  EVERY question that asks students to identify, name, match, or check a picture must have
+  its own correct visual, in both Version A and Version B. An example picture cannot supply
+  the clue for the rest of the section. Never substitute the words "Picture: rain" for a picture,
+  and never label a picture with its answer. For a Yes/No picture task, visual shows the actual
+  object even when the statement is false. For older learners prefer self-contained text tasks.
+  Use "" only when the item needs no picture; rewrite tasks that need an unavailable picture
+  with an explicit meaningful text clue instead. No decorative or unrelated picture cues.
 - For matching sections, put the shared option list ONCE in wordBank (e.g. "A. definition one",
   "B. definition two") and leave every item's choices array empty. Never repeat the same option
   list on every item.

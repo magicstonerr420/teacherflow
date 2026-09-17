@@ -7,6 +7,7 @@ import {
 } from "@/lib/lesson-schema";
 import { findTechTerms, isNoTechRequest } from "@/lib/no-tech";
 import { READING_LABEL } from "@/lib/reading";
+import { worksheetPictureIssues } from '@/lib/young-learners';
 
 
 export type CheckStatus = "pass" | "warning" | "fail";
@@ -72,6 +73,12 @@ export function runQualityControl(
 
   /* --- worksheet --- */
   const worksheet = normalizeWorksheet(lesson.worksheet, lesson.answerKey);
+  const pictureIssues = [
+    ...worksheetPictureIssues(worksheet.student).map(issue => `Version A: ${issue}`),
+    ...worksheetPictureIssues(worksheet.studentB).map(issue => `Version B: ${issue}`),
+  ];
+  add('Worksheet picture clues', pictureIssues.length ? 'fail' : 'pass',
+    pictureIssues.length ? pictureIssues.join(' ') : 'Every required worksheet picture has a printable clue in both versions.');
   const studentSections = worksheet.student.sections;
   const teacherSections = worksheet.teacher.sections;
   const itemCount = studentSections.reduce((a, s) => a + s.items.length, 0);
@@ -212,7 +219,7 @@ export function runQualityControl(
   );
 
   /* --- export readiness --- */
-  const exportable = slides.length > 0 && studentSections.length > 0 && teacherHasAnswers;
+  const exportable = slides.length > 0 && studentSections.length > 0 && teacherHasAnswers && pictureIssues.length === 0;
   add(
     "Export validity",
     exportable ? "pass" : "fail",

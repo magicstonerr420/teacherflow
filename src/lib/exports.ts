@@ -1,4 +1,6 @@
-import { isYoungA1, picturePng } from '@/lib/young-learners';
+import { isYoungA1, picturePng, worksheetPictureKey, worksheetItemPrompt, worksheetPictureIssues } from '@/lib/young-learners';
+import { loadPdfTools } from '@/lib/pdf-tools';
+import { loadPresentationTools } from '@/lib/presentation-tools';
 import {
   normalizeWorksheet,
   type LessonPackage,
@@ -61,7 +63,7 @@ const BOTTOM = PAGE_H - 18;
 type Doc = Awaited<ReturnType<typeof createDoc>>;
 
 async function createDoc(title: string, subtitle: string) {
-  const { jsPDF } = await import("jspdf");
+  const { jsPDF } = await loadPdfTools();
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   doc.setProperties({ title, creator: "TeacherFlow" });
   let y = MARGIN;
@@ -84,6 +86,11 @@ async function createDoc(title: string, subtitle: string) {
         doc.addPage();
         y = MARGIN;
       }
+    },
+    textHeight(value: string, size = 10.5, indent = 0, bold = false) {
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.setFontSize(size);
+      return doc.splitTextToSize(pdfSafe(value), BODY_W - indent).length * (size * 0.45 + 1.2) + 1;
     },
     text(
       value: string,
@@ -264,6 +271,8 @@ export async function studentPdf(
   return d.blob();
 }
 async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonRequestInput) {
+  const issues = worksheetPictureIssues(studentDoc);
+  if (issues.length) throw new Error(`This worksheet needs picture clues before it can be printed: ${issues.join(' ')}`);
   d.text("Name: ______________________    Class: ____________    Date: ____________", {
     size: 10,
     color: [90, 100, 110],
@@ -271,8 +280,20 @@ async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonReque
   });
   if (studentDoc.instructions) d.text(studentDoc.instructions, { size: 10.5 });
 
+  const pictureCache = new Map<string, Promise<string | null>>();
+  const ruleSpacing = isYoungA1(request) ? 8 : 7;
+  const itemHeight = (item: StudentDoc['sections'][number]['items'][number]) =>
+    (worksheetPictureKey(item) ? 35 : 0) + d.textHeight(`${item.number}. ${worksheetItemPrompt(item)}`)
+    + (item.choices ?? []).reduce((height, choice, i) => height + d.textHeight(`  ${String.fromCharCode(97+i)}) ${choice}`, 10.5, 3), 0)
+    + Math.max(0, Math.min(8, item.answerLines ?? (item.choices?.length ? 0 : 1))) * ruleSpacing + 3;
+
   for (const section of studentDoc.sections) {
-    d.ensure(45);
+    const headingHeight = 6 + d.textHeight(`${section.label} — ${section.title}`, 14, 0, true)
+      + (section.instructions ? d.textHeight(section.instructions) : 0)
+      + (section.passage ? 1 + d.textHeight(section.passage, 10.5, 3) : 0)
+      + (section.wordBank?.length ? 2 + d.textHeight('Word bank', 11.5, 0, true) + d.textHeight(section.wordBank.join('   |   '), 10.5, 3) : 0);
+    // Keep the section heading with its first question, and every clue with its choices.
+    d.ensure(Math.min(BOTTOM - MARGIN, headingHeight + (section.items[0] ? itemHeight(section.items[0]) : 0) + 3));
     d.heading(`${section.label} — ${section.title}`);
     if (section.instructions) d.text(section.instructions, { size: 10.5 });
     if (section.passage) {
@@ -285,12 +306,12 @@ async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonReque
     }
     d.space(1);
     for (const item of section.items) {
-      d.ensure(14);
-      if (isYoungA1(request)) {
-        const picture = await picturePng(item.visual);
-        if (picture) { d.ensure(48); d.doc.addImage(picture, 'PNG', MARGIN, d.y, 32, 32); d.space(35); }
-      }
-      d.text(`${item.number}. ${item.prompt}`, { size: 10.5 });
+      d.ensure(Math.min(BOTTOM - MARGIN, itemHeight(item)));
+      const key = worksheetPictureKey(item);
+      if (key && !pictureCache.has(key)) pictureCache.set(key, picturePng(key));
+      const picture = key ? await pictureCache.get(key) : null;
+      if (picture) { d.doc.addImage(picture, 'PNG', MARGIN, d.y, 32, 32); d.space(35); }
+      d.text(`${item.number}. ${worksheetItemPrompt(item)}`, { size: 10.5 });
       if (item.choices?.length) {
         d.bullets(
           item.choices.map((c, i) => `${String.fromCharCode(97 + i)}) ${c}`),
@@ -432,7 +453,7 @@ export async function buildLessonPackageZip(
     }
   }
 
-  const { default: JSZip } = await import("jszip");
+  const { JSZip } = await loadPresentationTools();
   const zip = new JSZip();
   for (const file of files) {
     zip.file(file.name, new Uint8Array(await file.blob.arrayBuffer()));

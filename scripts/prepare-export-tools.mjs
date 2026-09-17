@@ -16,8 +16,10 @@ async function dependency(name, expected, file) {
 // No app entry point, hashed shared chunks, global JSZip, or CDN is involved.
 const zip = await dependency('jszip', '3.10.2', 'dist/jszip.min.js');
 const pptx = await dependency('pptxgenjs', '4.0.1', 'dist/pptxgen.min.js');
+const pdf = await dependency('jspdf', '4.2.1', 'dist/jspdf.umd.min.js');
 const zipModule = `const module = {exports: {}}; const exports = module.exports; const define = undefined;\n${zip}\n`;
 await writeFile(path.join(destination, 'jszip-3.10.2.mjs'), `${zipModule}export default module.exports;\n`);
+await writeFile(path.join(destination, 'jspdf-4.2.1.mjs'), `const module = {exports: {}}; const exports = module.exports; const define = undefined;\n${pdf}\nexport const jsPDF = module.exports.jsPDF;\n`);
 await writeFile(path.join(destination, 'pptxgenjs-4.0.1-jszip-3.10.2.mjs'), `${zipModule}const JSZip = module.exports;\n${pptx}\nexport default PptxGenJS;\n`);
 
 // A separate, self-contained recovery module can rescue an already-open old tab.

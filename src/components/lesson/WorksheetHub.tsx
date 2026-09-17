@@ -1,5 +1,5 @@
 import {PdfPreview} from './PdfPreview';
-import { isYoungA1, pictureUrl } from '@/lib/young-learners';
+import { pictureUrl, worksheetPictureKey, worksheetItemPrompt, worksheetPictureIssues } from '@/lib/young-learners';
 import { Download, Printer } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -43,40 +43,9 @@ const BAND_STYLES: Record<Band, { paper: string; heading: string; section: strin
   },
 };
 
-/** Small, printable picture cues for young children. Original glyphs, no licensing risk. */
-const VISUALS: Record<string, string> = {
-  star: "★",
-  heart: "♥",
-  smile: "☺",
-  sun: "☀",
-  rocket: "🚀",
-  ball: "⚽",
-  car: "🚗",
-  cat: "🐱",
-  dog: "🐶",
-  bird: "🐦",
-  fish: "🐟",
-  tree: "🌳",
-  flower: "🌸",
-  apple: "🍎",
-  cake: "🍰",
-  book: "📕",
-  pencil: "✏",
-  school: "🏫",
-  house: "🏠",
-  clock: "🕒",
-  music: "♪",
-  game: "🎲",
-  gift: "🎁",
-  balloon: "🎈",
-  rainbow: "🌈",
-};
-
-/** Only children aged 6-9 get picture cues. */
-function usesVisuals(studentAge: string) {
-  if (ageBand(studentAge) !== "Kids") return false;
-  const first = Number.parseInt(studentAge.trim(), 10);
-  return !Number.isNaN(first) && first <= 9;
+function PictureClue({ item }: { item: StudentDoc['sections'][number]['items'][number] }) {
+  const src = pictureUrl(worksheetPictureKey(item));
+  return src ? <img src={src} alt="Picture clue" className="mb-3 block h-28 w-28 object-contain" /> : null;
 }
 
 /* --------------------------------- hub ------------------------------------ */
@@ -110,6 +79,7 @@ export function WorksheetHub({
       : worksheet.teacher.sections;
 
   const label = tab === "student" ? "Student Worksheet" : tab === "answers" ? "Answer Key" : "Teacher Worksheet";
+  const pictureIssues = worksheetPictureIssues(studentDoc);
 
   async function onPdf(preview = false) {
     setExporting(true);
@@ -120,7 +90,7 @@ export function WorksheetHub({
         : tab === "teacher" ? await buildTeacherWorksheetPdf(payload,request,version) : await buildAnswerKeyPdf(payload,request,version);
       const name=`${safeSlug(request.topic)}_${tab}_${version}.pdf`;
       if(preview)setPdfFile({blob,name});else downloadBlob(blob,name);
-    } catch { toast.error("The PDF could not be created. Your worksheet is still available."); }
+    } catch (error) { toast.error(error instanceof Error ? error.message : "The PDF could not be created. Your worksheet is still available."); }
     finally {setExporting(false);}
   }
 
@@ -185,6 +155,12 @@ export function WorksheetHub({
 
       <PdfPreview file={pdfFile} onClose={()=>setPdfFile(null)}/>
 
+      {pictureIssues.length > 0 && <div role="alert" className="no-print mt-4 rounded-lg border border-destructive p-4 text-destructive">
+        <p className="font-semibold">This worksheet is missing required picture clues.</p>
+        <p className="mt-1 text-sm">Add the missing clues before printing the student worksheet.</p>
+        <ul className="mt-2 list-disc pl-5 text-sm">{pictureIssues.map((issue, i) => <li key={i}>{issue}</li>)}</ul>
+      </div>}
+
       {tab === "student" && <div className="mt-6">
         <div ref={studentRef} className="worksheet-sheet rounded-xl border bg-card p-8">
           <StudentWorksheet doc={studentDoc} request={request} band={band} version={version} />
@@ -234,7 +210,6 @@ function StudentWorksheet({
   version: Version;
 }) {
   const style = BAND_STYLES[band];
-  const withVisuals = usesVisuals(request.studentAge);
 
   return (
     <div className={cn("worksheet-paper", style.paper)}>
@@ -285,12 +260,8 @@ function StudentWorksheet({
                   <span className="w-6 shrink-0 font-semibold">{item.number || j + 1}.</span>
                   <div className="min-w-0 flex-1">
                     <p className="whitespace-pre-line">
-                      {isYoungA1(request) && pictureUrl(item.visual) ? <img src={pictureUrl(item.visual)!} alt="Picture clue" className="mb-3 block h-28 w-28 object-contain" /> : withVisuals && item.visual && VISUALS[item.visual] ? (
-                        <span aria-hidden className="mr-2 text-[1.1em]">
-                          {VISUALS[item.visual]}
-                        </span>
-                      ) : null}
-                      {item.prompt}
+                      <PictureClue item={item} />
+                      {worksheetItemPrompt(item)}
                     </p>
                     {item.choices.length ? (
                       <ul className="mt-2 space-y-1 pl-1">
@@ -381,6 +352,7 @@ function TeacherWorksheet({
                   {studentSection.instructions ? (
                     <p className="mt-1 text-sm italic">{studentSection.instructions}</p>
                   ) : null}
+                  {studentSection.passage ? <p className="mt-3 whitespace-pre-line rounded-md border p-3">{studentSection.passage}</p> : null}
                   {studentSection.wordBank.length ? (
                     <p className="mt-1 text-sm">Word bank: {studentSection.wordBank.join(", ")}</p>
                   ) : null}
@@ -389,7 +361,8 @@ function TeacherWorksheet({
                       <li key={j} className="flex gap-2">
                         <span className="w-6 shrink-0 font-medium">{item.number || j + 1}.</span>
                         <span className="min-w-0 flex-1">
-                          {item.prompt}
+                          <PictureClue item={item} />
+                          {worksheetItemPrompt(item)}
                           {item.choices.length ? ` (${item.choices.join(" / ")})` : ""}
                         </span>
                       </li>

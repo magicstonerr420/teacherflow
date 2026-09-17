@@ -27,7 +27,7 @@ test('production server renders the home, builder and sign-in routes', { timeout
       assert.equal(response.headers.get('cache-control'), 'no-cache');
       assert.match(await response.text(), /TeacherFlow/);
     }
-    for (const file of ['pptxgenjs-4.0.1-jszip-3.10.2.mjs', 'jszip-3.10.2.mjs', 'recover-presentation-v1.mjs']) {
+    for (const file of ['pptxgenjs-4.0.1-jszip-3.10.2.mjs', 'jszip-3.10.2.mjs', 'jspdf-4.2.1.mjs', 'recover-presentation-v1.mjs']) {
       const response = await fetch(origin + '/export-tools/' + file);
       assert.equal(response.status, 200, `${file} must be available independently of app chunks`);
       assert.match(response.headers.get('content-type'), /javascript/);

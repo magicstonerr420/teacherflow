@@ -105,22 +105,36 @@ Keep slide studentText/bullets concise. Put adult instructions in teacherNote, n
 If any plan, activity or presentation mentions flashcards, include each required word in presentation vocabulary with its own imagePrompt. Use at most five target flashcard words for this age. The application supplies picture-front/word-back cards; never tell the teacher to draw or source cards.
 `;
 
-export function youngWorksheetIssues(doc: any): string[] {
+type PictureItem = { visual?: string; prompt?: string };
+const PICTURE_PREFIX = /^\s*(?:picture|image|illustration)\s*:\s*([^.!?\n]{1,50})[.!?]\s*/i;
+
+/** Recover only an explicitly named legacy clue, never guess from choices or answers. */
+export function worksheetPictureKey(item: PictureItem): string {
+  if (item.visual?.trim()) return item.visual.trim();
+  const explicit = item.prompt?.match(PICTURE_PREFIX)?.[1]?.trim() ?? '';
+  return pictureSvg(explicit) ? explicit : '';
+}
+
+export function worksheetItemPrompt(item: PictureItem): string {
+  const prompt = item.prompt ?? '';
+  const explicit = prompt.match(PICTURE_PREFIX)?.[1]?.trim();
+  // Remove the answer-revealing placeholder only when that exact picture is shown.
+  return explicit && pictureSvg(explicit) === pictureSvg(worksheetPictureKey(item))
+    && pictureSvg(explicit) ? prompt.replace(PICTURE_PREFIX, '') : prompt;
+}
+
+/** Required learning resources must not disappear because of an age/level setting. */
+export function worksheetPictureIssues(doc: any): string[] {
   const issues: string[] = [];
   for (const section of doc?.sections ?? [])
     for (const item of section.items ?? []) {
-      const hasPicture = !!pictureSvg(item.visual || "");
+      const hasPicture = !!pictureSvg(worksheetPictureKey(item));
+      const namedPicture = item.prompt?.match(PICTURE_PREFIX)?.[1]?.trim();
+      if (namedPicture && pictureSvg(namedPicture) && hasPicture && pictureSvg(namedPicture) !== pictureSvg(worksheetPictureKey(item)))
+        issues.push(`${section.label} item ${item.number}: the named picture does not match its supplied illustration`);
       if (item.visual?.trim() && !hasPicture)
         issues.push(
           `${section.label} item ${item.number}: unsupported picture '${item.visual}'. Use a supported picture (${PICTURE_KEYS.join(", ")}) or a self-contained text clue.`,
-        );
-      if (/(?:touch|point to|show me)\s+(?:your|my)\s+_+/i.test(item.prompt) && !hasPicture)
-        issues.push(
-          `${section.label} item ${item.number}: missing picture clue for an ambiguous blank`,
-        );
-      if (/this word is for (?:your|the)\b/i.test(item.prompt))
-        issues.push(
-          `${section.label} item ${item.number}: replace circular word-copy clue with a meaningful task`,
         );
       const task = `${section.instructions ?? ''} ${item.prompt ?? ''}`;
       const explicitlyNeedsPicture = /\b(?:look\s+at|name|label|match|circle|choose|point\s+to|color|identify|find|use|describe)\b[^.!?]{0,70}\b(?:picture|image|illustration|drawing)s?\b/i.test(task);
@@ -128,8 +142,22 @@ export function youngWorksheetIssues(doc: any): string[] {
       // A bare "Look. Write." still needs a picture or a supplied text resource.
       const hasTextResource = !!section.passage?.trim() || /\b(?:read|sentence|clue|passage|text|weather\s+word|clothing\s+word|clothes\s+word|spelling)\b|\bword\s+["'“‘]/i.test(task);
       const bareLookTask = /\blook[.!]\s*(?:write|circle)\b/i.test(task) && !hasTextResource;
-      if ((explicitlyNeedsPicture || bareLookTask) && !hasPicture)
+      const itemNamesPicture = /^\s*(?:picture|image|illustration)\s*:/i.test(item.prompt ?? '');
+      const asksWhatYouSee = /^\s*what (?:do|can) you see\s*\?\s*$/i.test(item.prompt ?? '') && !section.passage?.trim();
+      if ((explicitlyNeedsPicture || bareLookTask || itemNamesPicture || asksWhatYouSee) && !hasPicture)
         issues.push(`${section.label} item ${item.number}: refers to a missing picture`);
+    }
+  return issues;
+}
+
+export function youngWorksheetIssues(doc: any): string[] {
+  const issues = worksheetPictureIssues(doc);
+  for (const section of doc?.sections ?? [])
+    for (const item of section.items ?? []) {
+      if (/(?:touch|point to|show me)\s+(?:your|my)\s+_+/i.test(item.prompt) && !pictureSvg(worksheetPictureKey(item)))
+        issues.push(`${section.label} item ${item.number}: missing picture clue for an ambiguous blank`);
+      if (/this word is for (?:your|the)\b/i.test(item.prompt))
+        issues.push(`${section.label} item ${item.number}: replace circular word-copy clue with a meaningful task`);
     }
   return issues;
 }

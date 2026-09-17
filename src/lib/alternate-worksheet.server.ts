@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { MASTER_SYSTEM_PROMPT, renderLessonContext, type LessonRequest } from '../config/teacherflow-prompt';
 import { worksheetSchema, worksheetStudentSectionSchema, type LessonPackage } from './lesson-schema';
 import { ALTERNATE_RULES, alternateWorksheetIssue, repeatedAlternateItems, removeRepeatedWorksheetSections } from './worksheet-versions';
-import { isYoungA1, youngWorksheetIssues } from './young-learners';
+import { isYoungA1, youngWorksheetIssues, worksheetPictureIssues } from './young-learners';
 import { READING_HANDOFF, withoutReadingSections } from './reading';
 import { LISTENING_HANDOFF, withoutListeningSections } from './listening';
 import { isNoTechRequest, findTechTerms } from './no-tech';
@@ -49,7 +49,7 @@ export async function generateAlternateWorksheet(request: LessonRequest, prior: 
    ...(!doc || doc.sections.length !== 5 || doc.sections.some(s => s.items.length !== 5) ? ['Return exactly five distinct sections, with five items each.'] : []),
    ...(doc?.sections.flatMap((s,i) => s.format !== plan[i]?.format ? [`${plan[i]?.section}: use ${plan[i]?.format} and this task: ${plan[i]?.task}`] : []) ?? []),
    ...(duplicate ? [duplicate, `Repeated items to replace: ${repeatedAlternateItems(original, doc).join('; ')}.`] : []),
-   ...(isYoungA1(request) ? youngWorksheetIssues(doc) : []),
+   ...(isYoungA1(request) ? youngWorksheetIssues(doc) : worksheetPictureIssues(doc)),
    ...(isNoTechRequest(request.technologyAvailable) && findTechTerms(doc).length ? ['Use only printed materials and the board; remove electronic equipment dependencies.'] : []),
   ];
   if (!issues.length) return draft;

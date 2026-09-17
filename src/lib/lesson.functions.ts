@@ -1,7 +1,7 @@
 import {alternateWorksheetIssue, removeRepeatedWorksheetSections} from './worksheet-versions';
 import { generateAlternateWorksheet } from './alternate-worksheet.server';
 import { americanEnglishContent } from './american-english';
-import { isYoungA1, youngWorksheetIssues, youngPresentationIssues } from './young-learners';
+import { isYoungA1, youngWorksheetIssues, youngPresentationIssues, worksheetPictureIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { betaEnabled, betaStore } from "./beta-store.server";
@@ -149,16 +149,17 @@ export const generateLessonStage = createServerFn({ method: "POST" })
         input: `${contextBlock(request, modelPrior, stage === 'teacherB' ? 'studentB' : undefined)}\n\n${STAGE_PROMPTS[promptStage]}\n\nCURRENT PART: ${stage}. Generate ONLY the fields required by the response schema for this part. Other parts are handled in separate requests. Preserve completed student items exactly when writing teacher answers. Solve each supplied question independently from its printed clue and picture; do not reuse an earlier key. Generate keys only for the worksheet sections shown; DeepSeek's reading key is added separately. Keep prose concise and avoid repeating prior lesson content outside the required fields.`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
-      if (isYoungA1(request) && stage === 'student') {
+      if (stage === 'student') {
+        const validate = isYoungA1(request) ? youngWorksheetIssues : worksheetPictureIssues;
         const docKey = 'student';
-        const issues = youngWorksheetIssues(result.worksheet?.[docKey]);
+        const issues = validate(result.worksheet?.[docKey]);
         if (issues.length) {
           result = await generateNoTechSafe<Partial<LessonPackage>>({
             schema, schemaName: `teacherflow_${stage}_clarity_repair`, system,
             input: `${contextBlock(request, modelPrior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: ${stage}. Revise this worksheet: ${JSON.stringify(result)}\nFix these issues: ${issues.join('; ')}`,
             noTech: isNoTechRequest(request.technologyAvailable),
           });
-          const remaining = youngWorksheetIssues(result.worksheet?.[docKey]);
+          const remaining = validate(result.worksheet?.[docKey]);
           if (remaining.length) {
             console.warn('TeacherFlow worksheet clarity', { stage, issues: remaining });
             throw new LessonGenerationError('worksheet_clarity', 'The worksheet still has missing picture clues or unclear tasks. Your earlier lesson sections are saved. Retry this worksheet section.');
@@ -317,11 +318,12 @@ export const regenerateSection = createServerFn({ method: "POST" })
         input: `${regenerationContext(request, lesson, section)}\n\n${SECTION_PROMPTS[section]}`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
-      if (section === 'worksheet' && isYoungA1(request)) {
-        const issues=[...youngWorksheetIssues(result.worksheet?.student),...youngWorksheetIssues(result.worksheet?.studentB)];
+      if (section === 'worksheet') {
+        const validate = isYoungA1(request) ? youngWorksheetIssues : worksheetPictureIssues;
+        const issues=[...validate(result.worksheet?.student),...validate(result.worksheet?.studentB)];
         if(issues.length){
           result=await generateNoTechSafe<Partial<LessonPackage>>({schema,schemaName:'teacherflow_worksheet_clarity_repair',system:MASTER_SYSTEM_PROMPT,input:`${regenerationContext(request, lesson, section)}\n${SECTION_PROMPTS.worksheet}\nFix these worksheet issues: ${issues.join('; ')}. Return both student versions and the matching corrected teacher answers.`,noTech:isNoTechRequest(request.technologyAvailable)});
-          if([...youngWorksheetIssues(result.worksheet?.student),...youngWorksheetIssues(result.worksheet?.studentB)].length)throw new LessonGenerationError('worksheet_clarity','The revised worksheet still has unclear picture tasks. Your original worksheet is retained.');
+          if([...validate(result.worksheet?.student),...validate(result.worksheet?.studentB)].length)throw new LessonGenerationError('worksheet_clarity','The revised worksheet still has unclear picture tasks. Your original worksheet is retained.');
         }
       }
       if(section==='worksheet' && alternateWorksheetIssue(result.worksheet?.student,result.worksheet?.studentB)) {
