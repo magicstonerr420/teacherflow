@@ -1,3 +1,4 @@
+import {PdfPreview} from './PdfPreview';
 import { isYoungA1, pictureUrl } from '@/lib/young-learners';
 import { Download, Printer } from "lucide-react";
 import { useRef, useState } from "react";
@@ -5,9 +6,8 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { studentPdf, buildAnswerKeyPdf, safeSlug } from "@/lib/exports";
+import { studentPdf, buildAnswerKeyPdf, buildTeacherWorksheetPdf, safeSlug } from "@/lib/exports";
 import { downloadBlob } from "@/lib/pptx";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { ageBand } from "@/lib/lesson-schema";
 import type { LessonRequestInput, Worksheet } from "@/lib/lesson-schema";
@@ -92,7 +92,7 @@ export function WorksheetHub({
 }) {
   const [tab, setTab] = useState<Tab>("teacher");
   const [version, setVersion] = useState<Version>("A");
-  const [preview, setPreview] = useState(false);
+  const [pdfFile,setPdfFile]=useState<{blob:Blob;name:string}|null>(null);
   const [exporting, setExporting] = useState(false);
 
   const studentRef = useRef<HTMLDivElement>(null);
@@ -109,25 +109,19 @@ export function WorksheetHub({
       ? worksheet.teacherB
       : worksheet.teacher.sections;
 
-  const target = () =>
-    tab === "student" ? studentRef.current : tab === "answers" ? answersRef.current : teacherRef.current;
-
   const label = tab === "student" ? "Student Worksheet" : tab === "answers" ? "Answer Key" : "Teacher Worksheet";
 
-  function onPrint() {
-    setPreview(true);
-  }
-
-  async function onPdf() {
+  async function onPdf(preview = false) {
     setExporting(true);
     try {
+      const payload={worksheet,answerKey:answerKey??{sections:[]}};
       const blob = tab === "student"
         ? await studentPdf(studentDoc, request, version === "B" ? " (Version B)" : "")
-        : await buildAnswerKeyPdf({ worksheet, answerKey: answerKey ?? { sections: [] } }, request, version);
-      downloadBlob(blob, `${safeSlug(request.topic)}_${tab === "student" ? "Student_Worksheet" : "Teacher_Answer_Key"}_${version}.pdf`);
-    } catch {
-      toast.error("The PDF could not be created. Your worksheet is still available in the preview.");
-    } finally { setExporting(false); }
+        : tab === "teacher" ? await buildTeacherWorksheetPdf(payload,request,version) : await buildAnswerKeyPdf(payload,request,version);
+      const name=`${safeSlug(request.topic)}_${tab}_${version}.pdf`;
+      if(preview)setPdfFile({blob,name});else downloadBlob(blob,name);
+    } catch { toast.error("The PDF could not be created. Your worksheet is still available."); }
+    finally {setExporting(false);}
   }
 
   const TABS: { key: Tab; label: string }[] = [
@@ -178,7 +172,7 @@ export function WorksheetHub({
             </div>
           ) : null}
 
-          <Button variant="outline" size="sm" onClick={onPrint}>
+          <Button variant="outline" size="sm" onClick={()=>void onPdf(true)} disabled={exporting}>
             <Printer className="size-4" />
             Preview / Print {label}
           </Button>
@@ -189,20 +183,7 @@ export function WorksheetHub({
         </div>
       </div>
 
-      <Dialog open={preview} onOpenChange={setPreview}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{label} — Version {version}</DialogTitle>
-            <DialogDescription>Review your document below. Download the PDF to print it from your PDF reader. PDF pagination may differ from this screen preview.</DialogDescription>
-          </DialogHeader>
-          <Button onClick={() => void onPdf()} disabled={exporting}>{exporting ? "Creating PDF…" : "Download printable PDF"}</Button>
-          <div className="rounded border bg-white p-8 text-black">
-            {tab === "student" ? <StudentWorksheet doc={studentDoc} request={request} band={band} version={version} />
-              : tab === "answers" ? <AnswerKeySheet worksheet={worksheet} studentDoc={studentDoc} teacherSections={teacherSections} request={request} version={version} answerKey={answerKey} />
-              : <TeacherWorksheet worksheet={worksheet} studentDoc={studentDoc} teacherSections={teacherSections} request={request} band={band} version={version} />}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <PdfPreview file={pdfFile} onClose={()=>setPdfFile(null)}/>
 
       {tab === "student" && <div className="mt-6">
         <div ref={studentRef} className="worksheet-sheet rounded-xl border bg-card p-8">

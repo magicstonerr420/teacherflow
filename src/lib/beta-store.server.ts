@@ -1,3 +1,4 @@
+import {alternateWorksheetIssue} from './worksheet-versions.ts';
 import { lessonImagePrompts } from './image-plan.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
@@ -8,7 +9,7 @@ const phases = ['foundation','student','teacher','studentB','teacherB','presenta
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 const stable = (value: any): string => JSON.stringify(value, (_key, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
 type Job = { attempts: number; lease?: string; until?: number; value?: any };
-type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; credited?: boolean };
+type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean };
 type Teacher = { runs: Record<string, Run> };
 type State = { invites: { digest: string; user?: string }[]; teachers: Record<string, Teacher> };
 
@@ -137,6 +138,33 @@ export class BetaStore {
       this.transact(s=>{const job=this.teacher(s,user).runs[key]!.images[imageKey]!;if(job.lease!==reservation.lease)throw new Error('Image request expired.');job.value=value;delete job.until;delete job.lease;});
       return value;
     }catch(e){this.transact(s=>{const job=this.teacher(s,user).runs[key]!.images[imageKey]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});throw e;}
+  }
+  /** Repair an existing duplicate B without consuming a fourth lesson or reopening other AI work. */
+  async repairAlternate(user:string, request:any, generate:(lesson:any)=>Promise<any>) {
+    const key=hash(stable(request));
+    const lesson=this.readingLesson(user,request);
+    if(!alternateWorksheetIssue(lesson.worksheet?.student,lesson.worksheet?.studentB))return {worksheet:lesson.worksheet};
+    const lease=this.transact(s=>{
+      const run=this.teacher(s,user).runs[key]!;
+      const job=run.alternateRepair??={attempts:0};
+      if((job.until??0)>Date.now())throw new Error('Version B repair is already running.');
+      if(job.attempts>=2)throw new Error('Version B repair needs organizer assistance after two unsuccessful attempts. Your lesson is retained.');
+      job.attempts++;job.lease=randomUUID();job.until=Date.now()+10*60_000;
+      return job.lease;
+    });
+    try {
+      const patch=await generate(lesson);
+      if(!patch?.worksheet?.studentB || alternateWorksheetIssue(lesson.worksheet.student,patch.worksheet.studentB))throw new Error('Version B repair did not produce a distinct worksheet.');
+      this.transact(s=>{
+        const run=this.teacher(s,user).runs[key]!;
+        if(run.alternateRepair?.lease!==lease)throw new Error('Version B repair expired.');
+        run.parts['studentB']!.value={worksheet:{studentB:patch.worksheet.studentB}};
+        run.parts['teacherB']!.value={worksheet:{teacherB:patch.worksheet.teacherB}};
+        if(run.parts['differentiation']?.value?.worksheet) Object.assign(run.parts['differentiation']!.value.worksheet,{studentB:patch.worksheet.studentB,teacherB:patch.worksheet.teacherB});
+        delete run.alternateRepair.until;delete run.alternateRepair.lease;
+      });
+      return {worksheet:{...lesson.worksheet,studentB:patch.worksheet.studentB,teacherB:patch.worksheet.teacherB}};
+    }catch(e){this.transact(s=>{const job=this.teacher(s,user).runs[key]!.alternateRepair!;if(job.lease===lease){delete job.until;delete job.lease;}});throw e;}
   }
   readingLesson(user: string, request: any) {
     return this.transact(s => {

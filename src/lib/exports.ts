@@ -74,6 +74,11 @@ async function createDoc(title: string, subtitle: string) {
     space(mm: number) {
       y += mm;
     },
+    newPage() {
+      if (y <= MARGIN) return;
+      doc.addPage();
+      y = MARGIN;
+    },
     ensure(height: number) {
       if (y + height > BOTTOM) {
         doc.addPage();
@@ -99,7 +104,7 @@ async function createDoc(title: string, subtitle: string) {
       y += opts.gap ?? 1;
     },
     heading(value: string) {
-      api.ensure(16);
+      api.ensure(28);
       y += 3;
       api.text(value, { size: 14, bold: true, color: [17, 61, 92] });
       doc.setDrawColor(200, 210, 220);
@@ -121,13 +126,13 @@ async function createDoc(title: string, subtitle: string) {
         api.text(`${marker} ${item}`, { indent: 3 });
       }
     },
-    rules(count: number) {
+    rules(count: number, spacing = 8) {
       const n = Math.max(0, Math.min(8, count));
       for (let i = 0; i < n; i++) {
-        api.ensure(8);
+        api.ensure(spacing);
         doc.setDrawColor(170, 180, 190);
         doc.line(MARGIN + 4, y + 3, PAGE_W - MARGIN, y + 3);
-        y += 8;
+        y += spacing;
       }
     },
     blob(): Blob {
@@ -137,7 +142,7 @@ async function createDoc(title: string, subtitle: string) {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8);
         doc.setTextColor(130, 140, 150);
-        doc.text(subtitle, MARGIN, PAGE_H - 10);
+
         doc.text(`${p} / ${total}`, PAGE_W - MARGIN, PAGE_H - 10, { align: "right" });
       }
       return doc.output("blob");
@@ -168,6 +173,10 @@ export async function buildLessonPlanPdf(
   request: LessonRequestInput,
 ): Promise<Blob> {
   const d = await createDoc(`${request.topic} — Lesson Plan`, header(request));
+  writeLessonPlan(d, lesson, request);
+  return d.blob();
+}
+function writeLessonPlan(d: Doc, lesson: LessonPackage, request: LessonRequestInput) {
   const o = lesson.overview;
 
   d.heading("Overview");
@@ -235,7 +244,6 @@ export async function buildLessonPlanPdf(
     d.bullets(lesson.teacherNotes.tips);
   }
 
-  return d.blob();
 }
 
 /* -------------------------- Student worksheet PDF ------------------------- */
@@ -252,6 +260,10 @@ export async function studentPdf(
     header(request),
   );
 
+  await writeStudent(d, studentDoc, request);
+  return d.blob();
+}
+async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonRequestInput) {
   d.text("Name: ______________________    Class: ____________    Date: ____________", {
     size: 10,
     color: [90, 100, 110],
@@ -260,6 +272,7 @@ export async function studentPdf(
   if (studentDoc.instructions) d.text(studentDoc.instructions, { size: 10.5 });
 
   for (const section of studentDoc.sections) {
+    d.ensure(45);
     d.heading(`${section.label} — ${section.title}`);
     if (section.instructions) d.text(section.instructions, { size: 10.5 });
     if (section.passage) {
@@ -284,12 +297,11 @@ export async function studentPdf(
           " ",
         );
       }
-      d.rules(item.answerLines ?? (item.choices?.length ? 0 : 1));
-      d.space(1);
+      d.rules(item.answerLines ?? (item.choices?.length ? 0 : 1), isYoungA1(request) ? 8 : 7);
+      d.space(isYoungA1(request) ? 1 : 0.5);
     }
   }
 
-  return d.blob();
 }
 
 export async function buildStudentWorksheetPdf(
@@ -309,9 +321,13 @@ export async function buildAnswerKeyPdf(
   request: LessonRequestInput,
   version?: "A" | "B",
 ): Promise<Blob> {
-  const w = normalizeWorksheet(lesson.worksheet, lesson.answerKey);
   const d = await createDoc(`${request.topic} — Teacher Answer Key`, header(request));
 
+  writeAnswerKey(d, lesson, version);
+  return d.blob();
+}
+function writeAnswerKey(d: Doc, lesson: Pick<LessonPackage, "worksheet" | "answerKey"> & Partial<Pick<LessonPackage,"assessment">>, version?: "A" | "B") {
+  const w = normalizeWorksheet(lesson.worksheet, lesson.answerKey);
   if (w.teacher.overview) {
     d.heading("How to run the worksheet");
     d.text(w.teacher.overview);
@@ -356,7 +372,6 @@ export async function buildAnswerKeyPdf(
     });
   }
 
-  return d.blob();
 }
 
 /* ------------------------------ ZIP package ------------------------------- */
@@ -410,4 +425,41 @@ export async function buildLessonPackageZip(
 
 
   return { blob, files, name: packageFileName(request) };
+}
+
+/** Printable content only; no app navigation, duplicate tabs or browser headers. */
+export async function buildCompleteLessonPdf(lesson: LessonPackage, request: LessonRequestInput): Promise<Blob> {
+  const d=await createDoc(`${request.topic} — Complete Lesson`,header(request));
+  writeLessonPlan(d,lesson,request);
+  const w=normalizeWorksheet(lesson.worksheet,lesson.answerKey);
+  d.newPage();
+  d.heading('Student worksheet — Version A');
+  await writeStudent(d,w.student,request);
+  if(w.studentB.sections.length){d.newPage();d.heading('Student worksheet — Version B');await writeStudent(d,w.studentB,request);}
+  d.newPage();
+  d.heading('Teacher answer key');writeAnswerKey(d,lesson);
+  if(lesson.assessment?.instructions){d.heading('Assessment guidance');d.text(lesson.assessment.instructions);}
+  if(lesson.supportVersion){
+    const v=lesson.supportVersion;d.heading('Support');d.text(v.summary);
+    for(const [label,values] of [['Sentence frames',v.sentenceFrames],['Word bank',v.wordBank],['Worked examples',v.examples],['Smaller steps',v.steps],['Guided practice',v.guidedPractice]] as [string,string[]][]) {
+      if(values?.length){d.subheading(label);d.bullets(values);}
+    }
+  }
+  if(lesson.challengeVersion){d.ensure(45);d.heading('Challenge');d.text(lesson.challengeVersion.summary);d.bullets(lesson.challengeVersion.tasks);d.bullets(lesson.challengeVersion.extensionQuestions);}
+  for(const p of lesson.teacherNotes?.problems??[]){d.subheading(p.problem);d.text(p.solution);}
+  d.heading('Presentation — teaching notes');
+  for(const slide of lesson.presentation?.slides??[]){
+    d.subheading(`${slide.number}. ${slide.title}`);d.text(slide.studentText);d.bullets(slide.bullets);
+    for(const v of slide.vocabulary??[]){d.text(`${v.word}: ${v.definition}`);if(v.example)d.text(v.example);}
+    d.label('Task',slide.interaction);d.label('Teacher note',slide.teacherNote);
+  }
+  return d.blob();
+}
+export async function buildTeacherWorksheetPdf(lesson: Pick<LessonPackage, 'worksheet'|'answerKey'>, request: LessonRequestInput, version: 'A'|'B'): Promise<Blob>{
+  const w=normalizeWorksheet(lesson.worksheet,lesson.answerKey);
+  const d=await createDoc(`${request.topic} — Teacher Worksheet ${version}`,header(request));
+  await writeStudent(d,version==='B'?w.studentB:w.student,request);
+  d.newPage();
+  writeAnswerKey(d,lesson,version);
+  return d.blob();
 }

@@ -1,3 +1,4 @@
+import {repairDrawingParagraphs} from './pptx-xml';
 import { lessonImagePrompts } from "./image-plan";
 import { isYoungA1, picturePng, youngPresentationIssues } from "./young-learners";
 import { youngSlidePages, wrapSlideText } from "./young-slides";
@@ -276,26 +277,23 @@ export async function buildPresentationBlob(
  * everywhere, not just in forgiving viewers.
  */
 async function repairPresentationXml(blob: Blob): Promise<Blob> {
-  try {
-    const { default: JSZip } = await import("jszip");
-    const zip = await JSZip.loadAsync(await blob.arrayBuffer());
-    const file = zip.file("ppt/presentation.xml");
-    if (!file) return blob;
-    const xml = await file.async("string");
-    const match = xml.match(/<p:notesMasterIdLst>[\s\S]*?<\/p:notesMasterIdLst>/);
-    if (!match) return blob;
-    const without = xml.replace(match[0], "");
-    if (!without.includes("<p:sldIdLst>")) return blob;
-    const fixed = without.replace("<p:sldIdLst>", `${match[0]}<p:sldIdLst>`);
-    zip.file("ppt/presentation.xml", fixed);
-    return (await zip.generateAsync({
-      type: "blob",
-      mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      compression: "DEFLATE",
-    })) as Blob;
-  } catch {
-    return blob;
+  const { default: JSZip } = await import("jszip");
+  const zip = await JSZip.loadAsync(await blob.arrayBuffer());
+  const file = zip.file("ppt/presentation.xml");
+  if (!file) throw new Error("PowerPoint could not be built: presentation data is missing.");
+  const xml = await file.async("string");
+  const match = xml.match(/<p:notesMasterIdLst>[\s\S]*?<\/p:notesMasterIdLst>/);
+  if (match && xml.includes("<p:sldIdLst>")) {
+    zip.file("ppt/presentation.xml", xml.replace(match[0], "").replace("<p:sldIdLst>", `${match[0]}<p:sldIdLst>`));
   }
+  for (const entry of Object.values(zip.files)) {
+    if (/^ppt\/.*\.xml$/.test(entry.name)) {
+      const original = await entry.async("string");
+      const fixed = repairDrawingParagraphs(original);
+      if (fixed !== original) zip.file(entry.name, fixed);
+    }
+  }
+  return await zip.generateAsync({type:"blob", mimeType:"application/vnd.openxmlformats-officedocument.presentationml.presentation", compression:"DEFLATE"});
 }
 
 function slideHeader(s: any, slide: Slide, t: Theme, W: number) {

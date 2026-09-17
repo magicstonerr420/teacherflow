@@ -204,10 +204,10 @@ export function PresentationActions({
     }
   }
 
-  async function exportAvailable() {
+  async function exportAvailable(withAvailable = true) {
     setBusy(true);
     try {
-      setBlob(await buildPresentationBlob(lesson, request, imagePreviews));
+      setBlob(await buildPresentationBlob(lesson, request, withAvailable ? imagePreviews : {}));
       setFailed(false);
     } catch (error) {
       setFailureMessage(error instanceof Error ? error.message : "Could not export the slides.");
@@ -279,6 +279,7 @@ export function PresentationActions({
               onCheckedChange={(value) => {
                 setWithImages(value);
                 setBlob(null);
+                setFailed(false);
               }}
               disabled={busy}
               aria-label="Add original illustrations"
@@ -304,7 +305,8 @@ export function PresentationActions({
               <Button size="sm" variant="outline" onClick={() => void generate()} disabled={busy}>
                 Retry missing pictures
               </Button>
-              {isYoungA1(request) ? (
+              <Button size="sm" variant="outline" onClick={() => void exportAvailable(false)} disabled={busy}>Export without AI illustrations</Button>
+              {Object.keys(imagePreviews).length > 0 ? (
                 <Button
                   size="sm"
                   variant="outline"

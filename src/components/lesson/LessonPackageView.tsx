@@ -1,3 +1,5 @@
+import {alternateWorksheetIssue} from '@/lib/worksheet-versions';
+import {PdfPreview} from './PdfPreview';
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, Package, Pencil, Printer, RefreshCw, Save, X } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
@@ -15,8 +17,8 @@ import {
 import { PresentationActions } from "@/components/lesson/PresentationPanel";
 import { SectionEditor } from "@/components/lesson/SectionEditor";
 import { WorksheetHub } from "@/components/lesson/WorksheetHub";
-import { buildLessonPackageZip } from "@/lib/exports";
-import { regenerateSection } from "@/lib/lesson.functions";
+import { buildLessonPackageZip, buildCompleteLessonPdf, safeSlug } from "@/lib/exports";
+import { regenerateSection, repairDuplicateVersionB } from "@/lib/lesson.functions";
 import { regenerateReading } from "@/lib/reading.functions";
 import { applyReading, needsReading } from "@/lib/reading";
 import { downloadBlob } from "@/lib/pptx";
@@ -35,11 +37,9 @@ const SECTIONS = [
   { key: "presentation", label: "Presentation" },
   { key: "worksheet", label: "Worksheet" },
   { key: "activity", label: "Activities" },
-  { key: "answerKey", label: "Answer Key" },
   { key: "homework", label: "Homework" },
   { key: "exitTicket", label: "Exit Ticket" },
   { key: "assessment", label: "Assessment" },
-  { key: "versionB", label: "Version B" },
   { key: "support", label: "Support Version" },
   { key: "challenge", label: "Challenge Version" },
   { key: "notes", label: "Teacher Notes" },
@@ -55,11 +55,9 @@ const SECTION_FIELD: Record<SectionKey, keyof LessonPackage | null> = {
   presentation: "presentation",
   worksheet: "worksheet",
   activity: "activity",
-  answerKey: "answerKey",
   homework: "homework",
   exitTicket: "exitTicket",
   assessment: "assessment",
-  versionB: "versionB",
   support: "supportVersion",
   challenge: "challengeVersion",
   notes: "teacherNotes",
@@ -94,6 +92,10 @@ export function LessonPackageView({
   const [draft, setDraft] = useState<unknown>(null);
   const [busy, setBusy] = useState<SectionKey | null>(null);
   const [packaging, setPackaging] = useState(false);
+  const [pdfFile,setPdfFile]=useState<{blob:Blob;name:string}|null>(null);
+  const [preparingPdf,setPreparingPdf]=useState(false);
+  async function previewPdf(){setPreparingPdf(true);try{setPdfFile({blob:await buildCompleteLessonPdf(lesson,request),name:`${safeSlug(request.topic)}_Complete_Lesson.pdf`});}catch(error){toast.error(error instanceof Error?error.message:'Could not prepare PDF.');}finally{setPreparingPdf(false);}}
+
   const [readingBusy, setReadingBusy] = useState(false);
   const [readingError, setReadingError] = useState<string | null>(null);
   const runReading = useServerFn(regenerateReading);
@@ -101,6 +103,11 @@ export function LessonPackageView({
   useEffect(() => setLesson(incoming), [incoming]);
 
   const runRegenerate = useServerFn(regenerateSection);
+  const repairAlternate=useServerFn(repairDuplicateVersionB);
+  const [repairingAlternate,setRepairingAlternate]=useState(false);
+  const duplicateVersion=alternateWorksheetIssue(lesson.worksheet?.student,lesson.worksheet?.studentB);
+  async function fixAlternate(){setRepairingAlternate(true);try{const patch=await repairAlternate({data:{request,lesson}});await commit({...lesson,worksheet:{...lesson.worksheet,studentB:patch.worksheet.studentB,teacherB:patch.worksheet.teacherB}},'Version B and its answer key updated. Version A was kept.');}catch(error){toast.error(error instanceof Error?error.message:'Could not repair Version B.');}finally{setRepairingAlternate(false);}}
+
   async function rebuildReading() {
     if (readingBusy) return;
     setReadingBusy(true);
@@ -194,6 +201,7 @@ export function LessonPackageView({
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-8">
+      <PdfPreview file={pdfFile} onClose={()=>setPdfFile(null)}/>
       <div className="no-print border-primary/20 bg-accent/40 mb-8 flex flex-wrap items-start justify-between gap-4 rounded-2xl border p-6">
         <div>
           <h1 className="display-heading text-3xl">{request.topic}</h1>
@@ -220,9 +228,9 @@ export function LessonPackageView({
             {packaging ? <Loader2 className="size-4 animate-spin" /> : <Package className="size-4" />}
             {packaging ? "Preparing…" : "Download Complete Lesson"}
           </Button>
-          <Button variant="outline" onClick={() => window.print()}>
+          <Button variant="outline" onClick={() => void previewPdf()} disabled={preparingPdf}>
             <Printer className="size-4" />
-            Print / Save as PDF
+            {preparingPdf ? "Preparing PDF…" : "Print / Save as PDF"}
           </Button>
         </div>
       </div>
@@ -338,6 +346,7 @@ export function LessonPackageView({
                 </div>
               </div>
 
+              {s.key==='worksheet' && duplicateVersion ? <div role="alert" className="no-print mb-4 rounded-lg border p-4"><p>This saved Version B repeats Version A. Repair it to create different questions and matching answers while keeping Version A.</p><Button className="mt-3" onClick={()=>void fixAlternate()} disabled={repairingAlternate || !!busy}>{repairingAlternate?'Repairing Version B…':'Repair Version B'}</Button></div>:null}
               {editing === s.key ? (
                 <div className="bg-card rounded-xl border p-5">
                   <SectionEditor value={draft} onChange={setDraft} />
@@ -489,21 +498,6 @@ function SectionBody({
       );
 
 
-    case "answerKey":
-      return (
-        <div className="space-y-4">
-          {lesson.answerKey.sections.map((s, i) => (
-            <Panel key={i} title={s.title}>
-              <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed">
-                {s.answers.map((a, j) => (
-                  <li key={j}>{a}</li>
-                ))}
-              </ol>
-              {s.notes ? <p className="mt-3 text-sm text-muted-foreground">{s.notes}</p> : null}
-            </Panel>
-          ))}
-        </div>
-      );
     case "activity": {
       const a = lesson.activity;
       return (
@@ -568,8 +562,6 @@ function SectionBody({
     }
     case "assessment":
       return <QuestionSet set={lesson.assessment} />;
-    case "versionB":
-      return <QuestionSet set={lesson.versionB} />;
     case "support": {
       const s = lesson.supportVersion;
       return (

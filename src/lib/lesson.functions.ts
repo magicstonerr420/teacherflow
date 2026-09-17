@@ -1,3 +1,4 @@
+import {alternateWorksheetIssue, ALTERNATE_RULES} from './worksheet-versions';
 import { isYoungA1, youngWorksheetIssues, youngPresentationIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
@@ -141,6 +142,14 @@ export const generateLessonStage = createServerFn({ method: "POST" })
             noTech: isNoTechRequest(request.technologyAvailable),
           });
           if (youngWorksheetIssues(result.worksheet?.[docKey]).length) throw new LessonGenerationError('worksheet_clarity', 'The worksheet still has missing picture clues or unclear tasks. Your earlier lesson sections are saved. Retry this worksheet section.');
+        }
+      }
+      if(stage==='studentB'){
+        const issue=alternateWorksheetIssue(prior.worksheet?.student,result.worksheet?.studentB);
+        if(issue){
+          result=await generateNoTechSafe<Partial<LessonPackage>>({schema,schemaName:'teacherflow_distinct_version_b',system:MASTER_SYSTEM_PROMPT,input:`${contextBlock(request,modelPrior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: studentB. ${ALTERNATE_RULES}\n${issue}`,noTech:isNoTechRequest(request.technologyAvailable)});
+          if(alternateWorksheetIssue(prior.worksheet?.student,result.worksheet?.studentB))throw new LessonGenerationError('duplicate_version','Version B still repeats Version A. Version A is retained. Retry the alternate worksheet section.');
+          if(isYoungA1(request)&&youngWorksheetIssues(result.worksheet?.studentB).length)throw new LessonGenerationError('worksheet_clarity','Version B has unclear picture clues. Retry the alternate worksheet section.');
         }
       }
       if (isYoungA1(request) && stage === 'presentation') {
@@ -300,6 +309,10 @@ export const regenerateSection = createServerFn({ method: "POST" })
           if([...youngWorksheetIssues(result.worksheet?.student),...youngWorksheetIssues(result.worksheet?.studentB)].length)throw new LessonGenerationError('worksheet_clarity','The revised worksheet still has unclear picture tasks. Your original worksheet is retained.');
         }
       }
+      if(section==='worksheet' && alternateWorksheetIssue(result.worksheet?.student,result.worksheet?.studentB)) {
+        const repaired=await createDistinctVersionB(request,{...lesson,...result} as LessonPackage);
+        result={...result,worksheet:repaired.worksheet};
+      }
       if (section === 'presentation' && isYoungA1(request)) {
         const issues=youngPresentationIssues(result.presentation,lesson);
         if(issues.length)throw new LessonGenerationError('flashcard_materials','The revised presentation is missing required flashcard pictures. Your original presentation is retained; retry this section.');
@@ -367,3 +380,26 @@ export const duplicateLesson = createServerFn({ method: "POST" })
     }
     return { id: copy.id as string };
   });
+
+async function createDistinctVersionB(request: LessonRequest, lesson: LessonPackage): Promise<Pick<LessonPackage,"worksheet">> {
+  const common={system:MASTER_SYSTEM_PROMPT,noTech:isNoTechRequest(request.technologyAvailable)};
+  const student=await generateNoTechSafe<Partial<LessonPackage>>({...common,schema:STAGE_SCHEMAS.studentB,schemaName:'repair_alternate_student',input:`${contextBlock(request,lesson)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: studentB. ${ALTERNATE_RULES}`});
+  if(alternateWorksheetIssue(lesson.worksheet.student,student.worksheet?.studentB))throw new LessonGenerationError('duplicate_version','The replacement still repeats Version A. Your current worksheet is retained.');
+  if(isYoungA1(request)&&youngWorksheetIssues(student.worksheet?.studentB).length)throw new LessonGenerationError('worksheet_clarity','The replacement has unclear picture clues. Your worksheet is retained.');
+  const prior={...lesson,worksheet:{...lesson.worksheet,...student.worksheet}};
+  const teacher=await generateNoTechSafe<Partial<LessonPackage>>({...common,schema:STAGE_SCHEMAS.teacherB,schemaName:'repair_alternate_answers',input:`${contextBlock(request,prior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: teacherB. Answer only the replacement studentB questions exactly, in order.`});
+  if(answerAlignmentIssue('teacherB',prior,teacher))throw new LessonGenerationError('answer_alignment','The replacement answer key did not match. Your worksheet is retained.');
+  return {worksheet:{...prior.worksheet,teacherB:teacher.worksheet!.teacherB}};
+}
+
+export const repairDuplicateVersionB=createServerFn({method:'POST'})
+ .inputValidator((input:unknown)=>{const i=input as {request:unknown;lesson:LessonPackage};return {request:lessonRequestSchema.parse(i.request),lesson:i.lesson};})
+ .handler(async({data})=>{
+  const user=await betaUser(getRequest());
+  const generate=async(lesson:LessonPackage)=>{
+    if(!alternateWorksheetIssue(lesson.worksheet?.student,lesson.worksheet?.studentB))return {worksheet:lesson.worksheet};
+    try{return await createDistinctVersionB(data.request,lesson);}catch(error){friendly(error);}
+  };
+  if(betaEnabled()&&!isOwner(user))return betaStore().repairAlternate(user,data.request,generate);
+  return generate(data.lesson);
+ });

@@ -1,3 +1,4 @@
+import {ALTERNATE_RULES} from '../lib/worksheet-versions';
 import { isYoungA1, YOUNG_A1_RULES } from '../lib/young-learners';
 /**
  * ============================================================================
@@ -409,6 +410,7 @@ worksheet.student must contain EXACTLY 5 sections labelled "Section A", "Section
 "Section C", "Section D" and "Section E", and EXACTLY 5 items in each section (25 items total).
 worksheet.studentB must ALSO contain exactly 5 sections with exactly 5 items each: an equivalent
 worksheet at the same difficulty, testing the same objective with entirely different content.
+${ALTERNATE_RULES}
 Give worksheet.teacherB the matching teacher sections for studentB, in the same order.
 For TEENS and ADULTS: use 3-6 sections as described above, set worksheet.studentB to
 { "title": "", "instructions": "", "sections": [] } and worksheet.teacherB to [].

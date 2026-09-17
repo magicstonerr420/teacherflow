@@ -97,7 +97,7 @@ function AuthPage() {
 
   async function resetPassword() {
     if(!email.trim()){setNotice('Enter your email address first, then click Set or reset my password.');return;}
-    setBusy(true);
+    setBusy(true);setNotice('Requesting your password-reset email…');
     try {
       const {error}=await supabase.auth.resetPasswordForEmail(email.trim(),{redirectTo:`${window.location.origin}/auth?password=true&redirect=%2Fbuilder`});
       if(error)throw error;
@@ -108,20 +108,26 @@ function AuthPage() {
 
   async function savePassword(e: React.FormEvent) {
     e.preventDefault();
+    if(password.length<8){setNotice('Use at least 8 characters for your new password.');return;}
+    if(!confirmPassword){setNotice('Enter your new password again in Confirm new password.');return;}
     if(password!==confirmPassword){setNotice('The passwords do not match.');return;}
-    setBusy(true);
+    setBusy(true);setNotice('Saving your password…');
     try {
-      const {error}=await supabase.auth.updateUser({password});
-      if(error)throw error;
-      setPassword('');setConfirmPassword('');toast.success('Password saved. You can use it the next time you sign in.');
-      navigate({to:'/builder'});
+      let timer:ReturnType<typeof setTimeout>|undefined;
+      const result=await Promise.race([
+        supabase.auth.updateUser({password}),
+        new Promise<never>((_,reject)=>{timer=setTimeout(()=>reject(new Error('We could not confirm that your password was saved. Try signing in with the new password before requesting another reset.')),25000);}),
+      ]).finally(()=>clearTimeout(timer));
+      if(result.error)throw result.error;
+      setPassword('');setConfirmPassword('');setNotice('Password saved. Opening your workspace…');
+      window.location.assign('/builder');
     }catch(error){setNotice(error instanceof Error?error.message:'Could not save the password.');}
     finally{setBusy(false);}
   }
 
   async function emailLink() {
     if(!email.trim()){setNotice('Enter your email address first.');return;}
-    setBusy(true);
+    setBusy(true);setNotice('Requesting your sign-in email…');
     try {
       const {error}=await supabase.auth.signInWithOtp({email:email.trim(),options:{emailRedirectTo:`${window.location.origin}${safePath(redirect)}`}});
       if(error)throw error;
@@ -147,12 +153,12 @@ function AuthPage() {
           Save your lesson packages and open them again any time.
         </p>
 
-        {notice?<p role="status" className="mt-5 rounded-lg border p-4 text-sm">{notice}</p>:null}
+        {notice && !(recovery && isAuthenticated)?<p role="status" className="mt-5 rounded-lg border p-4 text-sm">{notice}</p>:null}
 
-        {recovery && isAuthenticated ? <form onSubmit={savePassword} className="mt-8 space-y-4 rounded-xl border bg-card p-6">
+        {recovery && isAuthenticated ? <form onSubmit={savePassword} noValidate className="mt-8 space-y-4 rounded-xl border bg-card p-6">
           <Label htmlFor="new-password">New password</Label><Input id="new-password" type="password" autoComplete="new-password" required minLength={8} value={password} onChange={e=>setPassword(e.target.value)} />
           <Label htmlFor="confirm-password">Confirm new password</Label><Input id="confirm-password" type="password" autoComplete="new-password" required minLength={8} value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)} />
-          <Button type="submit" disabled={busy}>{busy?'Saving…':'Save password'}</Button>
+          <p role="status" aria-live="polite" className="text-sm">{notice}</p><p className="text-sm text-muted-foreground">Use at least 8 characters and enter the same password in both boxes.</p><Button type="submit" disabled={busy}>{busy?'Saving…':'Save password'}</Button>
         </form> : <form onSubmit={submit} className="mt-8 space-y-4 rounded-xl border bg-card p-6">
           {mode === "signup" ? (
             <div className="space-y-2">

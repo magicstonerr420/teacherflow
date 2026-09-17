@@ -29,7 +29,7 @@ const assert = require("node:assert/strict");
     assert.equal(await p.getByAltText("Picture clue").count(), 10);
     assert.ok(!(await p.locator("body").innerText()).includes("TEACHER-ONLY-NOTE"));
     await p.getByRole("button", { name: "Preview / Print Student Worksheet" }).click();
-    assert.equal(await p.getByRole("dialog").getByAltText("Picture clue").count(), 10);
+    await p.getByRole("dialog").locator('iframe[title="PDF preview"]').waitFor();
     assert.ok(!(await p.getByRole("dialog").innerText()).includes("TEACHER-ONLY-NOTE"));
     await p.keyboard.press("Escape");
     await p.getByRole("button", { name: "Version B", exact: true }).click();
@@ -140,7 +140,7 @@ const assert = require("node:assert/strict");
     await p.getByRole("switch", { name: "Add original illustrations" }).click();
     await p.getByRole("button", { name: "Generate PowerPoint", exact: true }).click();
     await p.getByText(/1 illustration\(s\) failed/).waitFor();
-    await p.getByRole("button", { name: "Export with available pictures", exact: true }).click();
+    await p.getByRole("button", { name: "Export without AI illustrations", exact: true }).click();
     await p.getByRole("button", { name: "Download .pptx", exact: true }).waitFor();
     await p.evaluate(async () => {
       const d = structuredClone(window.youngData);
