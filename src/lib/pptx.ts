@@ -680,11 +680,17 @@ export async function generateSlideImages(
   const images: SlideImages = {};
   const errors: string[] = [];
   const unique = [...new Set(prompts)];
+  const pending = unique.filter(prompt => {
+    const cached = imageCache.get(prefix + prompt);
+    if (cached) images[prompt] = cached;
+    return !cached;
+  });
+  let billingError = '';
   // A small queue avoids firing all six costly requests at the provider together.
   let index = 0;
   async function worker() {
-    while (index < unique.length) {
-      const prompt = unique[index++]!;
+    while (!billingError && index < pending.length) {
+      const prompt = pending[index++]!;
       const key = prefix + prompt;
       const cached = imageCache.get(key);
       if (cached) {
@@ -706,6 +712,10 @@ export async function generateSlideImages(
           }),
         });
         const json = await res.json();
+        if (res.status === 402 || json.code === 'image_billing') {
+          billingError = json.error || 'OpenRouter needs credits or an available API-key spending allowance for illustrations.';
+          throw new Error(billingError);
+        }
         if (
           !res.ok ||
           typeof json.dataUrl !== "string" ||
@@ -719,10 +729,12 @@ export async function generateSlideImages(
       }
     }
   }
-  await Promise.all(Array.from({ length: Math.min(2, unique.length) }, worker));
+  await Promise.all(Array.from({ length: Math.min(2, pending.length) }, worker));
   if (errors.length)
     throw new IllustrationGenerationError(
-      `${errors.length} illustration(s) failed. ${errors[0]} Successful pictures are saved for retry; retry requests only missing pictures.`,
+      billingError
+        ? `Illustrations paused. ${billingError} Remaining requests were stopped. Successful pictures are saved; you can export without AI illustrations.`
+        : `${errors.length} illustration(s) failed. ${errors[0]} Successful pictures are saved for retry; retry requests only missing pictures.`,
       images,
     );
   return images;

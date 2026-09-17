@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { generateIllustration } from "@/lib/illustration.server";
+import { generateIllustration, IllustrationBillingError } from "@/lib/illustration.server";
 import { betaEnabled, betaStore } from "@/lib/beta-store.server";
 import { betaUser, isOwner } from "@/lib/beta-auth.server";
 import { lessonRequestSchema } from "@/lib/lesson-schema";
@@ -21,7 +21,10 @@ export const Route = createFileRoute("/api/generate-image")({
             const generate = () => generateIllustration(input.prompt, lessonRequest.studentAge, lessonRequest.level);
             const dataUrl = isOwner(user) ? await generate() : await betaStore().image(user, lessonRequest, input.prompt, generate);
             return Response.json({dataUrl});
-          } catch (error) { return Response.json({error: error instanceof Error ? error.message : 'Beta illustration failed.'}, {status:403}); }
+          } catch (error) {
+            if (error instanceof IllustrationBillingError) return Response.json({error:error.message,code:error.code}, {status:402});
+            return Response.json({error: error instanceof Error ? error.message : 'Beta illustration failed.'}, {status:403});
+          }
         }
         if (process.env["TEACHERFLOW_AI_PROVIDER"] === "openrouter") {
           let input;
@@ -30,7 +33,10 @@ export const Route = createFileRoute("/api/generate-image")({
             return Response.json({ error: "An illustration needs a prompt, student age and English level." }, { status: 400 });
           }
           try { return Response.json({ dataUrl: await generateIllustration(input.prompt, input.studentAge, input.level) }); }
-          catch { return Response.json({ error: "Illustration generation failed. Check OpenRouter credits and retry; your lesson is still available." }, { status: 502 }); }
+          catch (error) {
+            if (error instanceof IllustrationBillingError) return Response.json({error:error.message,code:error.code}, {status:402});
+            return Response.json({ error: "Illustration generation failed. Check OpenRouter credits and retry; your lesson is still available." }, { status: 502 });
+          }
         }
         if (process.env["TEACHERFLOW_AI_PROVIDER"] === "ollama") {
           return Response.json({ error: "AI illustrations are not configured for this provider. Export slides without AI illustrations." }, { status: 503 });

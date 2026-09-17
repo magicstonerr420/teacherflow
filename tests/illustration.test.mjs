@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { illustrationBrief, generateIllustration } from '../src/lib/illustration.server.ts';
+import { illustrationBrief, generateIllustration, IllustrationBillingError } from '../src/lib/illustration.server.ts';
 test('age and language level independently control illustrations', () => {
   assert.match(illustrationBrief('school', '5-7', 'A1'), /Young children/);
   const teenBeginner = illustrationBrief('school', '15-17', 'A1');
@@ -30,6 +30,14 @@ test('budget image transport returns export-compatible data URLs and rejects mis
     assert.equal(await generateIllustration('Sharing', '15-17', 'A1'), 'data:image/jpeg;base64,dGVzdA==');
     globalThis.fetch = async () => Response.json({data:[]});
     await assert.rejects(generateIllustration('Sharing','15-17','A1'), /usable illustration/);
+    globalThis.fetch = async () => Response.json({error:{message:'private provider diagnostics fake-test-key'}},{status:402});
+    await assert.rejects(generateIllustration('Sharing','15-17','A1'), error => {
+      assert.ok(error instanceof IllustrationBillingError);
+      assert.equal(error.code,'image_billing');
+      assert.match(error.message,/account balance or API-key spending allowance/);
+      assert.ok(!error.message.includes('fake-test-key'));
+      return true;
+    });
   } finally {
     globalThis.fetch = originalFetch;
     if (originalKey === undefined) delete process.env.OPENROUTER_API_KEY; else process.env.OPENROUTER_API_KEY = originalKey;

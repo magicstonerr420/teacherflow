@@ -1,5 +1,12 @@
 import { modelSetting } from "./model-settings.server.ts";
 
+export class IllustrationBillingError extends Error {
+  readonly code = 'image_billing';
+  constructor() {
+    super('OpenRouter blocked illustrations because the account balance or API-key spending allowance is insufficient. Check the OpenRouter account and key used by TeacherFlow, then retry.');
+  }
+}
+
 export function illustrationBrief(prompt: string, age: string, level: string) {
   const years = Number.parseInt(age, 10);
   const style = Number.isFinite(years) && years <= 9
@@ -33,7 +40,8 @@ export async function generateIllustration(prompt: string, age: string, level: s
       n: 1,
     }),
   });
-  if (!response.ok) throw new Error(response.status === 402 ? "OpenRouter needs credits for illustrations." : "OpenRouter could not generate an illustration. Please retry.");
+  if (response.status === 402) throw new IllustrationBillingError();
+  if (!response.ok) throw new Error("OpenRouter could not generate an illustration. Please retry.");
   const result = await response.json();
   const item = result?.data?.[0];
   const url = typeof item?.b64_json === "string" && /^image\/(png|jpeg|webp)$/.test(item.media_type)

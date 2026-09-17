@@ -100,10 +100,10 @@ const assert = require("node:assert/strict");
       await new Promise((resolve) => setTimeout(resolve, 120));
       active--;
       await route.fulfill({
-        status: fail && prompt === "failed" ? 402 : 200,
+        status: fail && (prompt === "failed" || prompt.startsWith('billing-')) ? 402 : 200,
         contentType: "application/json",
         body: JSON.stringify(
-          fail && prompt === "failed"
+          fail && (prompt === "failed" || prompt.startsWith('billing-'))
             ? { error: "OpenRouter needs credits." }
             : { dataUrl: picture },
         ),
@@ -131,6 +131,16 @@ const assert = require("node:assert/strict");
     );
     assert.deepEqual(calls, { a: 1, b: 1, c: 1, d: 1, e: 1, failed: 2 });
     fail = true;
+    const stopped = await p.evaluate(async () => {
+      try {
+        await (await import('/src/lib/pptx.ts')).generateSlideImages(['billing-1','billing-2','billing-3','billing-4','a'],window.youngData.request);
+        throw Error('Expected billing rejection');
+      } catch(error) { return {message:error.message,images:Object.keys(error.images ?? {})}; }
+    });
+    assert.match(stopped.message,/Illustrations paused/);
+    assert.deepEqual(stopped.images,['a']);
+    assert.equal(calls['billing-1'],1);assert.equal(calls['billing-2'],1);
+    assert.equal(calls['billing-3'],undefined);assert.equal(calls['billing-4'],undefined);
     await p.evaluate(async () => {
       const d = structuredClone(window.youngData);
       d.lesson.presentation.slides[0].imagePrompt = "failed";
@@ -139,7 +149,7 @@ const assert = require("node:assert/strict");
     });
     await p.getByRole("switch", { name: "Add original illustrations" }).click();
     await p.getByRole("button", { name: "Generate PowerPoint", exact: true }).click();
-    await p.getByText(/1 illustration\(s\) failed/).waitFor();
+    await p.getByText(/Illustrations paused/).waitFor();
     await p.getByRole("button", { name: "Export without AI illustrations", exact: true }).click();
     await p.getByRole("button", { name: "Download .pptx", exact: true }).waitFor();
     await p.evaluate(async () => {
