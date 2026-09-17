@@ -65,6 +65,15 @@ test('private beta enforces invitations, quotas, durable retries and image limit
       await assert.rejects(store.image('stranger',{topic:'one'},'image 0',image),/invitation/);
       assert.equal(imageCalls,6);
     });
+    await t.test('a priority change preserves paid pictures without granting extra slots',async()=>{
+      store.transact(s=>{
+        const run=Object.values(s.teachers.teacher1.runs).find(r=>r.request.topic==='one');
+        run.parts.presentation.value.presentation.slides.unshift({layout:'content',imagePrompt:'image 6',vocabulary:[]});
+      });
+      const neverGenerate=async()=>assert.fail('Must not charge again or exceed six slots');
+      assert.equal(await store.image('teacher1',{topic:'one'},'image 5',neverGenerate),'data:image/png;base64,test');
+      await assert.rejects(store.image('teacher1',{topic:'one'},'image 6',neverGenerate),/six illustration slots/);
+    });
     await t.test('failed image attempts are capped without extra charges on blocked retries',async()=>{
       let failures=0;const fail=async()=>{failures++;throw Error('upstream');};
       for(let i=0;i<2;i++)await assert.rejects(store.image('teacher1',{topic:'two'},'image 0',fail),/upstream/);

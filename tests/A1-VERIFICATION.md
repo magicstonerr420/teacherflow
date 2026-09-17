@@ -15,7 +15,7 @@ Scope: the first age-band repair only. Existing model providers and the paused R
 
 - TypeScript: passed.
 - Production build and actual production server startup: passed; home, builder and sign-in return HTTP 200.
-- 38 automated tests passed: new A1 checks plus existing beta seats/quotas, owner access, auth environment mapping, OpenRouter error handling and illustration transport.
+- 39 automated tests passed: new A1 checks plus existing beta seats/quotas, owner access, auth environment mapping, OpenRouter error handling and illustration transport.
 - Browser integration: passed student/teacher separation, Version B, print preview, PPTX and PDF generation, two concurrent image requests, successful-image reuse, partial failure export and stale-download reset.
 - Handcrafted My body fixture: 17-slide PPTX with five front/back card pairs and a three-page student PDF. PDF pages rendered and visually inspected. PPTX XML/shape bounds and front/back separation checked.
 - Export smoke tests for ages 8–9 and Adults still produce the previous seven-slide structure for the same fixture.
