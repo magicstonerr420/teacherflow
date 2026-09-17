@@ -1,4 +1,5 @@
-import {alternateWorksheetIssue, ALTERNATE_RULES, removeRepeatedWorksheetSections} from './worksheet-versions';
+import {alternateWorksheetIssue, removeRepeatedWorksheetSections} from './worksheet-versions';
+import { generateAlternateWorksheet } from './alternate-worksheet.server';
 import { americanEnglishContent } from './american-english';
 import { isYoungA1, youngWorksheetIssues, youngPresentationIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
@@ -79,7 +80,7 @@ function friendly(error: unknown): never {
   throw new Error("Something went wrong while building the class. Your inputs are safe — please retry.");
 }
 
-function contextBlock(request: LessonRequest, prior: Partial<LessonPackage>): string {
+function contextBlock(request: LessonRequest, prior: Partial<LessonPackage>, worksheetScope?: 'studentB'): string {
   const parts = [renderLessonContext(request)];
   if (prior.reading) parts.push(`DEDICATED READING\n${JSON.stringify(prior.reading)}`);
   if (prior.listening) parts.push(`DEDICATED LISTENING\n${JSON.stringify(prior.listening)}`);
@@ -90,7 +91,8 @@ function contextBlock(request: LessonRequest, prior: Partial<LessonPackage>): st
     parts.push(`ALREADY DESIGNED — LESSON PLAN\n${JSON.stringify(prior.lessonPlan)}`);
   }
   if (prior.worksheet) {
-    parts.push(`ALREADY DESIGNED — WORKSHEET\n${JSON.stringify(prior.worksheet)}`);
+    const worksheet = worksheetScope === 'studentB' ? { studentB: prior.worksheet.studentB } : prior.worksheet;
+    parts.push(`ALREADY DESIGNED — WORKSHEET\n${JSON.stringify(worksheet)}`);
   }
   if (prior.assessment) {
     parts.push(`ALREADY DESIGNED — ASSESSMENT\n${JSON.stringify(prior.assessment)}`);
@@ -136,15 +138,19 @@ export const generateLessonStage = createServerFn({ method: "POST" })
     const system = `${MASTER_SYSTEM_PROMPT}${reading ? `\n${READING_HANDOFF}` : ''}${listening ? `\n${LISTENING_HANDOFF}` : ''}`;
 
     try {
+      if (stage === 'studentB') {
+        const result = await generateAlternateWorksheet(request, prior, generateNoTechSafe<Partial<LessonPackage>>);
+        return integrateListeningPatch(prior, integrateReadingPatch(prior, result));
+      }
       let result = await generateNoTechSafe<Partial<LessonPackage>>({
         schema,
         schemaName: `teacherflow_${stage}`,
         system,
-        input: `${contextBlock(request, modelPrior)}\n\n${STAGE_PROMPTS[promptStage]}\n\nCURRENT PART: ${stage}. Generate ONLY the fields required by the response schema for this part. Other parts are handled in separate requests. Preserve completed student items exactly when writing teacher answers. Generate keys only for the worksheet sections shown; DeepSeek's reading key is added separately. Keep prose concise and avoid repeating prior lesson content outside the required fields.`,
+        input: `${contextBlock(request, modelPrior, stage === 'teacherB' ? 'studentB' : undefined)}\n\n${STAGE_PROMPTS[promptStage]}\n\nCURRENT PART: ${stage}. Generate ONLY the fields required by the response schema for this part. Other parts are handled in separate requests. Preserve completed student items exactly when writing teacher answers. Solve each supplied question independently from its printed clue and picture; do not reuse an earlier key. Generate keys only for the worksheet sections shown; DeepSeek's reading key is added separately. Keep prose concise and avoid repeating prior lesson content outside the required fields.`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
-      if (isYoungA1(request) && (stage === 'student' || stage === 'studentB')) {
-        const docKey = stage === 'student' ? 'student' : 'studentB';
+      if (isYoungA1(request) && stage === 'student') {
+        const docKey = 'student';
         const issues = youngWorksheetIssues(result.worksheet?.[docKey]);
         if (issues.length) {
           result = await generateNoTechSafe<Partial<LessonPackage>>({
@@ -159,14 +165,6 @@ export const generateLessonStage = createServerFn({ method: "POST" })
           }
         }
       }
-      if(stage==='studentB'){
-        const issue=alternateWorksheetIssue(prior.worksheet?.student,result.worksheet?.studentB);
-        if(issue){
-          result=await generateNoTechSafe<Partial<LessonPackage>>({schema,schemaName:'teacherflow_distinct_version_b',system:MASTER_SYSTEM_PROMPT,input:`${contextBlock(request,modelPrior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: studentB. ${ALTERNATE_RULES}\n${issue}`,noTech:isNoTechRequest(request.technologyAvailable)});
-          if(alternateWorksheetIssue(prior.worksheet?.student,result.worksheet?.studentB))throw new LessonGenerationError('duplicate_version','Version B still repeats Version A. Version A is retained. Retry the alternate worksheet section.');
-          if(isYoungA1(request)&&youngWorksheetIssues(result.worksheet?.studentB).length)throw new LessonGenerationError('worksheet_clarity','Version B has unclear picture clues. Retry the alternate worksheet section.');
-        }
-      }
       if (isYoungA1(request) && stage === 'presentation') {
         const issues=youngPresentationIssues(result.presentation, prior);
         if(issues.length){
@@ -178,7 +176,7 @@ export const generateLessonStage = createServerFn({ method: "POST" })
       if (alignmentIssue) {
         result = await generateNoTechSafe<Partial<LessonPackage>>({
           schema, schemaName: `teacherflow_${stage}_repair`, system,
-          input: `${contextBlock(request, modelPrior)}\n\nCURRENT PART: ${stage}. Generate only the required answer-key fields. ${alignmentIssue} Answer the existing worksheet questions exactly. The separate DeepSeek reading is excluded from these keys. Do not invent or change questions.`,
+          input: `${contextBlock(request, modelPrior, stage === 'teacherB' ? 'studentB' : undefined)}\n\nCURRENT PART: ${stage}. Generate only the required answer-key fields. ${alignmentIssue} Answer the existing worksheet questions exactly. The separate DeepSeek reading is excluded from these keys. Do not invent or change questions.`,
           noTech: isNoTechRequest(request.technologyAvailable),
         });
         if (answerAlignmentIssue(stage, modelPrior, result)) throw new LessonGenerationError("answer_alignment", "The answer key did not match the number of student questions, even after a repair attempt. Your worksheet is retained. Retry this part.");
@@ -400,11 +398,9 @@ export const duplicateLesson = createServerFn({ method: "POST" })
 
 async function createDistinctVersionB(request: LessonRequest, lesson: LessonPackage): Promise<Pick<LessonPackage,"worksheet">> {
   const common={system:MASTER_SYSTEM_PROMPT,noTech:isNoTechRequest(request.technologyAvailable)};
-  const student=await generateNoTechSafe<Partial<LessonPackage>>({...common,schema:STAGE_SCHEMAS.studentB,schemaName:'repair_alternate_student',input:`${contextBlock(request,lesson)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: studentB. ${ALTERNATE_RULES}`});
-  if(alternateWorksheetIssue(lesson.worksheet.student,student.worksheet?.studentB))throw new LessonGenerationError('duplicate_version','The replacement still repeats Version A. Your current worksheet is retained.');
-  if(isYoungA1(request)&&youngWorksheetIssues(student.worksheet?.studentB).length)throw new LessonGenerationError('worksheet_clarity','The replacement has unclear picture clues. Your worksheet is retained.');
+  const student=await generateAlternateWorksheet(request,lesson,generateNoTechSafe<Partial<LessonPackage>>);
   const prior={...lesson,worksheet:{...lesson.worksheet,...student.worksheet}};
-  const teacher=await generateNoTechSafe<Partial<LessonPackage>>({...common,schema:STAGE_SCHEMAS.teacherB,schemaName:'repair_alternate_answers',input:`${contextBlock(request,prior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: teacherB. Answer only the replacement studentB questions exactly, in order.`});
+  const teacher=await generateNoTechSafe<Partial<LessonPackage>>({...common,schema:STAGE_SCHEMAS.teacherB,schemaName:'repair_alternate_answers',input:`${contextBlock(request,prior,'studentB')}\n${STAGE_PROMPTS.materials}\nCURRENT PART: teacherB. Answer only the replacement studentB questions exactly, in order.`});
   if(answerAlignmentIssue('teacherB',prior,teacher))throw new LessonGenerationError('answer_alignment','The replacement answer key did not match. Your worksheet is retained.');
   return {worksheet:{...prior.worksheet,teacherB:teacher.worksheet!.teacherB}};
 }
