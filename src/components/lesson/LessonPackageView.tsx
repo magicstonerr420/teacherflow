@@ -21,6 +21,9 @@ import { buildLessonPackageZip, buildCompleteLessonPdf, safeSlug } from "@/lib/e
 import { regenerateSection, repairDuplicateVersionB } from "@/lib/lesson.functions";
 import { regenerateReading } from "@/lib/reading.functions";
 import { applyReading, needsReading } from "@/lib/reading";
+import { ListeningPanel } from './ListeningPanel';
+import { applyListening } from '@/lib/listening';
+import { loadListeningAudio } from '@/lib/listening.functions';
 import { downloadBlob } from "@/lib/pptx";
 import { canExportPackage, runQualityControl, type QualityCheck } from "@/lib/quality";
 import { cn } from "@/lib/utils";
@@ -36,6 +39,7 @@ const SECTIONS = [
   { key: "plan", label: "Lesson Plan" },
   { key: "presentation", label: "Presentation" },
   { key: "worksheet", label: "Worksheet" },
+  { key: "listening", label: "Listening" },
   { key: "activity", label: "Activities" },
   { key: "homework", label: "Homework" },
   { key: "exitTicket", label: "Exit Ticket" },
@@ -54,6 +58,7 @@ const SECTION_FIELD: Record<SectionKey, keyof LessonPackage | null> = {
   plan: "lessonPlan",
   presentation: "presentation",
   worksheet: "worksheet",
+  listening: null,
   activity: "activity",
   homework: "homework",
   exitTicket: "exitTicket",
@@ -99,6 +104,7 @@ export function LessonPackageView({
   const [readingBusy, setReadingBusy] = useState(false);
   const [readingError, setReadingError] = useState<string | null>(null);
   const runReading = useServerFn(regenerateReading);
+  const loadAudio = useServerFn(loadListeningAudio);
 
   useEffect(() => setLesson(incoming), [incoming]);
 
@@ -185,7 +191,9 @@ export function LessonPackageView({
     }
     setPackaging(true);
     try {
-      const { blob, name } = await buildLessonPackageZip(lesson, request);
+      const recording = lesson.listening?.status === 'ready' && lesson.listening.audio
+        ? await loadAudio({ data: { id: lesson.listening.audio.id } }) : undefined;
+      const { blob, name } = await buildLessonPackageZip(lesson, request, {}, recording?.dataUrl);
       downloadBlob(blob, name);
       toast.success("Your complete lesson package is downloading.");
     } catch (error) {
@@ -235,7 +243,7 @@ export function LessonPackageView({
         </div>
       </div>
 
-      {import.meta.env["VITE_TEACHERFLOW_READING"] === "true" && (lesson.reading || needsReading(request, lesson)) && (
+      {(lesson.reading || needsReading(request, lesson)) && (
         <div className="no-print mb-6 rounded-xl border p-4">
           <p className="font-semibold">Reading</p>
           <p className="mt-1 text-sm">
@@ -247,7 +255,7 @@ export function LessonPackageView({
             <p role="alert" className="mt-2 text-sm text-destructive">{readingError || (lesson.reading?.status === "failed" ? lesson.reading.error : "")}</p>
           )}
           <Button className="mt-3" variant="outline" size="sm" disabled={readingBusy || !!busy || !!editing} onClick={rebuildReading}>
-            {readingBusy ? "Generating reading…" : lesson.reading?.status === "ready" ? "Regenerate reading only" : "Retry reading only"}
+            {readingBusy ? "Generating reading…" : lesson.reading?.status === "ready" ? "Regenerate reading only" : "Generate reading"}
           </Button>
         </div>
       )}
@@ -347,7 +355,7 @@ export function LessonPackageView({
               </div>
 
               {s.key==='worksheet' && duplicateVersion ? <div role="alert" className="no-print mb-4 rounded-lg border p-4"><p>This saved Version B repeats Version A. Repair it to create different questions and matching answers while keeping Version A.</p><Button className="mt-3" onClick={()=>void fixAlternate()} disabled={repairingAlternate || !!busy}>{repairingAlternate?'Repairing Version B…':'Repair Version B'}</Button></div>:null}
-              {editing === s.key ? (
+              {s.key === 'listening' ? <ListeningPanel lesson={lesson} request={request} onChange={state => commit(applyListening(lesson, state), 'Listening activity saved.')} /> : editing === s.key ? (
                 <div className="bg-card rounded-xl border p-5">
                   <SectionEditor value={draft} onChange={setDraft} />
                 </div>

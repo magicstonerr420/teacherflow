@@ -1,0 +1,51 @@
+import type { VoiceChoice } from './listening';
+
+export const SPEECH_MODELS = {
+  standard: { model: 'x-ai/grok-voice-tts-1.0', voice: 'eve' },
+  economy: { model: 'canopylabs/orpheus-3b-0.1-ft', voice: 'tara' },
+  test: { model: 'deepgram/flux-tts:free', voice: 'flux-alexis-en' },
+} as const;
+class SpeechError extends Error {
+  constructor(message: string, readonly fallbackAllowed = false) { super(message); }
+}
+export function isMp3(bytes: Uint8Array) {
+  if (bytes.length < 500) return false;
+  return (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) || (bytes[0] === 0xff && (bytes[1]! & 0xe0) === 0xe0);
+}
+async function synthesize(script: string, choice: VoiceChoice) {
+  const config = SPEECH_MODELS[choice];
+  const key = process.env['OPENROUTER_API_KEY']?.trim();
+  if (!key) throw new SpeechError('The listening voice service is not configured. Contact the organizer.');
+  let response: Response;
+  try {
+    response = await fetch('https://openrouter.ai/api/v1/audio/speech', {
+      method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'X-Title': 'TeacherFlow' },
+      signal: AbortSignal.timeout(150_000), body: JSON.stringify({ ...config, input: script, response_format: 'mp3',
+        ...(choice === 'standard' ? { provider: { options: { xai: { speed: 0.7, language: 'en' } } } } : {}),
+        ...(choice === 'economy' ? { provider: { only: ['deepinfra'], allow_fallbacks: false } } : {}),
+      }),
+    });
+  } catch { throw new SpeechError('The voice service did not respond. Your script is saved; retry the recording.', true); }
+  if (!response.ok) {
+    const message = response.status === 402 ? 'OpenRouter needs credits for the recording. Your script is saved.'
+      : [401, 403].includes(response.status) ? 'The voice service denied access. Contact the organizer.'
+      : 'The selected voice is temporarily unavailable. Your script is saved; retry the recording.';
+    throw new SpeechError(message, [404, 408, 429, 500, 502, 503, 504].includes(response.status));
+  }
+  let bytes: Uint8Array;
+  try { bytes = new Uint8Array(await response.arrayBuffer()); }
+  catch { throw new SpeechError('The recording download was interrupted. Your script is saved; retry the recording.', true); }
+  if (!response.headers.get('content-type')?.startsWith('audio/') || bytes.length > 8_000_000 || !isMp3(bytes))
+    throw new SpeechError('The voice service returned an invalid recording. Your script is saved.', true);
+  return { ...config, bytes, choice };
+}
+/** Only a transient primary failure triggers the economy model. Never retry billing/auth failures. */
+export async function generateSpeech(script: string, choice: VoiceChoice = 'standard') {
+  if (!script.trim() || script.length > 3500) throw new Error('The listening script is empty or too long.');
+  if (choice === 'test' && process.env['NODE_ENV'] === 'production') throw new Error('The test voice is available only during local development.');
+  try { return await synthesize(script, choice); }
+  catch (error) {
+    if (choice === 'standard' && error instanceof SpeechError && error.fallbackAllowed) return synthesize(script, 'economy');
+    throw error;
+  }
+}

@@ -191,7 +191,7 @@ export class BetaStore {
       }
       const next = apply(lesson);
       // Reopening a beta lesson must retain its newest reading without rerunning AI.
-      Object.assign(run.parts['differentiation']!.value, { reading: next.reading, worksheet: next.worksheet, answerKey: next.answerKey });
+      Object.assign(run.parts['differentiation']!.value, { reading: next.reading, listening: next.listening, worksheet: next.worksheet, answerKey: next.answerKey });
     });
   }
 }

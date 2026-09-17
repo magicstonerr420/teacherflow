@@ -72,10 +72,18 @@ export function validateReading(value: unknown, level: string): Reading {
   if (reading.cefr !== level) throw new Error("DeepSeek returned the wrong CEFR level.");
   if (reading.questions.length !== reading.answers.length) throw new Error("DeepSeek did not provide one answer per reading question.");
   const normalize = (text: string) => text.normalize("NFKC").replace(/[‘’]/gu, "'").replace(/[“”]/gu, '"').replace(/\s+/gu, " ").trim().replace(/^"|"$/gu, "").toLowerCase();
-  if (reading.questions.some(q => !normalize(reading.text).includes(normalize(q.evidence)))) {
-    throw new Error("A reading question cited evidence that is missing from the text. Retry only the reading.");
-  }
-  return { ...reading, word_count: reading.text.split(/\s+/u).length };
+  const missing = reading.questions.findIndex(q => !normalize(reading.text).includes(normalize(q.evidence)));
+  if (missing !== -1) throw new Error(`Reading question ${missing + 1} cites evidence absent from the passage: ${reading.questions[missing]!.evidence}. Copy ONE continuous sentence directly from the supplied passage; do not summarize, join separate sentences with ellipses, or add words. Revise the question if the passage does not support it.`);
+  // A model can select the wrong choice index while quoting/explaining the right
+  // choice. Correct only unambiguous, positive, literal detail questions.
+  const phrase = (s: string) => ` ${normalize(s).replace(/[^\p{L}\p{N}]+/gu, ' ').trim()} `;
+  const answers = reading.answers.map((answer, i) => {
+    const q = reading.questions[i]!;
+    if (!['supporting_details', 'scanning', 'short_answer'].includes(q.type) || /\b(not|except|false|incorrect|least|never|isn't|doesn't|didn't)\b/i.test(q.question)) return answer;
+    const supported = q.choices.filter(c => phrase(q.evidence).includes(phrase(c)) && phrase(q.answerExplanation).includes(phrase(c)));
+    return supported.length === 1 ? supported[0]! : answer;
+  });
+  return { ...reading, answers, word_count: reading.text.split(/\s+/u).length };
 }
 
 /** Integrate through existing printable worksheet contracts. Answers never enter student documents. */

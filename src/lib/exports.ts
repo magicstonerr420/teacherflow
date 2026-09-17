@@ -389,6 +389,7 @@ export async function buildLessonPackageZip(
   lesson: LessonPackage,
   request: LessonRequestInput,
   images: Record<string, string> = {},
+  listeningAudio?: string,
 ): Promise<{ blob: Blob; files: PackageFile[]; name: string }> {
   const base = [safeSlug(request.topic), safeSlug(request.level, 10)].filter(Boolean).join("_");
   const w = normalizeWorksheet(lesson.worksheet, lesson.answerKey);
@@ -402,6 +403,21 @@ export async function buildLessonPackageZip(
     { name: `${base}_Teacher_Answer_Key.pdf`, blob: await buildAnswerKeyPdf(lesson, request) },
     { name: presentationFileName(request), blob: await buildPresentationBlob(lesson, request, images) },
   ];
+
+  if (lesson.listening?.status === 'ready') {
+    const d = await createDoc(`${request.topic} — Listening: Teacher Copy`, header(request));
+    d.heading(lesson.listening.value.title);
+    d.text(lesson.listening.value.script);
+    d.subheading('Teaching guidance'); d.text(lesson.listening.value.teacherGuidance);
+    lesson.listening.value.questions.forEach((q, i) => { d.subheading(`${i + 1}. ${q.question}`); d.text(q.answer); d.text(q.explanation); });
+    files.push({ name: `${base}_Listening_Teacher_Copy.pdf`, blob: d.blob() });
+    if (lesson.listening.audio && !listeningAudio) throw new Error('The saved listening recording could not be loaded. Reopen Listening and retry the download.');
+    if (listeningAudio) {
+      if (!/^data:audio\/mpeg;base64,[A-Za-z0-9+/=]+$/.test(listeningAudio)) throw new Error('The listening recording is invalid.');
+      const bytes = Uint8Array.from(atob(listeningAudio.split(',')[1]!), c => c.charCodeAt(0));
+      files.push({ name: `${base}_Listening.mp3`, blob: new Blob([bytes], { type: 'audio/mpeg' }) });
+    }
+  }
 
   if (w.studentB.sections.length) {
     files.splice(2, 0, {

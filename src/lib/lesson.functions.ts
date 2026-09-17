@@ -7,6 +7,8 @@ import { betaEnabled, betaStore } from "./beta-store.server";
 import { betaUser, isOwner } from "./beta-auth.server";
 import { generateReading } from "./reading.server";
 import { needsReading, integrateReadingPatch, withoutReadingSections, READING_HANDOFF } from "./reading";
+import { generateListening } from './listening.server';
+import { needsListening, integrateListeningPatch, withoutListeningSections, LISTENING_HANDOFF } from './listening';
 import { STAGE_SCHEMAS, readingCoreStageSchema, readingCoreWorksheetSchema, answerAlignmentIssue, type GenerationStage } from "./generation-plan";
 
 import {
@@ -80,6 +82,7 @@ function friendly(error: unknown): never {
 function contextBlock(request: LessonRequest, prior: Partial<LessonPackage>): string {
   const parts = [renderLessonContext(request)];
   if (prior.reading) parts.push(`DEDICATED READING\n${JSON.stringify(prior.reading)}`);
+  if (prior.listening) parts.push(`DEDICATED LISTENING\n${JSON.stringify(prior.listening)}`);
   if (prior.overview) {
     parts.push(`ALREADY DESIGNED — LESSON OVERVIEW\n${JSON.stringify(prior.overview)}`);
   }
@@ -115,21 +118,28 @@ export const generateLessonStage = createServerFn({ method: "POST" })
     const schemas = STAGE_SCHEMAS;
     if (ageBand(request.studentAge) !== "Kids" && stage === "studentB") return { worksheet: { studentB: { title: "", instructions: "", sections: [] } } };
     if (ageBand(request.studentAge) !== "Kids" && stage === "teacherB") return { worksheet: { teacherB: [] } };
-    let reading = process.env["TEACHERFLOW_READING"] === "true" ? prior.reading : undefined;
-    if (process.env["TEACHERFLOW_READING"] === "true" && stage === "student" && needsReading(request, prior)) {
+    let reading = prior.reading;
+    let listening = prior.listening;
+    if (stage === "student" && needsReading(request, prior)) {
       try { reading = await generateReading(request, prior, user, "initial", betaEnabled() && !isOwner(user)); }
       catch { reading = { status: "failed", error: "Reading generation could not start. Your lesson is retained; retry only the reading." }; }
       prior = { ...prior, reading };
     }
+    if (stage === 'student' && needsListening(request)) {
+      try { listening = await generateListening(request, prior, user, betaEnabled() && !isOwner(user)); }
+      catch { listening = { status: 'failed', error: 'The listening script could not be generated. Your lesson is retained; retry in Listening.' }; }
+      prior = { ...prior, listening };
+    }
     const promptStage = stage === "foundation" || stage === "assessment" || stage === "differentiation" ? stage : "materials";
-    const modelPrior = stage === "teacher" || stage === "teacherB" ? withoutReadingSections(prior) : prior;
+    const modelPrior = stage === "teacher" || stage === "teacherB" ? withoutListeningSections(withoutReadingSections(prior)) : prior;
     const schema = reading ? readingCoreStageSchema(stage, modelPrior) : schemas[stage];
+    const system = `${MASTER_SYSTEM_PROMPT}${reading ? `\n${READING_HANDOFF}` : ''}${listening ? `\n${LISTENING_HANDOFF}` : ''}`;
 
     try {
       let result = await generateNoTechSafe<Partial<LessonPackage>>({
         schema,
         schemaName: `teacherflow_${stage}`,
-        system: reading ? `${MASTER_SYSTEM_PROMPT}\n${READING_HANDOFF}` : MASTER_SYSTEM_PROMPT,
+        system,
         input: `${contextBlock(request, modelPrior)}\n\n${STAGE_PROMPTS[promptStage]}\n\nCURRENT PART: ${stage}. Generate ONLY the fields required by the response schema for this part. Other parts are handled in separate requests. Preserve completed student items exactly when writing teacher answers. Generate keys only for the worksheet sections shown; DeepSeek's reading key is added separately. Keep prose concise and avoid repeating prior lesson content outside the required fields.`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
@@ -169,7 +179,8 @@ export const generateLessonStage = createServerFn({ method: "POST" })
         });
         if (answerAlignmentIssue(stage, modelPrior, result)) throw new LessonGenerationError("answer_alignment", "The answer key did not match the number of student questions, even after a repair attempt. Your worksheet is retained. Retry this part.");
       }
-      return reading ? integrateReadingPatch(prior, { ...result, reading }) : result;
+      const patch = reading ? integrateReadingPatch(prior, { ...result, reading }) : result;
+      return listening ? integrateListeningPatch(prior, { ...patch, listening }) : patch;
 
     } catch (error) {
       friendly(error);
@@ -264,6 +275,7 @@ function regenerationContext(request: LessonRequest, lesson: LessonPackage, skip
   const parts = [renderLessonContext(request)];
   parts.push(`ALREADY DESIGNED — LESSON OVERVIEW\n${JSON.stringify(lesson.overview)}`);
   parts.push(`ALREADY DESIGNED — LESSON PLAN\n${JSON.stringify(lesson.lessonPlan)}`);
+  if (lesson.listening) parts.push(`DEDICATED LISTENING\n${JSON.stringify(lesson.listening)}`);
   if (skip !== "worksheet" && lesson.worksheet) {
     parts.push(`ALREADY DESIGNED — WORKSHEET (student side)\n${JSON.stringify(lesson.worksheet)}`);
   }
@@ -291,7 +303,7 @@ export const regenerateSection = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     if (betaEnabled() && !isOwner(await betaUser(getRequest()))) throw new Error("AI section regeneration is disabled during the beta to protect your allowance. You can edit and export your existing lesson.");
     const { request, lesson, section } = data;
-    const readingEnabled = process.env["TEACHERFLOW_READING"] === "true";
+    const readingEnabled = true;
     const schema = section === "worksheet" && readingEnabled && lesson.reading
       ? SECTION_SCHEMAS.worksheet.extend({ worksheet: readingCoreWorksheetSchema }) : SECTION_SCHEMAS[section];
     if (!schema) throw new Error("That part of the lesson cannot be regenerated.");
@@ -299,7 +311,7 @@ export const regenerateSection = createServerFn({ method: "POST" })
       let result = await generateNoTechSafe<Partial<LessonPackage>>({
         schema,
         schemaName: `teacherflow_section_${section}`,
-        system: readingEnabled && lesson.reading ? `${MASTER_SYSTEM_PROMPT}\n${READING_HANDOFF}` : MASTER_SYSTEM_PROMPT,
+        system: `${MASTER_SYSTEM_PROMPT}${lesson.reading ? `\n${READING_HANDOFF}` : ''}${lesson.listening ? `\n${LISTENING_HANDOFF}` : ''}`,
         input: `${regenerationContext(request, lesson, section)}\n\n${SECTION_PROMPTS[section]}`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
@@ -318,7 +330,7 @@ export const regenerateSection = createServerFn({ method: "POST" })
         const issues=youngPresentationIssues(result.presentation,lesson);
         if(issues.length)throw new LessonGenerationError('flashcard_materials','The revised presentation is missing required flashcard pictures. Your original presentation is retained; retry this section.');
       }
-      return readingEnabled ? integrateReadingPatch(lesson, result) : result;
+      return integrateListeningPatch(lesson, integrateReadingPatch(lesson, result));
 
     } catch (error) {
       friendly(error);

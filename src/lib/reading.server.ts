@@ -3,14 +3,16 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import { z } from 'zod';
 import { requestReadingOpenRouter } from "./openrouter.server";
 import { READING_MODEL, readingContext, readingSchema, validateReading, type ReadingState } from "./reading";
 import type { LessonPackage, LessonRequestInput } from "./lesson-schema";
 import { findTechTerms, isNoTechRequest } from "./no-tech";
+import { AMERICAN_ENGLISH_RULES, americanEnglishContent } from './american-english';
 
-export const READING_SYSTEM = `You write integrated English reading materials for TeacherFlow: One topic. One complete class.
-Use the supplied objective, lesson progression, target vocabulary/grammar, prior knowledge and teaching context. Select a specific reading purpose that advances the SAME objective. Questions, a short reading activity and assessment guidance must assess that purpose, not a generic list of every question type. Questions must be answerable from the text; inference must have evidence. Include all options needed for matching or sequencing. Put correct answers ONLY in answers, never in instructions, questions, or choices as marked solutions.
-Before returning, check EVERY question and answer against the actual passage. Each question must include evidence (an EXACT, contiguous quote from the passage, without added quote marks or ellipses) and answerExplanation (teacher-only justification explaining why the answer follows). These are hidden from students. Do not ask about locations, objects, people or events the passage does not state. For true/false, false means explicitly contradicted, NEVER merely unstated: a passage saying people read in a library does not make 'children read in the library' false. Prefer direct detail/scanning questions over ambiguous true/false at A1/A2. Every multiple-choice item must have exactly one defensible answer; other options must be contradicted or irrelevant to that specific question.
+export const READING_SYSTEM = `You write integrated English reading materials for TeacherFlow: One topic. One complete class. ${AMERICAN_ENGLISH_RULES}
+Use the supplied objective, lesson progression, target vocabulary/grammar, prior knowledge and teaching context. Select a specific reading purpose that advances the SAME objective. Questions, a short reading activity and assessment guidance must assess that purpose, not a generic list of every question type. Questions must be answerable from the text; inference must have evidence. Include all options needed for matching or sequencing. Put correct answers ONLY in each question's answer and teacher-only answerExplanation, never in student instructions or question text.
+Before returning, check EVERY question and answer against the actual passage. Each question must include its own answer, evidence (an EXACT, contiguous quote from the passage, without added quote marks or ellipses) and answerExplanation (teacher-only justification explaining why the answer follows). These are hidden from students. Explain how the answer follows from the quoted evidence. Include short answers explicitly in the explanation. If choices are provided, copy the correct choice verbatim into answer; never answer with only a letter or index. For questions with multiple correct parts, use choices=[] and a short complete textual answer. Do not ask about locations, objects, people or events the passage does not state. For true/false, false means explicitly contradicted, NEVER merely unstated: a passage saying people read in a library does not make 'children read in the library' false. Prefer direct detail/scanning questions over ambiguous true/false at A1/A2. Every multiple-choice item must have exactly one defensible answer; other options must be contradicted or irrelevant to that specific question.
 The reading activity and assessment guidance must be self-contained and use THIS passage. Never ask teachers to supply a new notice, new reading, missing picture or unspecified extra resource. Students must be able to perform the activity using only this reading and its questions.
 CEFR controls language, NOT maturity:
 A1: very common words, short simple sentences, concrete ideas, very limited inference.
@@ -30,6 +32,29 @@ Use 3–5 focused questions, fewer if the purpose needs fewer. Do not require de
 const stable = (value: unknown) => JSON.stringify(value, (_k, v) => v && typeof v === "object" && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
 const pending = new Map<string, Promise<ReadingState>>();
+const passageSchema = readingSchema.pick({ cefr: true, title: true, purpose: true, text: true });
+const taskSchema = readingSchema.pick({ instructions: true, activity: true, assessment: true }).extend({
+  questions: z.array(readingSchema.shape.questions.element.omit({ evidence: true }).extend({
+    evidenceSentence: z.number().int().positive(),
+    answerChoice: z.number().int().nonnegative(),
+    answer: z.string(),
+  })).min(3).max(5),
+});
+const QUESTION_RULES = `The passage is now FIXED. Write questions only about the supplied passage. Choose a numbered evidence sentence for each question; the app copies that original sentence, so do not rewrite the passage or evidence. For multiple choice, answerChoice is the 1-based index of the correct choice (1 means the first option), and answer is empty. For an open question, choices=[], answerChoice=0, and answer contains the complete correct answer. Check the index against the evidence and explain why that option is right. Do not require any unsupplied pictures, notices, texts, recordings or quizzes. The reading activity and assessment must directly use this passage and these supplied questions.`;
+function assembleReading(passage: z.infer<typeof passageSchema>, extracts: string[], value: unknown, level: string) {
+  const tasks = taskSchema.parse(americanEnglishContent(value));
+  const answers = tasks.questions.map(q => {
+    if (!extracts[q.evidenceSentence - 1]) throw new Error('The evidence sentence number is outside the supplied passage.');
+    if (q.choices.length) {
+      if (q.answerChoice < 1 || q.answerChoice > q.choices.length) throw new Error('Choose a valid 1-based answerChoice index.');
+      return q.choices[q.answerChoice - 1]!;
+    }
+    if (q.answerChoice !== 0 || !q.answer.trim()) throw new Error('An open question needs answerChoice=0 and a nonempty answer.');
+    return q.answer;
+  });
+  return validateReading({ ...passage, ...tasks, word_count: passage.text.split(/\s+/u).length,
+    questions: tasks.questions.map(q => ({ ...q, evidence: extracts[q.evidenceSentence - 1] })), answers }, level);
+}
 
 /** Persistent results and leases prevent duplicate charges on retries, refreshes and concurrent calls. */
 export async function generateReading(request: LessonRequestInput, lesson: Partial<LessonPackage>, scope: string, operation = "initial", limited = false): Promise<ReadingState> {
@@ -38,7 +63,7 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
     previousReading: lesson.reading.value, activity: lesson.activity, assessment: lesson.assessment, versionB: lesson.versionB,
     instruction: "Regenerate only the reading. Preserve all facts, characters, actions and answers tested by these existing activities and assessments so they remain usable unchanged. You may improve the wording and reading questions, but do not invalidate existing lesson materials.",
   } } : baseContext;
-  const baseFingerprint = hash(stable({ model: READING_MODEL, reasoning: false, prompt: READING_SYSTEM, context: baseContext }));
+  const baseFingerprint = hash(stable({ model: READING_MODEL, reasoning: false, prompt: READING_SYSTEM, questions: QUESTION_RULES, version: 2, context: baseContext }));
   const fingerprint = context === baseContext ? baseFingerprint : hash(stable({ baseFingerprint, context }));
   const file = process.env["TEACHERFLOW_READING_DB"] || ".local-runtime/readings.sqlite";
   const key = hash(`${scope}:${fingerprint}:${operation}`);
@@ -52,7 +77,7 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
     try {
       db.exec("BEGIN IMMEDIATE");
       const row = db.prepare("SELECT * FROM readings WHERE id=?").get(key) as any;
-      if (row?.result) { db.exec("COMMIT"); return JSON.parse(row.result); }
+      if (row?.result) { db.exec("COMMIT"); const saved = JSON.parse(row.result); return saved.status === 'ready' ? { ...saved, value: validateReading(saved.value, request.level) } : saved; }
       if (row?.until > Date.now()) { db.exec("COMMIT"); return { status: "failed", error: "This reading is already generating. Wait before reopening it." }; }
       const count = (db.prepare("SELECT COUNT(*) AS n FROM readings WHERE family=?").get(family) as any).n;
       if (limited && !row && count >= 3) { db.exec("COMMIT"); return { status: "failed", error: "The beta reading retry limit was reached. Your lesson is retained; contact the organizer." }; }
@@ -60,12 +85,17 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
       db.exec("COMMIT");
       let result: ReadingState;
       try {
-        let value = await requestReadingOpenRouter({
-          system: READING_SYSTEM, input: JSON.stringify(context), schemaName: "teacherflow_reading",
-          schema: zodToJsonSchema(readingSchema, { $refStrategy: "none" }),
-        });
+        const passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({
+          system: READING_SYSTEM, input: `${JSON.stringify(context)}\nFIRST STEP: Write only the passage, title, purpose and CEFR required by the schema. Keep the stated age/level length. Questions come in a separate request.`, schemaName: "teacherflow_reading_passage",
+          schema: zodToJsonSchema(passageSchema, { $refStrategy: "none" }),
+        })));
+        if (passage.cefr !== request.level) throw new Error('DeepSeek returned the wrong reading level.');
+        const extracts = (passage.text.match(/[^.!?]+(?:[.!?]+|$)/gu) ?? [passage.text]).map(s => s.trim()).filter(Boolean);
+        const taskInput = `${JSON.stringify(context)}\nFIXED PASSAGE\n${JSON.stringify(passage)}\nNUMBERED EVIDENCE SENTENCES\n${extracts.map((s, i) => `${i + 1}: ${s}`).join('\n')}\n${QUESTION_RULES}`;
+        let value = await requestReadingOpenRouter({ system: `${READING_SYSTEM}\n${QUESTION_RULES}`, input: taskInput,
+          schemaName: 'teacherflow_reading_questions', schema: zodToJsonSchema(taskSchema, { $refStrategy: 'none' }) });
         const validate = (value: unknown) => {
-          const r = validateReading(value, request.level);
+          const r = assembleReading(passage, extracts, value, request.level);
           if (isNoTechRequest(request.technologyAvailable)) {
             const found = findTechTerms(r);
             if (found.length) throw new Error(`This is a no-technology lesson. Remove unnecessary references to ${found.join(", ")}, including distracting answer options. Keep reading tasks printable and self-contained.`);
@@ -75,9 +105,9 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
         try { validate(value); }
         catch (error) {
           // One bounded repair, using the same reading model, only when a complete JSON result fails validation.
-          value = await requestReadingOpenRouter({ system: READING_SYSTEM, schemaName: "teacherflow_reading_repair",
-            schema: zodToJsonSchema(readingSchema, { $refStrategy: "none" }),
-            input: `${JSON.stringify(context)}\nRepair this reading JSON: ${JSON.stringify(value)}\nValidation issue: ${error instanceof Error ? error.message : "Invalid reading"}. Return a complete corrected reading. Preserve the passage and valid questions wherever possible. Copy each evidence quote exactly from the passage; fix unsupported questions instead of inventing facts. Proofread for natural, age-appropriate English at the requested CEFR level.`,
+          value = await requestReadingOpenRouter({ system: `${READING_SYSTEM}\n${QUESTION_RULES}`, schemaName: "teacherflow_reading_repair",
+            schema: zodToJsonSchema(taskSchema, { $refStrategy: "none" }),
+            input: `${taskInput}\nRepair these reading tasks: ${JSON.stringify(value)}\nValidation issue: ${error instanceof Error ? error.message : "Invalid reading"}. Return corrected tasks only. The passage is fixed.`,
           });
         }
         result = { status: "ready", value: validate(value), fingerprint };

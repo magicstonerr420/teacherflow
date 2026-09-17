@@ -465,7 +465,7 @@ export type Materials = z.infer<typeof materialsSchema>;
 export type Assessment = z.infer<typeof assessmentSchema>;
 export type Differentiation = z.infer<typeof differentiationSchema>;
 
-export type LessonPackage = Foundation & Materials & Assessment & Differentiation & { reading?: import("./reading").ReadingState };
+export type LessonPackage = Foundation & Materials & Assessment & Differentiation & { reading?: import("./reading").ReadingState; listening?: import("./listening").ListeningState };
 
 export const GENERATION_STEPS = [
   { key: "foundation", label: "Analyzing learning objective" },

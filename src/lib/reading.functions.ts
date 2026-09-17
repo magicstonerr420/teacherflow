@@ -18,8 +18,7 @@ export const regenerateReading = createServerFn({ method: "POST" })
     }), operation: z.string().uuid(),
   }).parse(input))
   .handler(async ({ data }) => {
-    if (process.env["TEACHERFLOW_READING"] !== "true") throw new Error("The dedicated reading system is paused.");
-    const user = betaEnabled() ? await betaUser(getRequest()) : "local";
+    const user = betaEnabled() || process.env['NODE_ENV'] === 'production' ? await betaUser(getRequest()) : "local";
     const limited = betaEnabled() && !isOwner(user);
     // A beta teacher may regenerate only a completed lesson belonging to their account.
     const lesson = limited ? betaStore().readingLesson(user, data.request) : data.lesson;

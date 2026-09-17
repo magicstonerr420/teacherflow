@@ -21,6 +21,9 @@ try {
   for(const bad of [{...reading,text:''},{...reading,questions:[]},{...reading,answers:[]},{...reading,cefr:'A3'},{...reading,answers:['one','two']}]) assert.throws(()=>validateReading(bad,'A1'));
   assert.throws(()=>validateReading(reading,'B1'));
   assert.equal(validateReading({...reading,word_count:999},'A1').word_count,10);
+  const indexMismatch={...reading,text:'I have arms.',questions:[{type:'supporting_details',question:'Which sentence is in the passage?',choices:['I have ears.','I have arms.'],evidence:'I have arms.',answerExplanation:"The passage says 'I have arms.'"}],answers:['I have ears.']};
+  assert.deepEqual(validateReading(indexMismatch,'A1').answers,['I have arms.']);
+  assert.deepEqual(validateReading({...indexMismatch,questions:indexMismatch.questions.map(q=>({...q,question:'Which sentence is not in the passage?'}))},'A1').answers,['I have ears.']);
   const state={status:'ready',value:reading,fingerprint:'test'};
   const applied=applyReading(lesson,state);
   worksheetSchema.parse(applied.worksheet);
@@ -48,13 +51,23 @@ try {
     assert.equal(body.model,'deepseek/deepseek-v4-flash-0731'); assert.equal(body.max_tokens,6000);
     assert.ok(body.messages[0].content.includes(READING_SYSTEM));
     await new Promise(r=>setTimeout(r,25));
-    return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify(reading)}}]});
+    const result=body.response_format.json_schema.name.endsWith('_passage') ? {cefr:reading.cefr,title:reading.title,purpose:reading.purpose,text:reading.text} : {instructions:reading.instructions,activity:reading.activity,assessment:reading.assessment,questions:[1,2,3].map(()=>({...reading.questions[0],evidence:undefined,evidenceSentence:1,answerChoice:0,answer:reading.answers[0]}))};
+    return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify(result)}}]});
   };
   const [a,c]=await Promise.all([generateReading(request,lesson,'teacher'),generateReading(request,lesson,'teacher')]);
-  assert.equal(a.status,'ready'); assert.deepEqual(a,c); assert.equal(calls,1);
-  await generateReading(request,{...lesson,presentation:{slides:[]}},'teacher'); assert.equal(calls,1);
-  await generateReading(request,lesson,'teacher','regen-one'); assert.equal(calls,2);
-  await generateReading(request,lesson,'teacher','regen-one'); assert.equal(calls,2);
+  assert.equal(a.status,'ready'); assert.deepEqual(a,c); assert.equal(calls,2);
+  await generateReading(request,{...lesson,presentation:{slides:[]}},'teacher'); assert.equal(calls,2);
+  await generateReading(request,lesson,'teacher','regen-one'); assert.equal(calls,4);
+  await generateReading(request,lesson,'teacher','regen-one'); assert.equal(calls,4);
+  let repairs=0;
+  globalThis.fetch=async (_url,options)=>{
+    const body=JSON.parse(options.body);let candidate;
+    if(body.response_format.json_schema.name.endsWith('_passage'))candidate={cefr:reading.cefr,title:reading.title,purpose:reading.purpose,text:reading.text};
+    else {repairs++;candidate={instructions:reading.instructions,activity:reading.activity,assessment:reading.assessment,questions:[1,2,3].map(n=>({...reading.questions[0],evidence:undefined,evidenceSentence:repairs===1?99:1,answerChoice:0,answer:'Nine.'}))};}
+    return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify(candidate)}}]});
+  };
+  const corrected=await generateReading(request,lesson,'teacher','bad-evidence-repair');
+  assert.equal(corrected.status,'ready');assert.deepEqual(corrected.value.answers,['Nine.','Nine.','Nine.']);assert.equal(repairs,2);
   for(const [name,content,finish] of [['malformed','oops','stop'],['missing',JSON.stringify({cefr:'A1'}),'stop'],['truncated',JSON.stringify(reading),'length']]) {
     globalThis.fetch=async()=>Response.json({choices:[{finish_reason:finish,message:{content}}]});
     const result=await generateReading(request,lesson,'teacher',name); assert.equal(result.status,'failed'); assert.ok(result.error);

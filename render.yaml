@@ -25,10 +25,6 @@ services:
         value: openai/gpt-5.4-mini
       - key: OPENROUTER_IMAGE_MODEL
         value: google/gemini-3.1-flash-image-preview
-      - key: TEACHERFLOW_READING
-        value: "false"
-      - key: VITE_TEACHERFLOW_READING
-        value: "false"
       - key: VITE_LOCAL_AI
         value: "false"
       - key: VITE_GOOGLE_AUTH_ENABLED
@@ -39,6 +35,8 @@ services:
         value: /var/data/beta.sqlite
       - key: TEACHERFLOW_READING_DB
         value: /var/data/readings.sqlite
+      - key: TEACHERFLOW_LISTENING_DB
+        value: /var/data/listening.sqlite
       - key: OPENROUTER_API_KEY
         sync: false
       - key: TEACHERFLOW_OWNER_USER_ID
