@@ -40,8 +40,9 @@ const dir='.local-runtime/listening-review';
   const download=page.waitForEvent('download');await active.getByRole('link',{name:'Download MP3'}).click();await (await download).saveAs(dir+'/browser-recording.mp3');
   const saved=await page.evaluate(()=>window.readingSaved);assert.ok(saved.listening.audio);
   const before=await fs.readFile('.local-runtime/generation-events.jsonl','utf8');
-  await active.getByRole('button',{name:'Generate recording',exact:true}).click();
-  await active.getByRole('button',{name:'Generate recording',exact:true}).waitFor();
+  await active.getByRole('button',{name:'Recording ready',exact:true}).waitFor();
+  assert.equal(await active.getByRole('button',{name:'Recording ready',exact:true}).isDisabled(),true);
+  await active.getByRole('button',{name:'Back to start',exact:true}).click();
   assert.equal(await fs.readFile('.local-runtime/generation-events.jsonl','utf8'),before,'No text-generation request on audio replay');
   const data=await page.evaluate(async ({request,lesson})=>{
    const {buildLessonPackageZip,buildStudentWorksheetPdf}=await import('/src/lib/exports.ts');

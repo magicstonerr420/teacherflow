@@ -20,7 +20,8 @@ import { WorksheetHub } from "@/components/lesson/WorksheetHub";
 import { buildLessonPackageZip, buildCompleteLessonPdf, safeSlug } from "@/lib/exports";
 import { regenerateSection, repairDuplicateVersionB } from "@/lib/lesson.functions";
 import { regenerateReading } from "@/lib/reading.functions";
-import { applyReading, needsReading } from "@/lib/reading";
+import { applyReading } from "@/lib/reading";
+import { ReadingPanel } from './ReadingPanel';
 import { ListeningPanel } from './ListeningPanel';
 import { applyListening } from '@/lib/listening';
 import { loadListeningAudio } from '@/lib/listening.functions';
@@ -39,6 +40,7 @@ const SECTIONS = [
   { key: "plan", label: "Lesson Plan" },
   { key: "presentation", label: "Presentation" },
   { key: "worksheet", label: "Worksheet" },
+  { key: "reading", label: "Reading" },
   { key: "listening", label: "Listening" },
   { key: "activity", label: "Activities" },
   { key: "homework", label: "Homework" },
@@ -58,6 +60,7 @@ const SECTION_FIELD: Record<SectionKey, keyof LessonPackage | null> = {
   plan: "lessonPlan",
   presentation: "presentation",
   worksheet: "worksheet",
+  reading: null,
   listening: null,
   activity: "activity",
   homework: "homework",
@@ -243,23 +246,6 @@ export function LessonPackageView({
         </div>
       </div>
 
-      {(lesson.reading || needsReading(request, lesson)) && (
-        <div className="no-print mb-6 rounded-xl border p-4">
-          <p className="font-semibold">Reading</p>
-          <p className="mt-1 text-sm">
-            {lesson.reading?.status === "ready"
-              ? `${lesson.reading.value.cefr} · ${lesson.reading.value.word_count} words · ${lesson.reading.value.purpose}. Included in the worksheets; answers appear in the teacher version.`
-              : "The lesson is available, but its dedicated reading is not ready."}
-          </p>
-          {(readingError || lesson.reading?.status === "failed") && (
-            <p role="alert" className="mt-2 text-sm text-destructive">{readingError || (lesson.reading?.status === "failed" ? lesson.reading.error : "")}</p>
-          )}
-          <Button className="mt-3" variant="outline" size="sm" disabled={readingBusy || !!busy || !!editing} onClick={rebuildReading}>
-            {readingBusy ? "Generating reading…" : lesson.reading?.status === "ready" ? "Regenerate reading only" : "Generate reading"}
-          </Button>
-        </div>
-      )}
-
       <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
         <aside className="no-print">
           <div className="lg:hidden">
@@ -303,7 +289,7 @@ export function LessonPackageView({
           {SECTIONS.map((s) => (
             <section
               key={s.key}
-              className={cn("print-block", active === s.key ? "block" : "hidden print:block")}
+              className={cn(s.key === 'reading' ? 'no-print' : 'print-block', active === s.key ? 'block' : s.key === 'reading' ? 'hidden' : 'hidden print:block')}
             >
               <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                 <h2 className="display-heading border-primary border-l-4 pl-3 text-2xl">
@@ -355,7 +341,9 @@ export function LessonPackageView({
               </div>
 
               {s.key==='worksheet' && duplicateVersion ? <div role="alert" className="no-print mb-4 rounded-lg border p-4"><p>This saved Version B repeats Version A. Repair it to create different questions and matching answers while keeping Version A.</p><Button className="mt-3" onClick={()=>void fixAlternate()} disabled={repairingAlternate || !!busy}>{repairingAlternate?'Repairing Version B…':'Repair Version B'}</Button></div>:null}
-              {s.key === 'listening' ? <ListeningPanel lesson={lesson} request={request} onChange={state => commit(applyListening(lesson, state), 'Listening activity saved.')} /> : editing === s.key ? (
+              {s.key === 'reading' ? <ReadingPanel state={lesson.reading} request={request} busy={readingBusy} disabled={!!busy || !!editing}
+                error={readingError} onGenerate={() => void rebuildReading()} onOpenWorksheet={() => setActive('worksheet')} />
+              : s.key === 'listening' ? <ListeningPanel lesson={lesson} request={request} onChange={state => commit(applyListening(lesson, state), 'Listening activity saved.')} /> : editing === s.key ? (
                 <div className="bg-card rounded-xl border p-5">
                   <SectionEditor value={draft} onChange={setDraft} />
                 </div>

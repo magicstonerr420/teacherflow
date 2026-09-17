@@ -6,7 +6,6 @@ import { betaUser, isOwner } from './beta-auth.server';
 import { foundationSchema, lessonRequestSchema } from './lesson-schema';
 import { applyListening } from './listening';
 import { generateListening, generateListeningAudio, getListeningAudio } from './listening.server';
-import { isNoTechRequest } from './no-tech';
 
 const identity = async () => {
   // Hosted services must authenticate even if beta quotas are disabled.
@@ -26,7 +25,8 @@ export const createListeningAudio = createServerFn({ method: 'POST' })
   .inputValidator((input: unknown) => z.object({ request: lessonRequestSchema, fingerprint: z.string().regex(/^[a-f0-9]{64}$/), choice: z.enum(['standard', 'economy', 'test']).default('standard') }).parse(input))
   .handler(async ({ data }) => {
     const { user, limited } = await identity();
-    if (isNoTechRequest(data.request.technologyAvailable)) throw new Error('For a class without technology, read the included script aloud.');
+    // Recording is an explicit optional action, including for lessons whose core
+    // classroom activities use only the teacher's voice. Account checks still apply.
     if (data.choice === 'test' && process.env['NODE_ENV'] === 'production') throw new Error('The test voice is available only during local development.');
     if (limited) {
       const lesson = betaStore().readingLesson(user, data.request);

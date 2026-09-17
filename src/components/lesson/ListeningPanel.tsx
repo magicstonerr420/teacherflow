@@ -6,6 +6,7 @@ import { isNoTechRequest } from '@/lib/no-tech';
 import { safeSlug } from '@/lib/exports';
 import type { LessonPackage, LessonRequestInput } from '@/lib/lesson-schema';
 import type { ListeningState, VoiceChoice } from '@/lib/listening';
+import { ListeningAudioPlayer } from './ListeningAudioPlayer';
 
 export function ListeningPanel({ lesson, request, onChange }: {
   lesson: LessonPackage; request: LessonRequestInput; onChange: (state: ListeningState) => Promise<void>;
@@ -21,19 +22,31 @@ export function ListeningPanel({ lesson, request, onChange }: {
   const change = useRef(onChange); change.current = onChange;
   const loader = useRef(loadAudio); loader.current = loadAudio;
   const id = ready?.audio?.id;
+  const recordedChoice = ready?.audio?.choice;
+  const selectedRecording = recordedChoice === choice;
+  const recordingLoaded = selectedRecording && !!audio && audio.id === id;
+  const generating = useRef(false);
+  useEffect(() => { setChoice(recordedChoice ?? 'standard'); }, [id, recordedChoice]);
   useEffect(() => {
     if (!id) { setAudio(null); return; }
     let canceled = false;
     loader.current({ data: { id } }).then(result => { if (!canceled) setAudio({ id, url: result.dataUrl }); })
-      .catch(() => { if (!canceled) setError('The saved recording could not be loaded. Click Generate recording to retrieve it again.'); });
+      .catch(() => { if (!canceled) setError('The saved recording could not be loaded. Click Load saved recording to try again.'); });
     return () => { canceled = true; };
   }, [id]);
 
-  async function generate() {
-    if (busy) return;
+  async function generate(withRecording: boolean) {
+    if (generating.current) return;
+    generating.current = true;
     setError('');
     let current = ready;
     try {
+      if (selectedRecording && id) {
+        setBusy('Loading saved recording…');
+        const result = await loadAudio({ data: { id } });
+        setAudio({ id, url: result.dataUrl });
+        return;
+      }
       if (!current) {
         setBusy('Writing the listening activity…');
         const result = await runScript({ data: { request, lesson } });
@@ -41,34 +54,36 @@ export function ListeningPanel({ lesson, request, onChange }: {
         current = result;
         await change.current(current);
       }
-      if (noTech) return;
+      if (!withRecording) return;
       setBusy('Preparing your recording…');
       const result = await runAudio({ data: { request, fingerprint: current.fingerprint, choice } });
       setAudio({ id: result.audio.id, url: result.dataUrl });
       await change.current({ ...current, audio: result.audio });
     } catch (err) { setError(err instanceof Error ? err.message : 'Listening generation failed. Your existing materials are saved.'); }
-    finally { setBusy(''); }
+    finally { generating.current = false; setBusy(''); }
   }
 
   return <div className="space-y-6">
     <div className="no-print space-y-4 rounded-xl border bg-card p-5">
-      <p>{noTech ? 'Generate a listening activity with a script you can read aloud. No devices are needed.'
-        : 'Create an approximately two-minute listening activity for this class. Replay or download the saved recording without generating it again.'}</p>
-      {!noTech && <label className="flex max-w-sm flex-col gap-2 text-sm font-medium">Recording voice
+      <p>Create an approximately two-minute listening activity about {request.topic}, matched to ages {request.studentAge} and level {request.level}.</p>
+      {noTech && <p className="text-sm text-muted-foreground">This lesson works with the teacher reading aloud. You can also create an optional recording to play or download.</p>}
+      <label className="flex max-w-sm flex-col gap-2 text-sm font-medium">Recording voice
         <select className="rounded-md border bg-background p-2" value={choice} disabled={!!busy} onChange={e => setChoice(e.target.value as VoiceChoice)}>
           <option value="standard">Standard voice</option><option value="economy">Economy voice</option>
           {import.meta.env.DEV && <option value="test">Free test voice</option>}
         </select>
-      </label>}
-      <Button onClick={() => void generate()} disabled={!!busy || (noTech && !!ready)}>
-        {busy || (noTech ? ready ? 'Script ready' : 'Generate listening activity' : ready ? 'Generate recording' : 'Generate listening activity and audio')}
-      </Button>
+      </label>
+      <div className="flex flex-wrap gap-3">
+        <Button onClick={() => void generate(!noTech || !!ready)} disabled={!!busy || recordingLoaded}>
+          {busy || (recordingLoaded ? 'Recording ready' : selectedRecording ? 'Load saved recording' : ready ? noTech ? 'Generate optional recording' : 'Generate recording' : noTech ? 'Generate listening activity' : 'Generate listening activity and audio')}
+        </Button>
+        {noTech && !ready && <Button variant="outline" onClick={() => void generate(true)} disabled={!!busy}>Generate activity with optional audio</Button>}
+      </div>
       {error && <p role="alert" className="text-destructive">{error}</p>}
       {state?.status === 'failed' && !error && <p role="alert" className="text-destructive">{state.error}</p>}
-      {!noTech && audio && audio.id === id && <div className="space-y-3">
-        <audio aria-label="Lesson listening recording" controls preload="metadata" src={audio.url} className="w-full" />
-        <a className="inline-block font-medium text-primary underline" href={audio.url} download={`${safeSlug(request.topic)}_Listening.mp3`}>Download MP3</a>
-        <p className="text-sm text-muted-foreground">AI-generated voice. The questions are in Worksheet A; the transcript and answers are in the teacher copy.</p>
+      {audio && audio.id === id && <div className="space-y-3">
+        <ListeningAudioPlayer src={audio.url} downloadName={`${safeSlug(request.topic)}_Listening.mp3`} />
+        <p className="text-sm text-muted-foreground">The questions are in Worksheet A; the transcript and answers are in the teacher copy.</p>
       </div>}
     </div>
     {ready && <>
