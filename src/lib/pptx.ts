@@ -5,6 +5,7 @@ import { lessonImagePrompts } from "./image-plan";
 import { isYoungA1, picturePng, youngPresentationIssues } from "./young-learners";
 import { youngSlidePages, youngSlideRows, wrapSlideText } from "./young-slides";
 import { capitalizeHeading, presentationParagraphs } from "./presentation-text";
+import { colorShapeResources } from './color-shape-resources';
 import { ageBand, normalizeSlides, type Slide } from "@/lib/lesson-schema";
 import type { LessonPackage, LessonRequestInput } from "@/lib/lesson-schema";
 
@@ -201,6 +202,22 @@ export async function buildPresentationBlob(
     { x: 0.7, y: 4.2, w: W - 1.4, h: 0.5, fontSize: 13, color: "C9D8D5", fontFace: t.bodyFont },
   );
 
+  const shapeResources = colorShapeResources(request);
+  if (shapeResources) {
+    const board = pptx.addSlide();
+    board.background = { color: 'FFFFFF' };
+    board.addText('Listen and point', { x: 0.55, y: 0.3, w: 8.9, h: 0.55, fontSize: 28, bold: true, color: t.title, fontFace: t.titleFont });
+    const columns = shapeResources.colors.length;
+    const width = 8.9 / columns, height = 4.1 / shapeResources.shapes.length;
+    for (const [i, word] of shapeResources.words.entries()) {
+      const data = await picturePng(word);
+      if (!data) throw new Error(`The matching picture for "${word}" could not be prepared.`);
+      const size = Math.min(width - 0.25, height - 0.25, 2.1);
+      board.addImage({ data, x: 0.55 + (i % columns) * width + (width - size) / 2, y: 1.05 + Math.floor(i / columns) * height + (height - size) / 2, w: size, h: size });
+    }
+    board.addNotes(`Use all ${shapeResources.words.length} pictures together. Say each phrase in a mixed order and let students point: ${shapeResources.words.join('; ')}. Compare the same shape in different colors, then the same color on different shapes. Picture order, left to right by row: ${shapeResources.words.join('; ')}.`);
+  }
+
   // -------------------------------------------------------------- Content
   for (const slide of slides) {
     if (slide.layout === "vocabulary" && slide.vocabulary.length) {
@@ -239,7 +256,7 @@ export async function buildPresentationBlob(
   }
 
   for (const [index, card] of flashcardsFor(lesson, request).entries()) {
-    const data = images[card.imagePrompt] || (await picturePng(card.word));
+    const data = card.visual ? await picturePng(card.visual) : images[card.imagePrompt] || (await picturePng(card.word));
     if (!data)
       throw new Error(
         `The flashcard for "${card.word}" needs its picture. Turn on original illustrations and retry; your lesson is retained.`,
@@ -750,13 +767,14 @@ export async function generateSlideImages(
 }
 
 export function flashcardsFor(lesson: LessonPackage, request: LessonRequestInput) {
+  const shapeResources = colorShapeResources(request);
   if (
-    !/(?:flash|picture)[ -]?cards?/i.test(
+    !shapeResources && !/(?:flash|picture)[ -]?cards?/i.test(
       JSON.stringify([lesson.overview, lesson.lessonPlan, lesson.presentation, lesson.activity]),
     )
   )
     return [];
-  const unique = new Map<string, { word: string; imagePrompt: string }>();
+  const unique = new Map<string, { word: string; imagePrompt: string; visual?: string }>();
   for (const slide of normalizeSlides(lesson.presentation))
     for (const v of slide.vocabulary)
       if (v.word.trim())
@@ -765,5 +783,10 @@ export function flashcardsFor(lesson: LessonPackage, request: LessonRequestInput
   // when a model taught one on a content slide instead of a vocabulary slide.
   for (const word of (request.requiredVocabulary ?? '').split(/[,;\n]+/).map(w => w.trim()).filter(Boolean))
     if (!unique.has(word.toLowerCase())) unique.set(word.toLowerCase(), { word, imagePrompt: '' });
+  if (shapeResources) {
+    for (const word of [...shapeResources.colors, ...shapeResources.shapes, ...shapeResources.words]) unique.delete(word);
+    // Complete the combinations even if the model supplied only separate word cards.
+    for (const card of shapeResources.cards) unique.set(card.word, card);
+  }
   return [...unique.values()];
 }

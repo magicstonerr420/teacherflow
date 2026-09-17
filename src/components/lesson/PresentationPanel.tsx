@@ -3,6 +3,7 @@ import { americanEnglishContent } from "@/lib/american-english";
 import { youngSlidePages } from "@/lib/young-slides";
 import { loadPresentationTools } from "@/lib/presentation-tools";
 import { capitalizeHeading, presentationParagraphs } from "@/lib/presentation-text";
+import { colorShapeResources } from '@/lib/color-shape-resources';
 import {
   AlertCircle,
   CheckCircle2,
@@ -174,14 +175,15 @@ export function PresentationActions({
     [lesson, request],
   );
   const cards = useMemo(() => flashcardsFor(lesson, request), [lesson, request]);
+  const shapeResources = useMemo(() => colorShapeResources(request), [request]);
   const exportCount = isYoungA1(request)
     ? 1 +
       slides.reduce(
         (n, s) => n + (s.layout === "vocabulary" && s.vocabulary.length ? s.vocabulary.reduce((count, v) => count + youngSlidePages({ ...s, title: v.word, layout: "content", studentText: v.definition, bullets: v.example ? [v.example] : [], vocabulary: [] }).length, 0) : 1),
         0,
       ) +
-      cards.length * 2
-    : slides.length;
+      cards.length * 2 + (shapeResources ? 1 : 0)
+    : 1 + slides.reduce((n, s) => n + (s.layout === 'vocabulary' && s.vocabulary.length ? s.vocabulary.length : 1), 0) + cards.length * 2 + (shapeResources ? 1 : 0);
   const imagePrompts = useMemo(() => collectImagePrompts(lesson, 6, request), [lesson, request]);
 
   async function generate() {
@@ -354,6 +356,15 @@ export function PresentationActions({
       ) : null}
       {cards.length > 0 ? (
         <section aria-label="Flashcards" className="space-y-3">
+          {shapeResources && (
+            <section aria-label="Color and shape matching board" className="rounded-xl border bg-white p-5 text-slate-900">
+              <h3 className="text-xl font-bold">Listen and point</h3>
+              <div className="my-4 grid gap-3" style={{ gridTemplateColumns: `repeat(${shapeResources.colors.length}, minmax(0, 1fr))` }}>
+                {shapeResources.words.map((word, i) => <img key={word} src={pictureUrl(word) ?? undefined} alt={`Matching picture ${i + 1}`} data-picture={word} className="mx-auto aspect-square w-full max-w-40 object-contain" />)}
+              </div>
+              <p className="text-sm">Use these {shapeResources.words.length} pictures together. Say a color and a shape for students to find. Compare the same shape in different colors, then the same color on different shapes.</p>
+            </section>
+          )}
           <h3 className="font-semibold">Flashcards — picture front and word back</h3>
           <p className="text-sm text-muted-foreground">
             Each card is appended as two consecutive PowerPoint slides. Print each pair and glue
@@ -363,14 +374,14 @@ export function PresentationActions({
             <div key={card.word} className="grid grid-cols-2 gap-3 rounded-lg border p-3">
               <div>
                 <p className="text-sm">Card {i + 1} · Front</p>
-                {(withImages ? imagePreviews[card.imagePrompt] : null) || pictureUrl(card.word) ? (
+                {(card.visual ? pictureUrl(card.visual) : (withImages ? imagePreviews[card.imagePrompt] : null) || pictureUrl(card.word)) ? (
                   <img
                     src={
-                      (withImages ? imagePreviews[card.imagePrompt] : null) ||
-                      pictureUrl(card.word) ||
+                      (card.visual ? pictureUrl(card.visual) : (withImages ? imagePreviews[card.imagePrompt] : null) || pictureUrl(card.word)) ||
                       undefined
                     }
                     alt="Flashcard picture front"
+                    data-picture={card.visual ?? card.word}
                     className="h-40 w-full object-contain"
                   />
                 ) : (

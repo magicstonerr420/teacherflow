@@ -1,5 +1,6 @@
 import {ALTERNATE_RULES} from '../lib/worksheet-versions';
 import { AMERICAN_ENGLISH_RULES } from '../lib/american-english';
+import { colorShapeResourceInstructions } from '../lib/color-shape-resources';
 import { isYoungA1, YOUNG_A1_RULES, PICTURE_KEYS } from '../lib/young-learners';
 /**
  * ============================================================================
@@ -269,6 +270,7 @@ ${optional.length ? optional.join("\n") : "No optional information supplied — 
 
 ${AGE_BAND_RULES[bandOf(input.studentAge)]}
 ${isYoungA1(input) ? YOUNG_A1_RULES : ""}
+${colorShapeResourceInstructions(input)}
 
 ${techBlock}
 ${classSize ? `\n${classSize}` : ""}
