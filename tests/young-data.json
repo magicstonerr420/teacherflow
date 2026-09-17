@@ -1,0 +1,337 @@
+{
+  "request": {
+    "subject": "English",
+    "studentAge": "5-7",
+    "level": "A1",
+    "topic": "My body",
+    "learningObjective": "Name five body parts and recognise their written words.",
+    "durationMinutes": 30,
+    "mainSkill": "Vocabulary",
+    "secondarySkill": "Speaking",
+    "requiredVocabulary": "head, arm, leg, eye, hand",
+    "groupWorkEnabled": false,
+    "studentsPerGroup": null,
+    "technologyAvailable": "Projector / screen"
+  },
+  "lesson": {
+    "overview": {
+      "learningObjective": "Name five body parts and recognise their written words.",
+      "materialsNeeded": ["Included flashcards"],
+      "keyLanguage": ["head", "arm", "leg", "eye", "hand"]
+    },
+    "lessonPlan": {
+      "stages": []
+    },
+    "activity": {},
+    "worksheet": {
+      "title": "My body",
+      "student": {
+        "title": "My body",
+        "instructions": "Look at each picture.",
+        "sections": [
+          {
+            "label": "Section B",
+            "title": "Look and write",
+            "format": "fill-in-the-blank",
+            "instructions": "Look. Write one word.",
+            "passage": "",
+            "wordBank": ["head", "arm", "leg", "eye", "hand"],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "head",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "arm",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "leg",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "eye",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "hand",
+                "answerLines": 1,
+                "choices": []
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Look and choose",
+            "format": "multiple-choice",
+            "instructions": "Look. Circle the body word.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Circle one word.",
+                "visual": "head",
+                "answerLines": 0,
+                "choices": ["arm", "head", "leg"]
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Circle one word.",
+                "visual": "arm",
+                "answerLines": 0,
+                "choices": ["arm", "eye", "leg"]
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Circle one word.",
+                "visual": "leg",
+                "answerLines": 0,
+                "choices": ["eye", "hand", "leg"]
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Circle one word.",
+                "visual": "eye",
+                "answerLines": 0,
+                "choices": ["eye", "hand", "head"]
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Circle one word.",
+                "visual": "hand",
+                "answerLines": 0,
+                "choices": ["arm", "hand", "head"]
+              }
+            ]
+          }
+        ]
+      },
+      "studentB": {
+        "title": "My body B",
+        "instructions": "Look at each picture.",
+        "sections": [
+          {
+            "label": "Section B",
+            "title": "Look and write",
+            "format": "fill-in-the-blank",
+            "instructions": "Look. Write one word.",
+            "passage": "",
+            "wordBank": ["head", "arm", "leg", "eye", "hand"],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "hand",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "eye",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "leg",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "arm",
+                "answerLines": 1,
+                "choices": []
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Write the word: ______.",
+                "visual": "head",
+                "answerLines": 1,
+                "choices": []
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Look and choose",
+            "format": "multiple-choice",
+            "instructions": "Look. Circle the body word.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Circle one word.",
+                "visual": "head",
+                "answerLines": 0,
+                "choices": ["arm", "head", "leg"]
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Circle one word.",
+                "visual": "arm",
+                "answerLines": 0,
+                "choices": ["arm", "eye", "leg"]
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Circle one word.",
+                "visual": "leg",
+                "answerLines": 0,
+                "choices": ["eye", "hand", "leg"]
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Circle one word.",
+                "visual": "eye",
+                "answerLines": 0,
+                "choices": ["eye", "hand", "head"]
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Circle one word.",
+                "visual": "hand",
+                "answerLines": 0,
+                "choices": ["arm", "hand", "head"]
+              }
+            ]
+          }
+        ]
+      },
+      "teacher": {
+        "overview": "Check body words.",
+        "groupWorkGuidance": "",
+        "sections": [
+          {
+            "label": "Section B",
+            "title": "Look and write",
+            "answers": ["head", "arm", "leg", "eye", "hand"],
+            "explanation": "",
+            "expectedResponses": [],
+            "commonErrors": [],
+            "corrections": [],
+            "teacherNotes": "TEACHER-ONLY-NOTE"
+          },
+          {
+            "label": "Section C",
+            "title": "Look and choose",
+            "answers": ["head", "arm", "leg", "eye", "hand"],
+            "explanation": "",
+            "expectedResponses": [],
+            "commonErrors": [],
+            "corrections": [],
+            "teacherNotes": "TEACHER-ONLY-NOTE"
+          }
+        ]
+      },
+      "teacherB": [
+        {
+          "label": "Section B",
+          "title": "Look and write",
+          "answers": ["hand", "eye", "leg", "arm", "head"],
+          "explanation": "",
+          "expectedResponses": [],
+          "commonErrors": [],
+          "corrections": [],
+          "teacherNotes": "TEACHER-ONLY-NOTE"
+        },
+        {
+          "label": "Section C",
+          "title": "Look and choose",
+          "answers": ["head", "arm", "leg", "eye", "hand"],
+          "explanation": "",
+          "expectedResponses": [],
+          "commonErrors": [],
+          "corrections": [],
+          "teacherNotes": "TEACHER-ONLY-NOTE"
+        }
+      ]
+    },
+    "presentation": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "What Can We Do Today?",
+          "layout": "content",
+          "studentText": "I can name five body parts and show where they are.",
+          "bullets": [
+            "I can say: head, arm, leg, eye, hand.",
+            "I can point to the correct body part.",
+            "I can say: This is my ____."
+          ],
+          "highlightWords": ["head", "arm", "leg", "eye", "hand"],
+          "interaction": "Point to a picture. Say the word.",
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the included flashcards.",
+          "purpose": "Practise body words."
+        },
+        {
+          "number": 2,
+          "title": "My body words",
+          "layout": "vocabulary",
+          "studentText": "",
+          "bullets": [],
+          "highlightWords": ["head", "arm", "leg", "eye", "hand"],
+          "interaction": "Point and say.",
+          "vocabulary": [
+            {
+              "word": "head",
+              "definition": "This is my head.",
+              "example": "",
+              "imagePrompt": ""
+            },
+            {
+              "word": "arm",
+              "definition": "This is my arm.",
+              "example": "",
+              "imagePrompt": ""
+            },
+            {
+              "word": "leg",
+              "definition": "This is my leg.",
+              "example": "",
+              "imagePrompt": ""
+            },
+            {
+              "word": "eye",
+              "definition": "This is my eye.",
+              "example": "",
+              "imagePrompt": ""
+            },
+            {
+              "word": "hand",
+              "definition": "This is my hand.",
+              "example": "",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Show flashcard fronts then backs.",
+          "purpose": "Name body parts."
+        }
+      ]
+    }
+  }
+}

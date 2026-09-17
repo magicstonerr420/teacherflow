@@ -1,3 +1,4 @@
+import { lessonImagePrompts } from './image-plan.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
@@ -118,12 +119,9 @@ export class BetaStore {
     const reservation=this.transact(s=>{
       const run=this.teacher(s,user).runs[key];
       if(!run?.complete) throw new Error('Complete your own lesson before creating illustrations.');
-      const prompts: string[]=[];
-      for(const slide of run.parts['presentation']?.value?.presentation?.slides ?? []) {
-        for(const v of slide.vocabulary ?? []) if(v.imagePrompt) prompts.push(v.imagePrompt);
-        if(slide.imagePrompt && slide.layout!=='vocabulary') prompts.push(slide.imagePrompt);
-      }
-      if(![...new Set(prompts)].slice(0,6).includes(prompt)) throw new Error('The beta includes only the first six illustrations from this lesson.');
+      const prompts=lessonImagePrompts(run.parts['presentation']?.value, request);
+      if(!prompts.includes(prompt)) throw new Error('The beta includes only the six selected illustrations from this lesson.');
+      if (!run.images[imageKey] && Object.keys(run.images).length >= 6) throw new Error('This lesson already used its six illustration slots. Reuse the existing pictures.');
       const job=run.images[imageKey] ??= {attempts:0};
       if(job.value!==undefined) return {cached:job.value as string};
       if((job.until??0)>Date.now()) throw new Error('This illustration is already running. Please wait.');

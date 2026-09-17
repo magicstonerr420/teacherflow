@@ -1,3 +1,4 @@
+import { isYoungA1, pictureUrl } from '@/lib/young-learners';
 import { Download, Printer } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -303,7 +304,7 @@ function StudentWorksheet({
                   <span className="w-6 shrink-0 font-semibold">{item.number || j + 1}.</span>
                   <div className="min-w-0 flex-1">
                     <p className="whitespace-pre-line">
-                      {withVisuals && item.visual && VISUALS[item.visual] ? (
+                      {isYoungA1(request) && pictureUrl(item.visual) ? <img src={pictureUrl(item.visual)!} alt="Picture clue" className="mb-3 block h-28 w-28 object-contain" /> : withVisuals && item.visual && VISUALS[item.visual] ? (
                         <span aria-hidden className="mr-2 text-[1.1em]">
                           {VISUALS[item.visual]}
                         </span>

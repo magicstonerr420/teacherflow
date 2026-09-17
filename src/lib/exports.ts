@@ -1,3 +1,4 @@
+import { isYoungA1, picturePng } from '@/lib/young-learners';
 import {
   normalizeWorksheet,
   type LessonPackage,
@@ -272,6 +273,10 @@ export async function studentPdf(
     d.space(1);
     for (const item of section.items) {
       d.ensure(14);
+      if (isYoungA1(request)) {
+        const picture = await picturePng(item.visual);
+        if (picture) { d.ensure(48); d.doc.addImage(picture, 'PNG', MARGIN, d.y, 32, 32); d.space(35); }
+      }
       d.text(`${item.number}. ${item.prompt}`, { size: 10.5 });
       if (item.choices?.length) {
         d.bullets(

@@ -1,3 +1,4 @@
+import { isYoungA1, YOUNG_A1_RULES } from '../lib/young-learners';
 /**
  * ============================================================================
  * TEACHERFLOW — MASTER INSTRUCTIONAL DESIGN PROMPT (CONFIGURATION)
@@ -235,6 +236,7 @@ Learning objective: ${input.learningObjective}
 ${optional.length ? optional.join("\n") : "No optional information supplied — make professional assumptions."}
 
 ${AGE_BAND_RULES[bandOf(input.studentAge)]}
+${isYoungA1(input) ? YOUNG_A1_RULES : ""}
 
 ${techBlock}
 ${classSize ? `\n${classSize}` : ""}

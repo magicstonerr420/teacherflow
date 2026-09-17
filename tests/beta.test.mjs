@@ -60,7 +60,7 @@ test('private beta enforces invitations, quotas, durable retries and image limit
       let imageCalls=0;const image=async()=>{imageCalls++;return 'data:image/png;base64,test';};
       for(let i=0;i<6;i++)await store.image('teacher1',{topic:'one'},`image ${i}`,image);
       await store.image('teacher1',{topic:'one'},'image 0',image);assert.equal(imageCalls,6);
-      await assert.rejects(store.image('teacher1',{topic:'one'},'image 6',image),/first six/);
+      await assert.rejects(store.image('teacher1',{topic:'one'},'image 6',image),/six/);
       await assert.rejects(store.image('teacher1',{topic:'not-my-lesson'},'image 0',image),/own lesson/);
       await assert.rejects(store.image('stranger',{topic:'one'},'image 0',image),/invitation/);
       assert.equal(imageCalls,6);

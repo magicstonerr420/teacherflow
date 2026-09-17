@@ -1,3 +1,6 @@
+import { lessonImagePrompts } from "./image-plan";
+import { isYoungA1, picturePng, youngPresentationIssues } from "./young-learners";
+import { youngSlidePages, wrapSlideText } from "./young-slides";
 import { ageBand, normalizeSlides, type Slide } from "@/lib/lesson-schema";
 import type { LessonPackage, LessonRequestInput } from "@/lib/lesson-schema";
 
@@ -94,7 +97,10 @@ export function splitHighlights(
   return text
     .split(re)
     .filter((part) => part !== "")
-    .map((part) => ({ text: part, highlight: re.test(part) && clean.some((w) => w.toLowerCase() === part.toLowerCase()) }));
+    .map((part) => ({
+      text: part,
+      highlight: re.test(part) && clean.some((w) => w.toLowerCase() === part.toLowerCase()),
+    }));
 }
 
 /** Keeps projected text readable: shrinks as content grows, never below 14pt. */
@@ -120,15 +126,32 @@ export async function buildPresentationBlob(
   request: LessonRequestInput,
   images: SlideImages = {},
 ): Promise<Blob> {
+  if (isYoungA1(request)) {
+    const issues = youngPresentationIssues(lesson.presentation, lesson);
+    if (issues.length)
+      throw new Error(
+        "Flashcard material is incomplete. Regenerate only the presentation to include the required word cards and picture prompts.",
+      );
+  }
+  images = { ...images };
   const { default: PptxGenJS } = await import("pptxgenjs");
   const pptx = new PptxGenJS();
   pptx.layout = "LAYOUT_16x9";
   pptx.author = "TeacherFlow";
   pptx.title = `${request.topic} — ${request.level}`;
 
+  if (isYoungA1(request))
+    for (const data of Object.values(images)) {
+      const img = new Image();
+      img.src = data;
+      await img.decode();
+      imageRatios.set(data, img.naturalWidth / img.naturalHeight);
+    }
   const band = bandOfRequest(request);
   const t = themeFor(band);
-  const slides: Slide[] = normalizeSlides(lesson.presentation);
+  const slides: Slide[] = normalizeSlides(lesson.presentation).flatMap((s) =>
+    isYoungA1(request) ? youngSlidePages(s) : [s],
+  );
 
   const W = 10;
   const H = 5.625;
@@ -176,12 +199,73 @@ export async function buildPresentationBlob(
   // -------------------------------------------------------------- Content
   for (const slide of slides) {
     if (slide.layout === "vocabulary" && slide.vocabulary.length) {
-      addVocabularySlides(pptx, slide, t, images, W, H);
+      if (isYoungA1(request)) {
+        for (const v of slide.vocabulary) {
+          const prompt = v.imagePrompt || "built-in:" + v.word;
+          if (!images[prompt]) {
+            const picture = await picturePng(v.word);
+            if (picture) {
+              images[prompt] = picture;
+              imageRatios.set(picture, 1);
+            }
+          }
+          const display = {
+            ...slide,
+            title: v.word,
+            layout: "content",
+            studentText: v.definition,
+            bullets: v.example ? [v.example] : [],
+            vocabulary: [],
+            imagePrompt: prompt,
+            highlightWords: [v.word],
+          };
+          for (const page of youngSlidePages(display))
+            addYoungStandardSlide(pptx, page, t, images, W, H);
+        }
+      } else addVocabularySlides(pptx, slide, t, images, W, H);
       continue;
     }
-    addStandardSlide(pptx, slide, t, images, W, H);
+    if (isYoungA1(request)) addYoungStandardSlide(pptx, slide, t, images, W, H);
+    else addStandardSlide(pptx, slide, t, images, W, H);
   }
 
+  for (const [index, card] of flashcardsFor(lesson, request).entries()) {
+    const data = images[card.imagePrompt] || (await picturePng(card.word));
+    if (!data)
+      throw new Error(
+        `The flashcard for "${card.word}" needs its picture. Turn on original illustrations and retry; your lesson is retained.`,
+      );
+    if (!imageRatios.has(data)) {
+      const img = new Image();
+      img.src = data;
+      await img.decode();
+      imageRatios.set(data, img.naturalWidth / img.naturalHeight);
+    }
+    const front = pptx.addSlide();
+    front.background = { color: "FFFFFF" };
+    front.addImage({ data, ...containImage(data, 1, 0.7, 8, 4.2) });
+    front.addNotes(
+      `Flashcard ${index + 1} FRONT. Pair with the next slide (word back). Print the pair and glue back-to-back or use single-card duplex printing after checking orientation.`,
+    );
+    const back = pptx.addSlide();
+    back.background = { color: "FFFFFF" };
+    back.addText(card.word, {
+      x: 1,
+      y: 2,
+      w: 8,
+      h: 1.3,
+      fontSize: 44,
+      fontFace: t.bodyFont,
+      color: t.title,
+      bold: true,
+      align: "center",
+      margin: 0,
+      fit: "shrink",
+    });
+    back.addNotes(
+      `Flashcard ${index + 1} BACK. Word: ${card.word}. The preceding slide is its picture front.`,
+    );
+  }
   const blob = (await pptx.write({ outputType: "blob" })) as Blob;
   return repairPresentationXml(blob);
 }
@@ -213,7 +297,6 @@ async function repairPresentationXml(blob: Blob): Promise<Blob> {
     return blob;
   }
 }
-
 
 function slideHeader(s: any, slide: Slide, t: Theme, W: number) {
   s.background = { color: "FFFFFF" };
@@ -252,6 +335,90 @@ function slideFooter(s: any, slide: Slide, t: Theme, W: number, H: number) {
     .filter(Boolean)
     .join("\n");
   if (notes) s.addNotes(notes);
+}
+
+const imageRatios = new Map<string, number>();
+function containImage(data: string, x: number, y: number, w: number, h: number) {
+  const ratio = imageRatios.get(data) ?? 4 / 3;
+  const width = Math.min(w, h * ratio),
+    height = width / ratio;
+  return { x: x + (w - width) / 2, y: y + (h - height) / 2, w: width, h: height };
+}
+function addYoungStandardSlide(
+  pptx: any,
+  slide: Slide,
+  t: Theme,
+  images: SlideImages,
+  W: number,
+  H: number,
+) {
+  const s = pptx.addSlide();
+  let titleSize = 24;
+  while (titleSize > 16 && wrapSlideText(slide.title, 8.1, titleSize).length > 2) titleSize -= 2;
+  const titleTheme = { ...t, titleSize };
+  slideHeader(
+    s,
+    { ...slide, title: wrapSlideText(slide.title, 8.1, titleSize).join("\n") },
+    titleTheme,
+    W,
+  );
+  const image = images[slide.imagePrompt];
+  const width = image ? 4.98 : 8.9;
+  s.addShape("rect", {
+    x: 0.55,
+    y: 1.35,
+    w: width,
+    h: 2.85,
+    fill: { color: t.panel },
+    line: { color: t.panel },
+  });
+  const rows = slide.studentText.split("\n");
+  rows.forEach((row, i) =>
+    s.addText(
+      splitHighlights(row, slide.highlightWords).map((p) => ({
+        text: p.text,
+        options: { bold: p.highlight, color: p.highlight ? t.highlight : t.ink },
+      })),
+      {
+        x: 0.85,
+        y: 1.55 + i * 0.34,
+        w: width - 0.6,
+        h: 0.32,
+        fontSize: 18,
+        fontFace: t.bodyFont,
+        margin: 0,
+        breakLine: false,
+        valign: "top",
+      },
+    ),
+  );
+  if (image) s.addImage({ data: image, ...containImage(image, 5.85, 1.35, 3.6, 2.85) });
+  if (slide.interaction) {
+    const lines = wrapSlideText(slide.interaction, 8.5, 12);
+    // Full adult directions always remain in speaker notes.
+    if (lines.length <= 3) {
+      s.addShape("roundRect", {
+        x: 0.55,
+        y: 4.45,
+        w: 8.9,
+        h: 0.75,
+        fill: { color: t.accentSoft },
+        line: { color: t.accent },
+      });
+      s.addText(lines.join("\n"), {
+        x: 0.75,
+        y: 4.52,
+        w: 8.5,
+        h: 0.62,
+        fontSize: 12,
+        fontFace: t.bodyFont,
+        bold: true,
+        color: t.title,
+        margin: 0,
+      });
+    }
+  }
+  slideFooter(s, slide, t, W, H);
 }
 
 function addStandardSlide(
@@ -368,7 +535,13 @@ function addVocabularySlides(
     const s = pptx.addSlide();
     slideHeader(
       s,
-      { ...slide, title: slide.vocabulary.length > 1 ? `${slide.title} (${index + 1}/${slide.vocabulary.length})` : slide.title },
+      {
+        ...slide,
+        title:
+          slide.vocabulary.length > 1
+            ? `${slide.title} (${index + 1}/${slide.vocabulary.length})`
+            : slide.title,
+      },
       t,
       W,
     );
@@ -379,7 +552,14 @@ function addVocabularySlides(
     const h = bottom - top;
     const textW = image ? (W - 1.1) * 0.55 : W - 1.1;
 
-    s.addShape("rect", { x: 0.55, y: top, w: textW, h, fill: { color: t.panel }, line: { color: t.panel } });
+    s.addShape("rect", {
+      x: 0.55,
+      y: top,
+      w: textW,
+      h,
+      fill: { color: t.panel },
+      line: { color: t.panel },
+    });
     s.addText(v.word, {
       x: 0.85,
       y: top + 0.18,
@@ -468,36 +648,100 @@ export function downloadBlob(blob: Blob, filename: string) {
 }
 
 /** Collects every illustration prompt in the deck, in slide order. */
-export function collectImagePrompts(lesson: LessonPackage, max = 6): string[] {
-  const prompts: string[] = [];
-  for (const slide of normalizeSlides(lesson.presentation)) {
-    for (const v of slide.vocabulary) if (v.imagePrompt) prompts.push(v.imagePrompt);
-    if (slide.imagePrompt && slide.layout !== "vocabulary") prompts.push(slide.imagePrompt);
+export function collectImagePrompts(
+  lesson: LessonPackage,
+  max = 6,
+  request?: LessonRequestInput,
+): string[] {
+  // Normalise legacy slide visualSuggestion fields before choosing prompts.
+  return lessonImagePrompts(
+    { ...lesson, presentation: { slides: normalizeSlides(lesson.presentation) } },
+    request,
+    max,
+  );
+}
+export class IllustrationGenerationError extends Error {
+  constructor(
+    message: string,
+    public images: SlideImages,
+  ) {
+    super(message);
   }
-  return [...new Set(prompts)].slice(0, max);
 }
 
-/** Generates illustrations through the app's own endpoint. Failures are skipped. */
-export async function generateSlideImages(prompts: string[], request: LessonRequestInput): Promise<SlideImages> {
-  const { supabase } = await import('@/integrations/supabase/client');
+/** Successful pictures are retained per signed-in user and lesson for retry/export. */
+const imageCache = new Map<string, string>();
+export async function generateSlideImages(
+  prompts: string[],
+  request: LessonRequestInput,
+): Promise<SlideImages> {
+  const { supabase } = await import("@/integrations/supabase/client");
   const { data: sessionData } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
-  const results = await Promise.all(
-    prompts.map(async (prompt) => {
+  const prefix = JSON.stringify([sessionData.session?.user.id, request]);
+  const images: SlideImages = {};
+  const errors: string[] = [];
+  const unique = [...new Set(prompts)];
+  // A small queue avoids firing all six costly requests at the provider together.
+  let index = 0;
+  async function worker() {
+    while (index < unique.length) {
+      const prompt = unique[index++]!;
+      const key = prefix + prompt;
+      const cached = imageCache.get(key);
+      if (cached) {
+        images[prompt] = cached;
+        continue;
+      }
       try {
         const res = await fetch("/api/generate-image", {
           method: "POST",
-          headers: { "Content-Type": "application/json", ...(token ? {Authorization: `Bearer ${token}`} : {}) },
-          body: JSON.stringify({ prompt, request, studentAge: request.studentAge, level: request.level }),
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            prompt,
+            request,
+            studentAge: request.studentAge,
+            level: request.level,
+          }),
         });
-        if (!res.ok) return null;
-        const json = (await res.json()) as { dataUrl?: string };
-        return json.dataUrl ? ([prompt, json.dataUrl] as const) : null;
-      } catch {
-        return null;
+        const json = await res.json();
+        if (
+          !res.ok ||
+          typeof json.dataUrl !== "string" ||
+          !/^data:image\/(png|jpeg|webp);base64,/.test(json.dataUrl)
+        )
+          throw Error(json.error || "The image service returned no usable picture.");
+        images[prompt] = json.dataUrl;
+        imageCache.set(key, json.dataUrl);
+      } catch (e) {
+        errors.push(e instanceof Error ? e.message : "Image request failed.");
       }
-    }),
-  );
-  if (results.some(result => !result)) throw new Error("Some illustrations could not be generated. Retry or turn off illustrations to export the slides without them.");
-  return Object.fromEntries(results.filter(Boolean) as (readonly [string, string])[]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(2, unique.length) }, worker));
+  if (errors.length)
+    throw new IllustrationGenerationError(
+      `${errors.length} illustration(s) failed. ${errors[0]} Successful pictures are saved for retry; retry requests only missing pictures.`,
+      images,
+    );
+  return images;
+}
+
+export function flashcardsFor(lesson: LessonPackage, request: LessonRequestInput) {
+  if (
+    !isYoungA1(request) ||
+    !/flash[ -]?cards?/i.test(
+      JSON.stringify([lesson.overview, lesson.lessonPlan, lesson.presentation, lesson.activity]),
+    )
+  )
+    return [];
+  const unique = new Map<string, { word: string; imagePrompt: string }>();
+  for (const slide of normalizeSlides(lesson.presentation))
+    for (const v of slide.vocabulary)
+      if (v.word.trim())
+        unique.set(v.word.trim().toLowerCase(), { word: v.word, imagePrompt: v.imagePrompt });
+  return [...unique.values()];
 }

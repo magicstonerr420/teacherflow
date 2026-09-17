@@ -1,11 +1,23 @@
-import { AlertCircle, CheckCircle2, Download, Loader2, Presentation, RefreshCw, Sparkles } from "lucide-react";
-import { useMemo, useState } from "react";
+import { isYoungA1, pictureUrl } from "@/lib/young-learners";
+import { youngSlidePages } from "@/lib/young-slides";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Download,
+  Loader2,
+  Presentation,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
+  IllustrationGenerationError,
+  flashcardsFor,
   bandOfRequest,
   buildPresentationBlob,
   collectImagePrompts,
@@ -15,7 +27,12 @@ import {
   splitHighlights,
   themeFor,
 } from "@/lib/pptx";
-import { normalizeSlides, type LessonPackage, type LessonRequestInput, type Slide } from "@/lib/lesson-schema";
+import {
+  normalizeSlides,
+  type LessonPackage,
+  type LessonRequestInput,
+  type Slide,
+} from "@/lib/lesson-schema";
 
 /** Renders one slide roughly as it will look in PowerPoint. */
 function SlidePreview({ slide, theme }: { slide: Slide; theme: ReturnType<typeof themeFor> }) {
@@ -40,7 +57,11 @@ function SlidePreview({ slide, theme }: { slide: Slide; theme: ReturnType<typeof
         {slide.vocabulary.length ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {slide.vocabulary.map((v, i) => (
-              <div key={i} className="rounded-lg p-3" style={{ backgroundColor: `#${theme.panel}` }}>
+              <div
+                key={i}
+                className="rounded-lg p-3"
+                style={{ backgroundColor: `#${theme.panel}` }}
+              >
                 <p className="text-base font-bold" style={{ color: `#${theme.highlight}` }}>
                   {v.word}
                 </p>
@@ -63,7 +84,7 @@ function SlidePreview({ slide, theme }: { slide: Slide; theme: ReturnType<typeof
             style={{ backgroundColor: `#${theme.panel}`, color: `#${theme.ink}` }}
           >
             {lines.map((line, i) => (
-              <p key={i}>
+              <p key={i} className="whitespace-pre-line">
                 {splitHighlights(line, slide.highlightWords).map((part, j) =>
                   part.highlight ? (
                     <strong key={j} style={{ color: `#${theme.highlight}` }}>
@@ -131,10 +152,31 @@ export function PresentationActions({
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({});
   const [failureMessage, setFailureMessage] = useState("");
 
+  useEffect(() => {
+    setBlob(null);
+    setImagePreviews({});
+    setFailed(false);
+  }, [lesson, request]);
+
   const filename = presentationFileName(request);
   const theme = useMemo(() => themeFor(bandOfRequest(request)), [request]);
-  const slides = useMemo(() => normalizeSlides(lesson.presentation), [lesson]);
-  const imagePrompts = useMemo(() => collectImagePrompts(lesson), [lesson]);
+  const slides = useMemo(
+    () =>
+      normalizeSlides(lesson.presentation).flatMap((s) =>
+        isYoungA1(request) ? youngSlidePages(s) : [s],
+      ),
+    [lesson, request],
+  );
+  const cards = useMemo(() => flashcardsFor(lesson, request), [lesson, request]);
+  const exportCount = isYoungA1(request)
+    ? 1 +
+      slides.reduce(
+        (n, s) => n + (s.layout === "vocabulary" ? Math.max(1, s.vocabulary.length) : 1),
+        0,
+      ) +
+      cards.length * 2
+    : slides.length;
+  const imagePrompts = useMemo(() => collectImagePrompts(lesson, 6, request), [lesson, request]);
 
   async function generate() {
     setBusy(true);
@@ -150,8 +192,11 @@ export function PresentationActions({
       const built = await buildPresentationBlob(lesson, request, images);
       setBlob(built);
     } catch (error) {
+      if (error instanceof IllustrationGenerationError) setImagePreviews(error.images);
       console.error(error);
-      setFailureMessage(error instanceof Error ? error.message : "PowerPoint generation failed. Please retry.");
+      setFailureMessage(
+        error instanceof Error ? error.message : "PowerPoint generation failed. Please retry.",
+      );
       setFailed(true);
     } finally {
       setStatus("");
@@ -159,6 +204,17 @@ export function PresentationActions({
     }
   }
 
+  async function exportAvailable() {
+    setBusy(true);
+    try {
+      setBlob(await buildPresentationBlob(lesson, request, imagePreviews));
+      setFailed(false);
+    } catch (error) {
+      setFailureMessage(error instanceof Error ? error.message : "Could not export the slides.");
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <div className="space-y-4">
       <div className="no-print rounded-xl border bg-card p-5">
@@ -167,7 +223,8 @@ export function PresentationActions({
             <Presentation className="size-5 text-primary" />
             <div>
               <p className="text-sm font-semibold">
-                {slides.length} slide{slides.length === 1 ? "" : "s"} ready to preview below
+                {exportCount} slide{exportCount === 1 ? "" : "s"} in the PowerPoint
+                {cards.length ? ", including flashcard fronts and backs" : ""}
               </p>
               <p className="text-sm text-muted-foreground">
                 Teacher notes go into PowerPoint speaker notes, never onto student slides.
@@ -193,7 +250,11 @@ export function PresentationActions({
               </>
             ) : (
               <Button onClick={() => void generate()} disabled={busy}>
-                {busy ? <Loader2 className="size-4 animate-spin" /> : <Presentation className="size-4" />}
+                {busy ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Presentation className="size-4" />
+                )}
                 {busy ? status || "Building…" : "Generate PowerPoint"}
               </Button>
             )}
@@ -208,17 +269,24 @@ export function PresentationActions({
                 <p className="text-sm font-semibold">Add original illustrations</p>
                 <p className="text-sm text-muted-foreground">
                   Draws {imagePrompts.length} pictures for the vocabulary and key slides. Takes a
-                  minute longer and uses OpenRouter credits. Style is matched to age {request.studentAge} and level {request.level}.
+                  minute longer and uses OpenRouter credits. Style is matched to age{" "}
+                  {request.studentAge} and level {request.level}.
                 </p>
               </div>
             </div>
-            <Switch checked={withImages} onCheckedChange={(value) => { setWithImages(value); setBlob(null); }} disabled={busy} aria-label="Add original illustrations" />
+            <Switch
+              checked={withImages}
+              onCheckedChange={(value) => {
+                setWithImages(value);
+                setBlob(null);
+              }}
+              disabled={busy}
+              aria-label="Add original illustrations"
+            />
           </div>
         ) : null}
 
-        {busy && status ? (
-          <p className="mt-3 text-sm text-muted-foreground">{status}</p>
-        ) : null}
+        {busy && status ? <p className="mt-3 text-sm text-muted-foreground">{status}</p> : null}
 
         {failed ? (
           <Alert variant="destructive" className="mt-4">
@@ -226,9 +294,26 @@ export function PresentationActions({
             <AlertTitle>PowerPoint generation failed</AlertTitle>
             <AlertDescription className="space-y-3">
               <p>{failureMessage}</p>
+              {isYoungA1(request) ? (
+                <p>
+                  Export with available pictures keeps completed illustrations and built-in picture
+                  cards. Optional slide illustrations may be absent. A flashcard that still needs a
+                  picture will be reported.
+                </p>
+              ) : null}
               <Button size="sm" variant="outline" onClick={() => void generate()} disabled={busy}>
-                Try again
+                Retry missing pictures
               </Button>
+              {isYoungA1(request) ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => void exportAvailable()}
+                  disabled={busy}
+                >
+                  Export with available pictures
+                </Button>
+              ) : null}
             </AlertDescription>
           </Alert>
         ) : null}
@@ -242,9 +327,55 @@ export function PresentationActions({
         <Badge variant="outline">{bandOfRequest(request)} design</Badge>
       </div>
 
-      {Object.keys(imagePreviews).length > 0 && withImages ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Generated illustrations">{Object.entries(imagePreviews).map(([prompt, url]) => <img key={prompt} src={url} alt={prompt} className="aspect-square rounded-lg border object-contain" />)}</div> : null}
-      {slides.map((slide) => (
-        <SlidePreview key={slide.number} slide={slide} theme={theme} />
+      {Object.keys(imagePreviews).length > 0 && withImages ? (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Generated illustrations">
+          {Object.entries(imagePreviews).map(([prompt, url]) => (
+            <img
+              key={prompt}
+              src={url}
+              alt={prompt}
+              className="aspect-square rounded-lg border object-contain"
+            />
+          ))}
+        </div>
+      ) : null}
+      {cards.length > 0 ? (
+        <section aria-label="Flashcards" className="space-y-3">
+          <h3 className="font-semibold">Flashcards — picture front and word back</h3>
+          <p className="text-sm text-muted-foreground">
+            Each card is appended as two consecutive PowerPoint slides. Print each pair and glue
+            back-to-back; check orientation before duplex printing.
+          </p>
+          {cards.map((card, i) => (
+            <div key={card.word} className="grid grid-cols-2 gap-3 rounded-lg border p-3">
+              <div>
+                <p className="text-sm">Card {i + 1} · Front</p>
+                {(withImages ? imagePreviews[card.imagePrompt] : null) || pictureUrl(card.word) ? (
+                  <img
+                    src={
+                      (withImages ? imagePreviews[card.imagePrompt] : null) ||
+                      pictureUrl(card.word) ||
+                      undefined
+                    }
+                    alt="Flashcard picture front"
+                    className="h-40 w-full object-contain"
+                  />
+                ) : (
+                  <p className="text-sm">
+                    Turn on original illustrations and generate PowerPoint to create this picture.
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <p className="text-sm">Card {i + 1} · Back</p>
+                <p className="text-3xl font-bold">{card.word}</p>
+              </div>
+            </div>
+          ))}
+        </section>
+      ) : null}
+      {slides.map((slide, index) => (
+        <SlidePreview key={index} slide={slide} theme={theme} />
       ))}
     </div>
   );

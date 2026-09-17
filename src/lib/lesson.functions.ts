@@ -1,3 +1,4 @@
+import { isYoungA1, youngWorksheetIssues, youngPresentationIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { betaEnabled, betaStore } from "./beta-store.server";
@@ -130,6 +131,25 @@ export const generateLessonStage = createServerFn({ method: "POST" })
         input: `${contextBlock(request, modelPrior)}\n\n${STAGE_PROMPTS[promptStage]}\n\nCURRENT PART: ${stage}. Generate ONLY the fields required by the response schema for this part. Other parts are handled in separate requests. Preserve completed student items exactly when writing teacher answers. Generate keys only for the worksheet sections shown; DeepSeek's reading key is added separately. Keep prose concise and avoid repeating prior lesson content outside the required fields.`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
+      if (isYoungA1(request) && (stage === 'student' || stage === 'studentB')) {
+        const docKey = stage === 'student' ? 'student' : 'studentB';
+        const issues = youngWorksheetIssues(result.worksheet?.[docKey]);
+        if (issues.length) {
+          result = await generateNoTechSafe<Partial<LessonPackage>>({
+            schema, schemaName: `teacherflow_${stage}_clarity_repair`, system: MASTER_SYSTEM_PROMPT,
+            input: `${contextBlock(request, modelPrior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: ${stage}. Revise this worksheet: ${JSON.stringify(result)}\nFix these issues: ${issues.join('; ')}`,
+            noTech: isNoTechRequest(request.technologyAvailable),
+          });
+          if (youngWorksheetIssues(result.worksheet?.[docKey]).length) throw new LessonGenerationError('worksheet_clarity', 'The worksheet still has missing picture clues or unclear tasks. Your earlier lesson sections are saved. Retry this worksheet section.');
+        }
+      }
+      if (isYoungA1(request) && stage === 'presentation') {
+        const issues=youngPresentationIssues(result.presentation, prior);
+        if(issues.length){
+          result=await generateNoTechSafe<Partial<LessonPackage>>({schema,schemaName:'teacherflow_presentation_cards_repair',system:MASTER_SYSTEM_PROMPT,input:`${contextBlock(request, modelPrior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: presentation. Fix: ${issues.join('; ')}`,noTech:isNoTechRequest(request.technologyAvailable)});
+          if(youngPresentationIssues(result.presentation,prior).length)throw new LessonGenerationError('flashcard_materials','The presentation did not include the required flashcard pictures. Your earlier sections are retained. Retry this presentation section.');
+        }
+      }
       const alignmentIssue = answerAlignmentIssue(stage, modelPrior, result);
       if (alignmentIssue) {
         result = await generateNoTechSafe<Partial<LessonPackage>>({
@@ -266,13 +286,24 @@ export const regenerateSection = createServerFn({ method: "POST" })
       ? SECTION_SCHEMAS.worksheet.extend({ worksheet: readingCoreWorksheetSchema }) : SECTION_SCHEMAS[section];
     if (!schema) throw new Error("That part of the lesson cannot be regenerated.");
     try {
-      const result = await generateNoTechSafe<Partial<LessonPackage>>({
+      let result = await generateNoTechSafe<Partial<LessonPackage>>({
         schema,
         schemaName: `teacherflow_section_${section}`,
         system: readingEnabled && lesson.reading ? `${MASTER_SYSTEM_PROMPT}\n${READING_HANDOFF}` : MASTER_SYSTEM_PROMPT,
         input: `${regenerationContext(request, lesson, section)}\n\n${SECTION_PROMPTS[section]}`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
+      if (section === 'worksheet' && isYoungA1(request)) {
+        const issues=[...youngWorksheetIssues(result.worksheet?.student),...youngWorksheetIssues(result.worksheet?.studentB)];
+        if(issues.length){
+          result=await generateNoTechSafe<Partial<LessonPackage>>({schema,schemaName:'teacherflow_worksheet_clarity_repair',system:MASTER_SYSTEM_PROMPT,input:`${regenerationContext(request, lesson, section)}\n${SECTION_PROMPTS.worksheet}\nFix these worksheet issues: ${issues.join('; ')}. Return both student versions and the matching corrected teacher answers.`,noTech:isNoTechRequest(request.technologyAvailable)});
+          if([...youngWorksheetIssues(result.worksheet?.student),...youngWorksheetIssues(result.worksheet?.studentB)].length)throw new LessonGenerationError('worksheet_clarity','The revised worksheet still has unclear picture tasks. Your original worksheet is retained.');
+        }
+      }
+      if (section === 'presentation' && isYoungA1(request)) {
+        const issues=youngPresentationIssues(result.presentation,lesson);
+        if(issues.length)throw new LessonGenerationError('flashcard_materials','The revised presentation is missing required flashcard pictures. Your original presentation is retained; retry this section.');
+      }
       return readingEnabled ? integrateReadingPatch(lesson, result) : result;
 
     } catch (error) {
