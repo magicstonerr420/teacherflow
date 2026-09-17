@@ -130,6 +130,31 @@ export function worksheetItemPrompt(item: PictureItem): string {
     && pictureSvg(explicit) ? prompt.replace(PICTURE_PREFIX, '') : prompt;
 }
 
+/** Recognize the simple named profiles used in beginner worksheets, including
+ * an immediately following he/she sentence. Unknown wording is not proof that
+ * a fact is absent, so callers only reject omissions when this parse is complete. */
+function feelingFacts(passage: string) {
+  const facts: {name: string; feeling: string}[] = [];
+  let subject = '', complete = true;
+  for (const raw of passage.split(/[.!?\n]+/u)) {
+    const sentence = raw.trim().replace(/^["“”]+|["“”]+$/g, '').trim();
+    if (!sentence) continue;
+    const named = /^([\p{L}'-]+)\s+(?:feels?|is(?:\s+feeling)?)\s+(?:very\s+)?(happy|sad|okay)\b/iu.exec(sentence);
+    const profile = /^(?:This is ([\p{L}'-]+)|([\p{L}'-]+) is \d{1,2}(?: years old)?)$/iu.exec(sentence);
+    const pronoun = /^(?:he|she)\s+(?:feels?|is(?:\s+feeling)?)\s+(?:very\s+)?(happy|sad|okay)\b/iu.exec(sentence);
+    if (pronoun) {
+      if (subject) facts.push({name:subject,feeling:pronoun[1]!.toLowerCase()});
+      else complete=false;
+    } else if (named && !/^(?:he|she|i|you|they|it)$/i.test(named[1]!)) {
+      subject=named[1]!.toLowerCase();facts.push({name:subject,feeling:named[2]!.toLowerCase()});
+    } else {
+      subject=(profile?.[1]??profile?.[2]??'').toLowerCase();
+      if (/\b(?:happy|sad|okay)\b/i.test(sentence)) complete=false;
+    }
+  }
+  return {facts,complete};
+}
+
 /** Required learning resources must not disappear because of an age/level setting. */
 export function worksheetPictureIssues(doc: any): string[] {
   const issues: string[] = [];
@@ -174,14 +199,14 @@ export function worksheetPictureIssues(doc: any): string[] {
           issues.push(`${section.label} item ${item.number}: the pictured object '${worksheetPictureKey(item)}' is absent from the answer choices or word bank. Supply the intended exact picture and its correct word; do not use a decorative icon.`);
       }
       if (item.choices?.some((c: string) => /^yes$/i.test(c)) && section.passage) {
-        const statement = /^([\p{L}'-]+) feels? (happy|sad|okay)\b/iu.exec(item.prompt ?? '');
+        const statement = /^([\p{L}'-]+) (?:feels?|is(?:\s+feeling)?) (happy|sad|okay)\b/iu.exec(item.prompt ?? '');
         if (statement) {
-          const facts = [...section.passage.matchAll(/([\p{L}'-]+) feels? (happy|sad|okay)\b/giu)]
-            .filter(m=>m[1]?.toLowerCase()===statement[1]?.toLowerCase());
-          if (!facts.length) issues.push(`${section.label} item ${item.number}: the passage never states ${statement[1]}'s feeling; an unstated fact cannot be marked false. Supply an explicit feeling or ask about a stated fact.`);
-          else if (facts.length===1 && /^(?:happy|sad|okay|smile)$/.test(worksheetPictureKey(item))) {
+          const parsed=feelingFacts(section.passage);
+          const facts = new Set(parsed.facts.filter(f=>f.name===statement[1]?.toLowerCase()).map(f=>f.feeling));
+          if (!facts.size && parsed.complete) issues.push(`${section.label} item ${item.number}: the passage never states ${statement[1]}'s feeling; an unstated fact cannot be marked false. Supply an explicit feeling or ask about a stated fact.`);
+          else if (facts.size===1 && /^(?:happy|sad|okay|smile)$/.test(worksheetPictureKey(item))) {
             const visual = worksheetPictureKey(item)==='smile' ? 'happy' : worksheetPictureKey(item);
-            if (visual!==facts[0]?.[2]?.toLowerCase()) issues.push(`${section.label} item ${item.number}: the feeling picture contradicts the person's actual feeling in the passage. Illustrate the true clue, not the false statement.`);
+            if (!facts.has(visual)) issues.push(`${section.label} item ${item.number}: the feeling picture contradicts the person's actual feeling in the passage. Illustrate the true clue, not the false statement.`);
           }
         }
       }

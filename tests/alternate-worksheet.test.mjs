@@ -6,7 +6,7 @@ try {
  const { generateAlternateWorksheet } = await server.ssrLoadModule('/src/lib/alternate-worksheet.server.ts');
  const request = { subject: 'English', topic: 'Weather and Clothes', studentAge: '5-7', level: 'A1', mainSkill: 'Listening', secondarySkill: 'Vocabulary', durationMinutes: 60, technologyAvailable: 'Board only', learningObjective: 'Identify weather and clothes.', requiredVocabulary: 'Sun, Rain, Shirt, Shoes, Hat' };
  const words = ['sun', 'rain', 'shirt', 'shoes', 'hat'];
- const doc = { title: 'A', instructions: 'Circle the word.', sections: words.map((word, index) => ({ label: `Section ${index+1}`, title: word, instructions: 'Look at the picture. Circle one word.', format: 'multiple-choice', passage: '', wordBank: [], items: words.map((visual,i) => ({ number: i+1, prompt: `Name the picture ${index+1}.`, visual, choices: words, answerLines: 0 })) })) };
+ const doc = { title: 'A', instructions: 'Circle the word.', sections: words.map((word, index) => ({ label: `Section ${String.fromCharCode(65+index)}`, title: word, instructions: 'Look at the picture. Circle one word.', format: 'multiple-choice', passage: '', wordBank: [], items: words.map((visual,i) => ({ number: i+1, prompt: `Name the picture ${index+1}.`, visual, choices: words, answerLines: 0 })) })) };
  const prior = { worksheet: { student: doc }, listening: { status: 'failed', error: 'Not needed for core worksheet' } };
  const before = JSON.stringify(prior);
  const valid = structuredClone(doc);
@@ -19,16 +19,19 @@ try {
   const unsupported = { worksheet: { studentB: structuredClone(valid) } };
   unsupported.worksheet.studentB.sections[0].items[0].visual='unknown-object';
   assert.equal(args.schema.safeParse(unsupported).success,false,'Unknown pictures must be excluded by the generation contract');
-  const patch = { worksheet: { studentB: structuredClone(responses[calls.length-1]) } };
+  const response = structuredClone(responses[calls.length-1]);
+  if(calls.length===3)response.sections=response.sections.slice(0,1);
+  const patch = { worksheet: { studentB: response } };
   args.schema.parse(patch); return patch;
  });
  assert.equal(calls.length,3);
  assert.match(calls[1].input,/REJECTED VERSION B DRAFT/);
  assert.match(calls[1].input,/Repeated items to replace: section 1, item 1/);
  assert.match(calls[2].input,/missing picture/);
+ assert.match(calls[2].input,/ONLY these replacement sections in worksheet.studentB.sections: Section A\./);
  assert.ok(calls.every(c=>c.noTech && c.system.includes('dedicated listening script')));
  assert.ok(!calls[0].input.includes('Stay perfectly consistent with everything already designed'));
- assert.deepEqual(result.worksheet.studentB, valid);
+ assert.deepEqual(result.worksheet.studentB, {...valid,title:doc.title});
  assert.equal(JSON.stringify(prior),before);
  let failedCalls=0;
  await assert.rejects(generateAlternateWorksheet(request, prior, async()=>{ failedCalls++; return { worksheet: { studentB: structuredClone(doc) } }; }), /alternate worksheet still needs revised questions/);
@@ -49,5 +52,32 @@ try {
  });
  assert.equal(schoolCalls,1,'School pictures should no longer force paid repair attempts');
  assert.deepEqual(schoolResult.worksheet.studentB,schoolB);assert.equal(JSON.stringify(schoolPrior),savedSchool);
+ const introRequest={...request,topic:'All About Me',mainSkill:'Vocabulary',secondarySkill:null,technologyAvailable:'No technology',learningObjective:'Students can state their name, age, and how they feel today.',requiredVocabulary:'Mom, Dad, Brother, Sister, Baby'};
+ const intro=structuredClone(valid);
+ const family=['mom','dad','brother','sister','baby'];
+ intro.sections.forEach((s,index)=>{
+  s.passage='Mia is 5 years old. Mia feels happy today. Tom is 6 years old. Tom feels sad today. Mia says: Ana is my mom. Ben is my dad. Leo is my brother. Eva is my sister. Jo is my baby.';
+  s.instructions=index<3?'Read the facts. Write one word.':'Read the facts. Circle Yes or No.';
+  s.wordBank=index===0?family:index===1?['Mia','Tom','5','6','happy']:index===2?['happy','sad']:[];
+  const prompts=[['Who is Ana in Mia\'s family?','Who is Ben in Mia\'s family?','Who is Leo in Mia\'s family?','Who is Eva in Mia\'s family?','Who is Jo in Mia\'s family?'],['Write the name of the child who is 5.','Write the name of the child who is 6.','Mia is ____ years old.','Tom is ____ years old.','Mia feels ____ today.'],['How does Mia feel?','How does Tom feel?','Mia feels ____.','Tom feels ____.','Which feeling does Mia name?'],['Mia is 5 years old.','Tom is 5 years old.','Mia feels sad today.','Tom feels sad today.','Mia feels happy today.'],['Ana is Mia\'s mom.','Ben is Mia\'s brother.','Leo is Mia\'s brother.','Eva is Mia\'s mom.','Jo is Mia\'s baby.']];
+  s.items.forEach((item,i)=>Object.assign(item,{prompt:prompts[index][i],visual:'',choices:index<3?[]:['Yes','No'],answerLines:index<3?1:0}));
+ });
+ const badIntro=structuredClone(intro);badIntro.sections[1].items[0].prompt='My name is Mia. Write the word for Mia.';
+ const introCalls=[];
+ const introResult=await generateAlternateWorksheet(introRequest,prior,async args=>{
+  introCalls.push(args);
+  const missingContext=structuredClone(intro);missingContext.sections[0].passage='';
+  if(introCalls.length===1){
+   assert.equal(args.schema.safeParse({worksheet:{studentB:missingContext}}).success,false,'Family vocabulary requires supplied context even when the objective does not say family');
+   assert.match(args.input,/fictional introductions/);
+   return args.schema.parse({worksheet:{studentB:badIntro}});
+  }
+  assert.match(args.input,/ONLY these replacement sections in worksheet.studentB.sections: Section B\./);
+  assert.equal(args.schema.safeParse({worksheet:{studentB:intro}}).success,false,'A repair cannot rewrite already valid sections');
+  return args.schema.parse({worksheet:{studentB:{...intro,sections:[intro.sections[1]]}}});
+ });
+ assert.equal(introCalls.length,2);
+ assert.deepEqual(introResult.worksheet.studentB,intro);
+ assert.equal(JSON.stringify(prior),before);
  console.log('PASS: duplicate draft receives exact item feedback; picture errors are repaired; Version A is unchanged; invalid worksheets are never accepted; repair and billing retries are bounded.');
 } finally { await server.close(); }

@@ -31,6 +31,21 @@ test('reject ambiguous self-report checklists, family guesses, and unrelated fee
 test('picture cards must be supplied just like flashcards',()=>{
  assert.match(youngPresentationIssues({slides:[]},{overview:{materialsNeeded:['Printed family picture cards']}}).join(' '),/no vocabulary/);
 });
+
+test('All About Me feeling facts accept named adjectives and clear adjacent pronouns',()=>{
+ const section={label:'D',instructions:'Read. Circle Yes or No.',passage:'Nia is 6 years old. She feels happy today. Sam is 5 years old. He feels okay today.',items:[{number:1,prompt:'Nia feels sad today.',visual:'',choices:['Yes','No']},{number:2,prompt:'Sam feels happy today.',visual:'',choices:['Yes','No']}]};
+ assert.deepEqual(worksheetPictureIssues({sections:[section]}),[]);
+ section.passage='Nia is happy today. Sam is okay today.';
+ assert.deepEqual(worksheetPictureIssues({sections:[section]}),[]);
+ section.items[0].visual='sad';
+ assert.match(worksheetPictureIssues({sections:[section]}).join(' '),/picture contradicts/);
+ section.items[0].visual='happy';
+ assert.deepEqual(worksheetPictureIssues({sections:[section]}),[]);
+ section.passage='Nia is 6 years old. Sam is 5 years old.';
+ assert.match(worksheetPictureIssues({sections:[section]}).join(' '),/never states/);
+ section.passage='Nia says, "I feel happy today." Sam says, "I feel okay today."';
+ assert.deepEqual(worksheetPictureIssues({sections:[section]}),[],'Unparsed quotation wording must not be treated as evidence of an absent fact');
+});
 test('colored shapes support color-only and shape-only questions without permitting wrong answers',()=>{
  const section={label:'C',instructions:'Look at each picture. Write the word.',wordBank:['red','blue','green','circle','square'],items:[{number:1,visual:'red circle',prompt:'Write the color word.'},{number:2,visual:'blue square',prompt:'Write the shape word.'}]};
  assert.deepEqual(worksheetPictureIssues({sections:[section]}),[]);
