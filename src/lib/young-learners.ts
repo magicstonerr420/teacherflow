@@ -3,6 +3,11 @@ export const isYoungA1 = (r: { studentAge: string; level: string }) =>
 
 // Original, print-safe line illustrations. No labels or answer text in the image.
 const parts: Record<string, string> = {
+  pencil: '<path d="M19 67L66 13q5-5 10-1l10 9q5 4 1 10L39 85l-25 7Z" fill="#ffd56b"/><path d="M66 13q5-5 10-1l10 9q5 4 1 10l-7 8-21-19Z" fill="#efa3ac"/><path d="M59 20l21 19-6 7-21-19Z" fill="#c5d8e2"/><path d="M19 67l20 18-25 7Z" fill="#e5bc8e"/><path d="M17 82l8 7-11 3Z" fill="#243c4c"/><path d="M26 72l32-37m-25 43 32-37" fill="none"/>',
+  book: '<path d="M23 12h55q7 0 7 7v66H25Q12 85 12 73V24q0-12 11-12Z" fill="#6caecf"/><path d="M25 12v58" fill="none"/><path d="M25 69h60v17H25q-14 0-13-9 0-8 13-8Z" fill="#fffdf3"/><path d="M26 77h50M85 86H25q-13 0-13-10" fill="none"/><path d="M37 28h34v25H37Z" fill="#abd4e6"/>',
+  paper: '<path d="M22 8h40l17 18v66H22Z" fill="#fffdf3"/><path d="M62 8v18h17" fill="#d5e4eb"/><path d="M32 39h36M32 51h36M32 63h36M32 75h26" stroke="#76a6c0" fill="none"/>',
+  eraser: '<path d="M10 57L44 17h23l24 23-33 42H34Z" fill="#f4a9b2"/><path d="M10 57h24l33-40H44Z" fill="#f9c5cb"/><path d="M34 57L67 17l24 23-33 42Z" fill="#f4a9b2"/><path d="M10 57h24v25L10 64Z" fill="#d1dce5"/><path d="M10 57l17-20h25L34 57Z" fill="#e6edf3"/><path d="M34 57l18-20 23 23-17 22H34Z" fill="#b8ccdc"/>',
+  bag: '<path d="M38 25V15q12-14 24 0v10" fill="none" stroke-width="6"/><path d="M21 51q-13 9-10 34h11m57-34q13 9 10 34H78" fill="#abd4e6"/><path d="M20 43q0-24 30-24t30 24v44q0 8-9 8H29q-9 0-9-8Z" fill="#79bad7"/><path d="M29 48q0-20 21-20t21 20" fill="none"/><rect x="30" y="59" width="40" height="27" rx="6" fill="#f2c877"/><path d="M31 68h38m-6 0v8M32 46h36" fill="none"/>',
   sun: '<circle cx="50" cy="50" r="22" fill="#ffdc66"/><path d="M50 5v13m0 64v13M5 50h13m64 0h13M18 18l10 10m44 44 10 10M18 82l10-10m44-44 10-10" stroke="#c47600" stroke-width="4" fill="none"/>',
   rain: '<path d="M20 52C2 52 4 28 24 28C28 6 57 9 62 25C85 14 101 48 80 52Z" fill="#d6e2ec"/><path d="M24 63l-9 15m32-15-9 15m32-15-9 15m-26 3-7 11m30-11-7 11m32-29-7 11" stroke="#166791" stroke-width="4" fill="none"/>',
   shirt: '<path d="M31 17L9 32l12 20 13-8v43h32V44l13 8 12-20-22-15-10-4H41Z" fill="#81c5df"/><path d="M41 13q9 19 18 0M34 76h32M22 32l-8 6m64-6 8 6" fill="none"/>',
@@ -42,8 +47,6 @@ const glyphs: Record<string, string> = {
   flower: "🌸",
   apple: "🍎",
   cake: "🍰",
-  book: "📕",
-  pencil: "✏",
   school: "🏫",
   house: "🏠",
   clock: "🕒",
@@ -98,6 +101,7 @@ A matching task must present genuinely different clues and options; a naming tas
 For body vocabulary, supported printable item.visual keywords are: ${BODY_VISUALS.join(", ")}. Use them on EVERY item that depends on a body picture, including Version B. Each visual must identify the correct answer, not simply match the topic. These pictures are included in the worksheet and PDF automatically.
 For farm vocabulary, printable picture cues cow, pig, duck, sheep and horse are also available on every item that needs one.
 For weather and clothes, sun, rain, shirt, shoes and hat are supplied printable illustrations. Use these exact keywords when an item needs these pictures; the teacher does not have to draw or source them.
+For school supplies, pencil, book, paper, eraser and bag are supplied printable illustrations. Use the exact object required by the question. Never replace a bag with a school building, paper with a book, or an eraser with a pencil. For picture naming, the correct pictured word must appear in the choices or supplied word bank. For Yes/No tasks, the statement may deliberately be false; keep the actual picture distinct from the statement.
 Use grammatically correct word-bank frames: sun and rain are nouns, while sunny and rainy are adjectives. Never make a child fill "It is ___" with sun or rain; use "I see the ___" or a picture-naming task. If multiple clothes suit a weather condition, add a specific body-part or situation clue for a single-answer question, or explicitly accept multiple appropriate answers. A hat can shade the head from sun; shoes cover feet. Do not teach that an ordinary shirt or sun hat keeps someone dry in rain. Do not force arbitrary one-to-one weather/clothing matches.
 For other topics, use only these supported picture keywords: ${PICTURE_KEYS.join(", ")}; if no supplied picture can identify an answer, write a self-contained meaningful task instead of referring to an absent picture.
 Section C must practice a useful distinct task aligned to the objective, not repeat Section B's word-copy task. For example, recognize a word among options after practicing writing it; only use action vocabulary if those actions were taught. Do not add unknown language just to make a task different.
@@ -134,7 +138,7 @@ export function worksheetPictureIssues(doc: any): string[] {
         issues.push(`${section.label} item ${item.number}: the named picture does not match its supplied illustration`);
       if (item.visual?.trim() && !hasPicture)
         issues.push(
-          `${section.label} item ${item.number}: unsupported picture '${item.visual}'. Use a supported picture (${PICTURE_KEYS.join(", ")}) or a self-contained text clue.`,
+          `${section.label} item ${item.number}: unsupported picture '${item.visual}'. Preserve the intended object. Never substitute an unrelated supported icon. If its exact picture is unavailable, rewrite this item with a complete text clue and visual="". Available pictures: ${PICTURE_KEYS.join(", ")}.`,
         );
       const task = `${section.instructions ?? ''} ${item.prompt ?? ''}`;
       const explicitlyNeedsPicture = /\b(?:look\s+at|name|label|match|circle|choose|point\s+to|color|identify|find|use|describe)\b[^.!?]{0,70}\b(?:picture|image|illustration|drawing)s?\b/i.test(task);
@@ -146,6 +150,13 @@ export function worksheetPictureIssues(doc: any): string[] {
       const asksWhatYouSee = /^\s*what (?:do|can) you see\s*\?\s*$/i.test(item.prompt ?? '') && !section.passage?.trim();
       if ((explicitlyNeedsPicture || bareLookTask || itemNamesPicture || asksWhatYouSee) && !hasPicture)
         issues.push(`${section.label} item ${item.number}: refers to a missing picture`);
+      const namesPicturedObject = asksWhatYouSee || /\b(?:name|label) (?:the |each |this )?picture\b/i.test(task)
+        || (/\blook at (?:the |each |this )?picture\b/i.test(task) && /\b(?:write|circle|choose) (?:the |one )?(?:correct )?word\b/i.test(task));
+      if (namesPicturedObject && hasPicture) {
+        const offered = item.choices?.length ? item.choices : section.wordBank;
+        if (offered?.length && !offered.some((word: string) => pictureSvg(word.replace(/[.!?]$/, '')) === pictureSvg(worksheetPictureKey(item))))
+          issues.push(`${section.label} item ${item.number}: the pictured object '${worksheetPictureKey(item)}' is absent from the answer choices or word bank. Supply the intended exact picture and its correct word; do not use a decorative icon.`);
+      }
     }
   return issues;
 }

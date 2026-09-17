@@ -16,6 +16,9 @@ try {
  const responses=[doc,missing,valid], calls=[];
  const result = await generateAlternateWorksheet(request, prior, async args => {
   calls.push(args);
+  const unsupported = { worksheet: { studentB: structuredClone(valid) } };
+  unsupported.worksheet.studentB.sections[0].items[0].visual='unknown-object';
+  assert.equal(args.schema.safeParse(unsupported).success,false,'Unknown pictures must be excluded by the generation contract');
   const patch = { worksheet: { studentB: structuredClone(responses[calls.length-1]) } };
   args.schema.parse(patch); return patch;
  });
@@ -34,5 +37,17 @@ try {
  let providerCalls=0;
  await assert.rejects(generateAlternateWorksheet(request, prior, async()=>{ providerCalls++; throw Error('credits'); }), /credits/);
  assert.equal(providerCalls,1,'Do not retry a provider billing failure');
+ const school = ['pencil','book','paper','eraser','bag'];
+ const schoolA=structuredClone(doc),schoolB=structuredClone(valid);
+ schoolA.sections.forEach(s=>{s.items.forEach((item,i)=>{item.visual=school[i];item.choices=school;item.prompt='What do you see?';});});
+ schoolB.sections.forEach(s=>{s.items.forEach((item,i)=>{item.visual=school[i];item.prompt=`This is a ${school[(i+1)%5]}.`;});});
+ let schoolCalls=0;
+ const schoolPrior={worksheet:{student:schoolA}};
+ const savedSchool=JSON.stringify(schoolPrior);
+ const schoolResult=await generateAlternateWorksheet({...request,topic:'School Supplies',mainSkill:'Writing',requiredVocabulary:school.join(', ')},schoolPrior,async args=>{
+  schoolCalls++; const patch={worksheet:{studentB:schoolB}};args.schema.parse(patch);return patch;
+ });
+ assert.equal(schoolCalls,1,'School pictures should no longer force paid repair attempts');
+ assert.deepEqual(schoolResult.worksheet.studentB,schoolB);assert.equal(JSON.stringify(schoolPrior),savedSchool);
  console.log('PASS: duplicate draft receives exact item feedback; picture errors are repaired; Version A is unchanged; invalid worksheets are never accepted; repair and billing retries are bounded.');
 } finally { await server.close(); }

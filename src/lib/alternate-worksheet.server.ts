@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { MASTER_SYSTEM_PROMPT, renderLessonContext, type LessonRequest } from '../config/teacherflow-prompt';
 import { worksheetSchema, worksheetStudentSectionSchema, type LessonPackage } from './lesson-schema';
 import { ALTERNATE_RULES, alternateWorksheetIssue, repeatedAlternateItems, removeRepeatedWorksheetSections } from './worksheet-versions';
-import { isYoungA1, youngWorksheetIssues, worksheetPictureIssues } from './young-learners';
+import { isYoungA1, youngWorksheetIssues, worksheetPictureIssues, PICTURE_KEYS } from './young-learners';
 import { READING_HANDOFF, withoutReadingSections } from './reading';
 import { LISTENING_HANDOFF, withoutListeningSections } from './listening';
 import { isNoTechRequest, findTechTerms } from './no-tech';
@@ -28,7 +28,9 @@ export async function generateAlternateWorksheet(request: LessonRequest, prior: 
   return { section: `Section ${String.fromCharCode(65+i)}`, ...available.splice(different < 0 ? 0 : different, 1)[0] };
  });
  const section = worksheetStudentSectionSchema.extend({
-  items: worksheetStudentSectionSchema.shape.items.length(5),
+  items: z.array(worksheetStudentSectionSchema.shape.items.element.extend({
+   visual: z.enum(['', ...PICTURE_KEYS] as [string, ...string[]]),
+  })).length(5),
   format: z.enum(['matching', 'short-answer', 'multiple-choice']),
   ...(prior.reading ? { passage: z.enum(['']) } : {}),
  });

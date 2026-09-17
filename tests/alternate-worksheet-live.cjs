@@ -3,7 +3,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'C:/Users/javie/.cache
 const fs=require('node:fs/promises'),assert=require('node:assert/strict');
 (async()=>{
  const fixture=JSON.parse(await fs.readFile(process.argv[2] || '.local-runtime/weather-review/lesson.json','utf8'));
- const dir='.local-runtime/alternate-review';await fs.mkdir(dir,{recursive:true});
+ const dir=process.env.TEST_OUTPUT_DIR || '.local-runtime/alternate-review';await fs.mkdir(dir,{recursive:true});
  const browser=await chromium.launch({headless:true,channel:'msedge'});
  try{
   const page=await browser.newPage();await page.goto(process.env.TEST_ORIGIN || 'http://127.0.0.1:3002');
