@@ -1,8 +1,11 @@
+import { beginnerPictures } from './beginner-pictures.ts';
+
 export const isYoungA1 = (r: { studentAge: string; level: string }) =>
   r.level === "A1" && /^5\s*[-–]\s*7$/.test(r.studentAge.trim());
 
 // Original, print-safe line illustrations. No labels or answer text in the image.
 const parts: Record<string, string> = {
+  ...beginnerPictures,
   pencil: '<path d="M19 67L66 13q5-5 10-1l10 9q5 4 1 10L39 85l-25 7Z" fill="#ffd56b"/><path d="M66 13q5-5 10-1l10 9q5 4 1 10l-7 8-21-19Z" fill="#efa3ac"/><path d="M59 20l21 19-6 7-21-19Z" fill="#c5d8e2"/><path d="M19 67l20 18-25 7Z" fill="#e5bc8e"/><path d="M17 82l8 7-11 3Z" fill="#243c4c"/><path d="M26 72l32-37m-25 43 32-37" fill="none"/>',
   book: '<path d="M23 12h55q7 0 7 7v66H25Q12 85 12 73V24q0-12 11-12Z" fill="#6caecf"/><path d="M25 12v58" fill="none"/><path d="M25 69h60v17H25q-14 0-13-9 0-8 13-8Z" fill="#fffdf3"/><path d="M26 77h50M85 86H25q-13 0-13-10" fill="none"/><path d="M37 28h34v25H37Z" fill="#abd4e6"/>',
   paper: '<path d="M22 8h40l17 18v66H22Z" fill="#fffdf3"/><path d="M62 8v18h17" fill="#d5e4eb"/><path d="M32 39h36M32 51h36M32 63h36M32 75h26" stroke="#76a6c0" fill="none"/>',
@@ -45,7 +48,6 @@ const glyphs: Record<string, string> = {
   fish: "🐟",
   tree: "🌳",
   flower: "🌸",
-  apple: "🍎",
   cake: "🍰",
   school: "🏫",
   house: "🏠",
@@ -62,6 +64,7 @@ export function pictureSvg(keyword: string): string | null {
     .trim()
     .toLowerCase()
     .replace(/^(a |an |the |my |your )/, "")
+    .replace(/^(apples|bananas|carrots)$/, s => s.slice(0, -1))
     .replace(/^(eyes|ears|arms|legs|hands|feet)$/, (s) => (s === "feet" ? "foot" : s.slice(0, -1)));
   const drawing =
     parts[key] ||
@@ -141,6 +144,16 @@ export function worksheetPictureIssues(doc: any): string[] {
           `${section.label} item ${item.number}: unsupported picture '${item.visual}'. Preserve the intended object. Never substitute an unrelated supported icon. If its exact picture is unavailable, rewrite this item with a complete text clue and visual="". Available pictures: ${PICTURE_KEYS.join(", ")}.`,
         );
       const task = `${section.instructions ?? ''} ${item.prompt ?? ''}`;
+      if (/\b(?:name|say) three family (?:members|words)\b/i.test(item.prompt ?? '') && /picture/i.test(task)
+        && worksheetPictureKey(item) !== 'family')
+        issues.push(`${section.label} item ${item.number}: naming three family members needs the complete supplied family picture. Use visual="family", not a portrait of one person.`);
+      if (!section.passage?.trim() && item.choices?.some((c: string) => /^I like\b/i.test(c))
+        && item.choices?.some((c: string) => /^I (?:do not|don['’]t) like\b/i.test(c))
+        && !/\b(?:you|your|own|true for)\b/i.test(task))
+        issues.push(`${section.label} item ${item.number}: a food picture does not establish a preference. Ask for the student's own truthful preference, or supply a named speaker's preference in passage.`);
+      if (item.choices?.some((c: string) => /^yes$/i.test(c)) && item.choices?.some((c: string) => /^no$/i.test(c))
+        && /\bsays?\b.*["“]/i.test(item.prompt ?? '') && !/\?/.test(item.prompt ?? ''))
+        issues.push(`${section.label} item ${item.number}: a quoted preference followed by Yes/No has no explicit question. Ask a clear question supported by the quote, such as "Does Mia like apples?", with both true and false cases.`);
       const explicitlyNeedsPicture = /\b(?:look\s+at|name|label|match|circle|choose|point\s+to|color|identify|find|use|describe)\b[^.!?]{0,70}\b(?:picture|image|illustration|drawing)s?\b/i.test(task);
       // "Look. Circle the weather word: sun / shirt" supplies its own clue.
       // A bare "Look. Write." still needs a picture or a supplied text resource.
@@ -154,8 +167,23 @@ export function worksheetPictureIssues(doc: any): string[] {
         || (/\blook at (?:the |each |this )?picture\b/i.test(task) && /\b(?:write|circle|choose) (?:the |one )?(?:correct )?word\b/i.test(task));
       if (namesPicturedObject && hasPicture) {
         const offered = item.choices?.length ? item.choices : section.wordBank;
-        if (offered?.length && !offered.some((word: string) => pictureSvg(word.replace(/[.!?]$/, '')) === pictureSvg(worksheetPictureKey(item))))
+        const coloredShape = /^(red|blue|green) (circle|square)$/.exec(worksheetPictureKey(item).toLowerCase());
+        const requestedAttribute = /\bcolor(?: word)?\b/i.test(item.prompt ?? '') ? coloredShape?.[1]
+          : /\bshape(?: word)?\b/i.test(item.prompt ?? '') ? coloredShape?.[2] : undefined;
+        if (offered?.length && !offered.some((word: string) => pictureSvg(word.replace(/[.!?]$/, '')) === pictureSvg(requestedAttribute ?? worksheetPictureKey(item))))
           issues.push(`${section.label} item ${item.number}: the pictured object '${worksheetPictureKey(item)}' is absent from the answer choices or word bank. Supply the intended exact picture and its correct word; do not use a decorative icon.`);
+      }
+      if (item.choices?.some((c: string) => /^yes$/i.test(c)) && section.passage) {
+        const statement = /^([\p{L}'-]+) feels? (happy|sad|okay)\b/iu.exec(item.prompt ?? '');
+        if (statement) {
+          const facts = [...section.passage.matchAll(/([\p{L}'-]+) feels? (happy|sad|okay)\b/giu)]
+            .filter(m=>m[1]?.toLowerCase()===statement[1]?.toLowerCase());
+          if (!facts.length) issues.push(`${section.label} item ${item.number}: the passage never states ${statement[1]}'s feeling; an unstated fact cannot be marked false. Supply an explicit feeling or ask about a stated fact.`);
+          else if (facts.length===1 && /^(?:happy|sad|okay|smile)$/.test(worksheetPictureKey(item))) {
+            const visual = worksheetPictureKey(item)==='smile' ? 'happy' : worksheetPictureKey(item);
+            if (visual!==facts[0]?.[2]?.toLowerCase()) issues.push(`${section.label} item ${item.number}: the feeling picture contradicts the person's actual feeling in the passage. Illustrate the true clue, not the false statement.`);
+          }
+        }
       }
     }
   return issues;
@@ -163,19 +191,38 @@ export function worksheetPictureIssues(doc: any): string[] {
 
 export function youngWorksheetIssues(doc: any): string[] {
   const issues = worksheetPictureIssues(doc);
-  for (const section of doc?.sections ?? [])
+  for (const section of doc?.sections ?? []) {
+    const seen = new Set<string>();
     for (const item of section.items ?? []) {
+      const signature = JSON.stringify([item.prompt?.toLowerCase().replace(/\s+/g, ' ').trim(), item.visual ?? '', item.choices ?? []]);
+      if (seen.has(signature)) issues.push(`${section.label} item ${item.number}: repeats an identical question in this section. Use a different complete clue or operation.`);
+      seen.add(signature);
       if (/(?:touch|point to|show me)\s+(?:your|my)\s+_+/i.test(item.prompt) && !pictureSvg(worksheetPictureKey(item)))
         issues.push(`${section.label} item ${item.number}: missing picture clue for an ambiguous blank`);
       if (/this word is for (?:your|the)\b/i.test(item.prompt))
         issues.push(`${section.label} item ${item.number}: replace circular word-copy clue with a meaningful task`);
+      const task = `${section.instructions ?? ''} ${item.prompt ?? ''}`;
+      if (/write your (?:name|age) again/i.test(item.prompt ?? ''))
+        issues.push(`${section.label} item ${item.number}: do not repeat the same personal-information answer to fill a section; use a new supplied situation`);
+      if (/my name is\b[^.!?]+[.!?"”].*write the word for/i.test(item.prompt ?? ''))
+        issues.push(`${section.label} item ${item.number}: ask clearly to write the person's name, not "the word for" a person. Include that exact name in the word bank.`);
+      const statedAge = /\b(?:am|is) (\d{1,2}) years old\b/i.exec(item.prompt ?? '')?.[1];
+      if (statedAge && /write the number/i.test(item.prompt ?? '') && section.wordBank?.length && !section.wordBank.includes(statedAge))
+        issues.push(`${section.label} item ${item.number}: add the explicitly stated answer ${statedAge} to the word bank; every required answer must be available.`);
+      if (/yes\s*(?:or|\/)\s*no/i.test(task) && /(?:my name is|i am|i feel)\s*_+/i.test(item.prompt ?? ''))
+        issues.push(`${section.label} item ${item.number}: Yes/No cannot be decided from unfilled personal-information blanks. Supply a fictional speaker's completed facts, or ask for the child's own answer without a fixed key.`);
+      if (!section.passage?.trim() && /\b(?:boy|girl|man|woman) in (?:my|your|the|a) family\b|\b(?:kind woman|tall man)\b/i.test(item.prompt ?? ''))
+        issues.push(`${section.label} item ${item.number}: family relationships need a supplied context; appearance, kindness or being a boy/girl does not identify a parent or sibling. Supply a short family story in passage.`);
+      if (/\b(?:feel|feeling|happy|sad|okay)\b/i.test(task) && /^(?:heart|star)$/i.test(worksheetPictureKey(item)))
+        issues.push(`${section.label} item ${item.number}: use the actual happy, sad or okay face, or no picture for a self-contained text task; a heart/star is not a feeling clue.`);
     }
+  }
   return issues;
 }
 
 export function youngPresentationIssues(presentation: any, context: any): string[] {
   if (
-    !/flash[ -]?cards?/i.test(
+    !/(?:flash|picture)[ -]?cards?/i.test(
       JSON.stringify([context?.overview, context?.lessonPlan, context?.activity, presentation]),
     )
   )

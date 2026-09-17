@@ -13,6 +13,7 @@ export const GENERATION_PHASES = [
   { key: "differentiation", labels: ["Creating support and challenge activities"] },
 ] as const;
 export type GenerationStage = (typeof GENERATION_PHASES)[number]["key"];
+const answerText = (s: string) => s.toLowerCase().replace(/[‘’]/g, "'").replace(/^\s*\d+[.)]\s*/, '').replace(/[.!?]+$/, '').trim();
 export function answerAlignmentIssue(stage: GenerationStage, prior: Partial<LessonPackage>, patch: Partial<LessonPackage>): string | null {
   if (stage !== "teacher" && stage !== "teacherB") return null;
   const student = stage === "teacher" ? prior.worksheet?.student : prior.worksheet?.studentB;
@@ -20,6 +21,32 @@ export function answerAlignmentIssue(stage: GenerationStage, prior: Partial<Less
   if (!student || !answers || answers.length !== student.sections.length) return "The answer key must have one section for each student worksheet section, in the same order.";
   for (const [i, section] of student.sections.entries()) {
     if (answers[i]?.answers.length !== section.items.length) return `Answer section ${i + 1} must contain exactly ${section.items.length} separate answers, one for each question. Include an individual acceptable-response rule for each open-ended item; never combine items into one answer.`;
+    for (const [j, item] of section.items.entries()) {
+      const key = answers[i].answers[j]?.trim() ?? '';
+      const personal = /\b(?:your (?:own )?(?:name|age)|how do you feel|do you like|(?:food|feeling) (?:word )?for today)\b/i.test(item.prompt)
+        || /\byour own (?:answers|opinion|preference)\b/i.test(section.instructions)
+        || (/^I\s+_+/i.test(item.prompt) && /\blike\b/i.test(section.wordBank.join(' ')));
+      const acceptable = /\b(?:accept|own|vary|varies|open|either|any|example|sample|possible)\b|\bor\b/i.test(key)
+        || /\bi like\b.*\bi (?:do not|don['’]t) like\b/i.test(key);
+      if (personal && !acceptable && !section.passage.trim()) return `Answer section ${i + 1}, item ${j + 1} asks for personal information or a preference. Accept the student's truthful response and give an acceptable-response rule, not a fixed answer.`;
+      const oneWord = /\b(?:one|a|the|family|color|shape|food) word\b/i.test(`${section.instructions} ${item.prompt}`);
+      const options = item.choices.length ? item.choices : oneWord ? section.wordBank : [];
+      if (options.length && !personal && !acceptable) {
+        const clean = answerText(key).replace(/^[a-e][.)]\s*/,'');
+        const matches = options.some(c => clean === answerText(c) || clean.startsWith(answerText(c) + ' (') || clean.startsWith(answerText(c) + ' —'));
+        if (!matches && !/^[a-e][.)]?$/i.test(key)) return `Answer section ${i + 1}, item ${j + 1} must match an actual printed choice or word-bank entry: ${options.join(', ')}. Solve this item from its supplied clue.`;
+      }
+      // A literal cloze whose completed sentence appears once in the supplied passage
+      // provides a reliable check without guessing the student's intended answer.
+      const cloze = /^(.*?)_+(.*?)[.!?]?\s*$/.exec(item.prompt);
+      if (cloze && section.passage.trim()) {
+        const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        const prefix = (cloze[1] ?? '').trim(), suffix = (cloze[2] ?? '').replace(/[.!?]$/,'').trim();
+        const pattern = new RegExp(escape(prefix) + '\\s+([^.!?\\n]+?)' + (suffix ? '\\s+' + escape(suffix) : '') + '(?=[.!?]|$)','gi');
+        const expected = [...new Set([...section.passage.matchAll(pattern)].map(m=>answerText(m[1] ?? '')))];
+        if (expected.length===1 && !acceptable && answerText(key)!==expected[0]) return `Answer section ${i + 1}, item ${j + 1} contradicts its printed passage. The completed cloze gives "${expected[0]}". Use the actual supplied worksheet, not another version.`;
+      }
+    }
   }
   return null;
 }

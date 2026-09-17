@@ -72,6 +72,33 @@ NON-NEGOTIABLE DESIGN PRINCIPLES
 12. REASONABLE ASSUMPTIONS: when optional teacher information is missing, make sensible
     professional assumptions silently. Never ask the teacher questions. Never leave placeholders
     such as "TBD", "[insert]" or "as needed".
+13. PERSONAL RESPONSES: a child's own name, age, feelings, family and food preferences are
+    open answers. The key must accept the child's truthful response, never a fixed yes/no,
+    favorite food or feeling. Do not ask yes/no about unfilled personal-information blanks.
+    Use a named fictional speaker with all facts printed when a single correct answer is needed.
+14. FAMILY CONTEXT: establish relationships in a short supplied family story before testing them.
+    A kind woman is not necessarily a mom; a tall man is not necessarily a dad. A boy/girl in
+    a family is not enough to distinguish a sibling from a baby. Never infer roles from appearance
+    alone. Teach any clue words such as mother/father first; avoid untaught "sibling" for A1 kids.
+    Do not assume every child has every family member; allow a fictional family for practice.
+15. COMPLETE RESOURCES: built-in family, food, feeling, color, shape and action pictures are
+    available. Use the exact requested object or action, not decorative hearts/stars for feelings.
+    Picture cards and flashcards are supplied with the exported presentation; tell teachers to
+    print those supplied cards, never to make or find missing pictures. A color/shape clue must
+    show the actual colored shape (e.g. visual="red circle"), not describe a missing colored box.
+    Do not repeat a child's name or age question with "again" just to fill a section. Vary the
+    operation or use different named characters with complete, simple printed facts.
+16. FOOD PREFERENCES: teach "I like apples/bananas/carrots" (plural) and "I like milk/bread"
+    (uncountable), never "I like apple". Supply correctly inflected word-bank entries when needed.
+    A food picture alone cannot determine whether anyone likes it. For a closed question, print
+    a named speaker's preference and ask a specific comprehension question. For a personal
+    preference, explicitly accept either truthful response. "Mia says I like apples. Yes/No"
+    has no clear question: ask "Does Mia like apples?" and include yes and no cases.
+17. TRUE/FALSE EVIDENCE: an unstated fact is not false. Every Yes/No judgment must follow
+    from an explicit supplied fact or a clear picture. If a passage says Tom is happy and the
+    item falsely says he is sad, show the happy face (the actual clue), not a sad face.
+    If children must name three family members from one picture, use visual="family", which
+    supplies the full family group, not a single person's portrait.
 
 STYLE
 - ${AMERICAN_ENGLISH_RULES}
@@ -404,6 +431,9 @@ content: never answers, never teacher notes, never explanations of the design.
   "B. definition two") and leave every item's choices array empty. Never repeat the same option
   list on every item.
 - Everything must be answerable on paper. Never write "teacher will provide".
+- For a speaking objective, use short oral responses and pointing/circling with sentence frames;
+  do not replace the objective with 25 written definitions. Clearly say when the teacher reads
+  the supplied text aloud. Keep any printed family story in passage so every clue is available.
 - If group work is enabled, student instructions must state what the group does and what each
   student personally writes on their own copy.
 

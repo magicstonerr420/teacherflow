@@ -22,6 +22,7 @@ const tasks = [
 export async function generateAlternateWorksheet(request: LessonRequest, prior: Partial<LessonPackage>, generate: Generate): Promise<Partial<LessonPackage>> {
  const original = withoutListeningSections(withoutReadingSections(prior)).worksheet?.student;
  if (!original?.sections.length) throw new LessonGenerationError('missing_worksheet', 'Generate Version A before preparing its alternate worksheet.');
+ const needsFamilyContext = /\bfamily\b/i.test(request.learningObjective) && !prior.reading;
  const available = [...tasks];
  const plan = Array.from({ length: 5 }, (_, i) => {
   const different = available.findIndex(t => t.format !== original.sections[i]?.format);
@@ -33,6 +34,7 @@ export async function generateAlternateWorksheet(request: LessonRequest, prior: 
   })).length(5),
   format: z.enum(['matching', 'short-answer', 'multiple-choice']),
   ...(prior.reading ? { passage: z.enum(['']) } : {}),
+  ...(needsFamilyContext ? { passage: z.string().min(20).describe('A short supplied family context naming people and explicitly stating their relationships. The teacher may read it aloud.') } : {}),
  });
  const schema = z.object({ worksheet: z.object({ studentB: worksheetSchema.shape.studentB.extend({ sections: z.array(section).length(5) }) }) });
  const system = `${MASTER_SYSTEM_PROMPT}\n${prior.reading ? READING_HANDOFF : ''}\n${prior.listening ? LISTENING_HANDOFF : ''}\n${ALTERNATE_RULES}`;

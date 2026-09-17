@@ -204,16 +204,20 @@ export async function buildPresentationBlob(
   // -------------------------------------------------------------- Content
   for (const slide of slides) {
     if (slide.layout === "vocabulary" && slide.vocabulary.length) {
+      for (const v of slide.vocabulary) {
+        const prompt = v.imagePrompt || "built-in:" + v.word;
+        if (!images[prompt]) {
+          const picture = await picturePng(v.word);
+          if (picture) {
+            images[prompt] = picture;
+            imageRatios.set(picture, 1);
+          }
+        }
+        v.imagePrompt = prompt;
+      }
       if (isYoungA1(request)) {
         for (const v of slide.vocabulary) {
           const prompt = v.imagePrompt || "built-in:" + v.word;
-          if (!images[prompt]) {
-            const picture = await picturePng(v.word);
-            if (picture) {
-              images[prompt] = picture;
-              imageRatios.set(picture, 1);
-            }
-          }
           const display = {
             ...slide,
             title: v.word,
@@ -747,8 +751,7 @@ export async function generateSlideImages(
 
 export function flashcardsFor(lesson: LessonPackage, request: LessonRequestInput) {
   if (
-    !isYoungA1(request) ||
-    !/flash[ -]?cards?/i.test(
+    !/(?:flash|picture)[ -]?cards?/i.test(
       JSON.stringify([lesson.overview, lesson.lessonPlan, lesson.presentation, lesson.activity]),
     )
   )
@@ -758,5 +761,9 @@ export function flashcardsFor(lesson: LessonPackage, request: LessonRequestInput
     for (const v of slide.vocabulary)
       if (v.word.trim())
         unique.set(v.word.trim().toLowerCase(), { word: v.word, imagePrompt: v.imagePrompt });
+  // Cards are physical lesson materials at every age. Include required words even
+  // when a model taught one on a content slide instead of a vocabulary slide.
+  for (const word of (request.requiredVocabulary ?? '').split(/[,;\n]+/).map(w => w.trim()).filter(Boolean))
+    if (!unique.has(word.toLowerCase())) unique.set(word.toLowerCase(), { word, imagePrompt: '' });
   return [...unique.values()];
 }

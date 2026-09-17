@@ -136,6 +136,9 @@ export const generateLessonStage = createServerFn({ method: "POST" })
     const modelPrior = stage === "teacher" || stage === "teacherB" ? withoutListeningSections(withoutReadingSections(prior)) : prior;
     const schema = reading ? readingCoreStageSchema(stage, modelPrior) : schemas[stage];
     const system = `${MASTER_SYSTEM_PROMPT}${reading ? `\n${READING_HANDOFF}` : ''}${listening ? `\n${LISTENING_HANDOFF}` : ''}`;
+    const answering = stage === 'teacher' || stage === 'teacherB';
+    const answerDoc = stage === 'teacherB' ? modelPrior.worksheet?.studentB : modelPrior.worksheet?.student;
+    const answerInput = `${renderLessonContext(request)}\nTAUGHT LANGUAGE\n${JSON.stringify(modelPrior.overview)}\nEXACT STUDENT WORKSHEET TO ANSWER\n${JSON.stringify(answerDoc)}\nCURRENT PART: ${stage}. Return only the required teacher fields. Solve each printed item independently, in section and item order. Match every section label and title. For each answer use the full correct choice or word-bank entry, with a separate answer per question. Do not copy another version's answers or invent different characters. Use the printed passage and actual visual clue. A child's own name, age, feelings or food preferences must have an acceptable-response rule; never assign one fixed answer. Respect singular/plural grammar in completed sentences. Keep explanations brief. Do not change student questions.`;
 
     try {
       if (stage === 'studentB') {
@@ -146,7 +149,7 @@ export const generateLessonStage = createServerFn({ method: "POST" })
         schema,
         schemaName: `teacherflow_${stage}`,
         system,
-        input: `${contextBlock(request, modelPrior, stage === 'teacherB' ? 'studentB' : undefined)}\n\n${STAGE_PROMPTS[promptStage]}\n\nCURRENT PART: ${stage}. Generate ONLY the fields required by the response schema for this part. Other parts are handled in separate requests. Preserve completed student items exactly when writing teacher answers. Solve each supplied question independently from its printed clue and picture; do not reuse an earlier key. Generate keys only for the worksheet sections shown; DeepSeek's reading key is added separately. Keep prose concise and avoid repeating prior lesson content outside the required fields.`,
+        input: answering ? answerInput : `${contextBlock(request, modelPrior)}\n\n${STAGE_PROMPTS[promptStage]}\n\nCURRENT PART: ${stage}. Generate ONLY the fields required by the response schema for this part. Other parts are handled in separate requests. Keep prose concise and avoid repeating prior lesson content outside the required fields.`,
         noTech: isNoTechRequest(request.technologyAvailable),
       });
       if (stage === 'student') {
@@ -177,10 +180,10 @@ export const generateLessonStage = createServerFn({ method: "POST" })
       if (alignmentIssue) {
         result = await generateNoTechSafe<Partial<LessonPackage>>({
           schema, schemaName: `teacherflow_${stage}_repair`, system,
-          input: `${contextBlock(request, modelPrior, stage === 'teacherB' ? 'studentB' : undefined)}\n\nCURRENT PART: ${stage}. Generate only the required answer-key fields. ${alignmentIssue} Answer the existing worksheet questions exactly. The separate DeepSeek reading is excluded from these keys. Do not invent or change questions.`,
+          input: `${answerInput}\nVALIDATION ISSUE TO FIX: ${alignmentIssue}\nReturn the complete corrected answer-key fields for this exact worksheet.`,
           noTech: isNoTechRequest(request.technologyAvailable),
         });
-        if (answerAlignmentIssue(stage, modelPrior, result)) throw new LessonGenerationError("answer_alignment", "The answer key did not match the number of student questions, even after a repair attempt. Your worksheet is retained. Retry this part.");
+        if (answerAlignmentIssue(stage, modelPrior, result)) throw new LessonGenerationError("answer_alignment", "The answer key still needs corrections to match the worksheet questions and clues. Your worksheet is retained. Retry this part.");
       }
       const patch = reading ? integrateReadingPatch(prior, { ...result, reading }) : result;
       return listening ? integrateListeningPatch(prior, { ...patch, listening }) : patch;
