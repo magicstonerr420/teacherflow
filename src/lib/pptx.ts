@@ -1,4 +1,5 @@
 import {repairDrawingParagraphs} from './pptx-xml';
+import { loadPresentationTools } from './presentation-tools';
 import { lessonImagePrompts } from "./image-plan";
 import { isYoungA1, picturePng, youngPresentationIssues } from "./young-learners";
 import { youngSlidePages, wrapSlideText } from "./young-slides";
@@ -135,7 +136,7 @@ export async function buildPresentationBlob(
       );
   }
   images = { ...images };
-  const { default: PptxGenJS } = await import("pptxgenjs");
+  const { PptxGenJS } = await loadPresentationTools();
   const pptx = new PptxGenJS();
   pptx.layout = "LAYOUT_16x9";
   pptx.author = "TeacherFlow";
@@ -277,7 +278,7 @@ export async function buildPresentationBlob(
  * everywhere, not just in forgiving viewers.
  */
 async function repairPresentationXml(blob: Blob): Promise<Blob> {
-  const { default: JSZip } = await import("jszip");
+  const { JSZip } = await loadPresentationTools();
   const zip = await JSZip.loadAsync(await blob.arrayBuffer());
   const file = zip.file("ppt/presentation.xml");
   if (!file) throw new Error("PowerPoint could not be built: presentation data is missing.");

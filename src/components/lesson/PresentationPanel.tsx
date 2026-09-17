@@ -1,5 +1,6 @@
 import { isYoungA1, pictureUrl } from "@/lib/young-learners";
 import { youngSlidePages } from "@/lib/young-slides";
+import { loadPresentationTools } from "@/lib/presentation-tools";
 import {
   AlertCircle,
   CheckCircle2,
@@ -151,6 +152,7 @@ export function PresentationActions({
   const [withImages, setWithImages] = useState(false);
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({});
   const [failureMessage, setFailureMessage] = useState("");
+  const [imageFailure, setImageFailure] = useState(false);
 
   useEffect(() => {
     setBlob(null);
@@ -182,6 +184,8 @@ export function PresentationActions({
     setBusy(true);
     setFailed(false);
     try {
+      setStatus("Loading PowerPoint export tools…");
+      await loadPresentationTools();
       let images = {};
       if (withImages && imagePrompts.length) {
         setStatus(`Creating ${imagePrompts.length} illustrations…`);
@@ -192,6 +196,7 @@ export function PresentationActions({
       const built = await buildPresentationBlob(lesson, request, images);
       setBlob(built);
     } catch (error) {
+      setImageFailure(error instanceof IllustrationGenerationError);
       if (error instanceof IllustrationGenerationError) setImagePreviews(error.images);
       console.error(error);
       setFailureMessage(
@@ -210,6 +215,8 @@ export function PresentationActions({
       setBlob(await buildPresentationBlob(lesson, request, withAvailable ? imagePreviews : {}));
       setFailed(false);
     } catch (error) {
+      setImageFailure(false);
+      setFailed(true);
       setFailureMessage(error instanceof Error ? error.message : "Could not export the slides.");
     } finally {
       setBusy(false);
@@ -295,18 +302,18 @@ export function PresentationActions({
             <AlertTitle>PowerPoint generation failed</AlertTitle>
             <AlertDescription className="space-y-3">
               <p>{failureMessage}</p>
-              {isYoungA1(request) ? (
+              {imageFailure && isYoungA1(request) ? (
                 <p>
                   Export with available pictures keeps completed illustrations and built-in picture
                   cards. Optional slide illustrations may be absent. A flashcard that still needs a
                   picture will be reported.
                 </p>
               ) : null}
-              <Button size="sm" variant="outline" onClick={() => void generate()} disabled={busy}>
-                Retry missing pictures
+              <Button size="sm" variant="outline" onClick={() => void (imageFailure || !Object.keys(imagePreviews).length ? generate() : exportAvailable())} disabled={busy}>
+                {imageFailure ? "Retry missing pictures" : "Retry PowerPoint export"}
               </Button>
-              <Button size="sm" variant="outline" onClick={() => void exportAvailable(false)} disabled={busy}>Export without AI illustrations</Button>
-              {Object.keys(imagePreviews).length > 0 ? (
+              {imageFailure ? <Button size="sm" variant="outline" onClick={() => void exportAvailable(false)} disabled={busy}>Export without AI illustrations</Button> : null}
+              {imageFailure && Object.keys(imagePreviews).length > 0 ? (
                 <Button
                   size="sm"
                   variant="outline"
