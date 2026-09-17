@@ -13,17 +13,52 @@ import { generateSpeech } from './speech.server';
 import type { LessonRequestInput, LessonPackage } from './lesson-schema';
 import { isNoTechRequest } from './no-tech';
 
+const CONTENT_ERROR = 'We could not finish checking the listening script and its questions. Your existing lesson has been kept. Please try generating the listening activity again.';
+// Put the word budget in the response contract, not just in the prompt. Eight
+// paragraphs of 25–30 words produce a 200–240-word script without filler added
+// by the app. Keep the public activity and saved-recording formats unchanged.
+const scriptRepairSchema = z.object({
+  paragraphs: z.array(z.string().trim().regex(/^\S+(?:\s+\S+){24,29}$/, 'Each paragraph must contain 25–30 spoken words.')).length(8),
+}).strict();
+// Providers can miss a paragraph boundary while still producing a usable story.
+// Validate the assembled script's real length/answers instead of rejecting an
+// otherwise valid activity because one paragraph has 24 or 31 words.
+const scriptPartsSchema = z.object({ paragraphs: z.array(z.string().trim().min(1)).min(1) }).strict();
+function checkedResponse<T>(schema: z.ZodType<T>, value: unknown): T {
+  const parsed = schema.safeParse(value);
+  if (!parsed.success) throw new Error(CONTENT_ERROR);
+  return parsed.data;
+}
+
 /** Repair questions against a fixed script, so correcting a quote cannot rewrite its source. */
 async function repairListening(value: unknown, issue: string, context: unknown, generate: typeof requestOpenRouter) {
-  const parsed = listeningSchema.safeParse(value);
+  let parsed = listeningSchema.safeParse(value);
   const words = parsed.success ? parsed.data.script.split(/\s+/u).length : 0;
-  if (parsed.success && words >= 160 && words <= 300 && /supporting quote|questions must be distinct|match one of its choices/.test(issue)) {
+  if (parsed.success && (words < 160 || words > 300)) {
+    const draft = parsed.data;
+    const repaired = checkedResponse(scriptPartsSchema, await generate({
+      system: LISTENING_SYSTEM,
+      schemaName: 'teacherflow_listening_script_repair',
+      schema: zodToJsonSchema(scriptRepairSchema, { $refStrategy: 'none' }),
+      input: `${JSON.stringify(context)}\nDRAFT ACTIVITY\n${JSON.stringify(draft)}\nThe script alone contains ${words} words. Return ONLY eight paragraphs, each with 25–30 spoken words. Count each paragraph before returning. Together they must tell one coherent 200–240-word story. Preserve the narrator, characters, facts and answers tested by the draft questions. Keep existing evidence sentences verbatim wherever possible. ${words < 160 ? 'Develop the same story with relevant simple actions and details.' : 'Remove unnecessary details while retaining the facts tested by the questions.'} Match the supplied age, English level and objective. Do not pad by repeating entire paragraphs or adding headings, word counts, teacher instructions, or questions. Do not return the full activity.`,
+    }));
+    value = { ...draft, script: repaired.paragraphs.join('\n\n') };
+    // Expansion can change an evidence sentence. Check the questions against the
+    // final script, and repair only questions if necessary; never shorten it again.
+    try { return validateListening(value, draft.cefr); }
+    catch (error) {
+      issue = error instanceof Error ? error.message : 'Invalid activity';
+      if (!/supporting quote|questions must be distinct|match one of its choices/.test(issue)) throw new Error(CONTENT_ERROR);
+    }
+    parsed = listeningSchema.safeParse(value);
+  }
+  if (parsed.success && /supporting quote|questions must be distinct|match one of its choices/.test(issue)) {
     const draft = parsed.data;
     const quotes = [...new Set(draft.script.match(/[^.!?]+(?:[.!?]+|$)/gu)?.map(s => s.trim()).filter(Boolean))];
     if (quotes.length) {
       const question = listeningSchema.shape.questions.element.extend({ evidence: z.enum(quotes as [string, ...string[]]) });
       const schema = z.object({ questions: z.array(question).min(3).max(5) }).strict();
-      const result = schema.parse(await generate({
+      const result = checkedResponse(schema, await generate({
         system: LISTENING_SYSTEM,
         schemaName: 'teacherflow_listening_questions_repair',
         schema: zodToJsonSchema(schema, { $refStrategy: 'none' }),
@@ -108,7 +143,7 @@ export async function generateListening(request: LessonRequestInput, lesson: Par
     // Young beginners cannot compensate for a contradictory story or an invented
     // character in a question. Use one bounded review with the existing lesson model.
     if (reviewer) {
-      const reviewInput = `${JSON.stringify(context)}\nReview and finalize this draft for ages 5-7 A1: ${JSON.stringify(value)}\n${issue ? `Validation issue to correct: ${issue}\n` : ''}Return the complete corrected activity. Keep valid content; correct factual or internal contradictions, unsupported character names, ambiguous questions, untaught answer choices and grammatical errors. Questions must refer to the actual narrator or named characters; never invent a name. Every answer must follow directly from its exact evidence quote. Copy evidence verbatim from the FINAL script, including pronouns and punctuation; never paraphrase evidence. Do not mistake ordinary clothing for waterproof clothing. Keep all facts consistent across the script, questions, choices, answers and explanations. Keep spoken language simple and instructions self-contained. Preserve the length: the script alone MUST contain 200-240 words (at least 160); do not shorten the story while fixing it. Do not read questions or answers aloud in the script.`;
+      const reviewInput = `${JSON.stringify(context)}\nReview and finalize this draft for ages 5-7 A1: ${JSON.stringify(value)}\n${issue ? `Validation issue to correct: ${issue}\n` : ''}Return the complete corrected activity. Keep valid content; correct factual or internal contradictions, unsupported character names, ambiguous questions, untaught answer choices and grammatical errors. Questions must refer to the actual narrator or named characters; never invent a name. Keep family relationships precise: a baby brother counts as a brother. Ask about a child's baby brother or baby sister, never about the child's own baby. When two characters are brothers or sisters, do not ask an unqualified 'Who is the brother/sister?' question with both among the choices: identify the specific sibling by an age or action stated in the script. Check EVERY distractor, including a baby sibling, to ensure only one choice is correct. A feelings question must identify the moment when the story includes changing feelings. Every answer must follow directly from its exact evidence quote. Copy evidence verbatim from the FINAL script, including pronouns and punctuation; never paraphrase evidence. Do not mistake ordinary clothing for waterproof clothing. Keep all facts consistent across the script, questions, choices, answers and explanations. Keep spoken language simple and instructions self-contained. Preserve the length: the script alone MUST contain 200-240 words (at least 160); do not shorten the story while fixing it. Do not read questions or answers aloud in the script.`;
       value = await requestOpenRouter({ ...args, schemaName: 'teacherflow_listening_review', input: reviewInput });
       try { validate(value); }
       catch (error) {
@@ -117,9 +152,11 @@ export async function generateListening(request: LessonRequestInput, lesson: Par
     } else if (issue) {
       value = await repairListening(value, issue, context, requestReadingOpenRouter);
     }
-    return { status: 'ready' as const, value: validate(value), fingerprint: id };
+    try { return { status: 'ready' as const, value: validate(value), fingerprint: id }; }
+    catch { throw new Error(CONTENT_ERROR); }
   });
-  return result.status === 'ready' ? { ...result, value: validate(result.value) } : result;
+  try { return result.status === 'ready' ? { ...result, value: validate(result.value) } : result; }
+  catch { throw new Error(CONTENT_ERROR); }
 }
 export async function generateListeningAudio(fingerprint: string, scope: string, choice: VoiceChoice, limited = false) {
   const script = lookup<ListeningState>(fingerprint, scope);
