@@ -162,7 +162,7 @@ export const worksheetItemSchema = z.object({
   /** How many blank writing lines to print under this item (0 = none). */
   answerLines: z.number(),
   /**
-   * Small topic-related picture cue for young children (ages 6-9 only).
+   * Small topic-related picture cue for young children (ages 5-9 only).
    * One lowercase keyword such as "star", "rocket", "cat". Empty string otherwise.
    */
   visual: z.string(),

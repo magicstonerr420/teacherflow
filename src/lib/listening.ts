@@ -79,7 +79,7 @@ export function integrateListeningPatch(prior: Partial<LessonPackage>, patch: Pa
 export function withoutListeningSections(lesson: Partial<LessonPackage>): Partial<LessonPackage> {
   if (!lesson.worksheet) return lesson;
   return { ...lesson, worksheet: { ...lesson.worksheet,
-    student: { ...lesson.worksheet.student, sections: lesson.worksheet.student.sections.filter(s => s.label !== LISTENING_LABEL) },
-    teacher: { ...lesson.worksheet.teacher, sections: lesson.worksheet.teacher.sections.filter(s => s.label !== LISTENING_LABEL) },
+    student: lesson.worksheet.student ? { ...lesson.worksheet.student, sections: lesson.worksheet.student.sections.filter(s => s.label !== LISTENING_LABEL) } : lesson.worksheet.student,
+    teacher: lesson.worksheet.teacher ? { ...lesson.worksheet.teacher, sections: lesson.worksheet.teacher.sections.filter(s => s.label !== LISTENING_LABEL) } : lesson.worksheet.teacher,
   }, ...(lesson.answerKey ? { answerKey: { sections: lesson.answerKey.sections.filter(s => s.notes !== LISTENING_LABEL) } } : {}) };
 }

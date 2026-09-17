@@ -44,8 +44,11 @@ export function integrateReadingPatch(prior: Partial<LessonPackage>, patch: Part
 }
 
 export function needsReading(request: LessonRequestInput, lesson: Partial<LessonPackage>) {
-  return /reading/i.test(`${request.mainSkill} ${request.secondarySkill ?? ""}`) ||
-    /\b(read|reading|scan|skim)\b/i.test(`${request.learningObjective} ${JSON.stringify(lesson.lessonPlan ?? {})}`);
+  if (/reading/i.test(`${request.mainSkill} ${request.secondarySkill ?? ""}`) ||
+    /\b(read|reading|scan|skim)\b/i.test(request.learningObjective)) return true;
+  // A teacher reading listening instructions aloud does not make this a reading lesson.
+  return (lesson.lessonPlan?.stages ?? []).some(stage =>
+    /\b(read|reading|scan|skim)\b[^.!?\n]{0,60}\b(passage|text|story|article|notice|email|letter)\b/i.test(stage.studentActions));
 }
 
 /** Only relevant inputs: unrelated slide/formatting edits never invalidate the cache. */

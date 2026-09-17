@@ -46,6 +46,19 @@ test("reject the ambiguous and circular tasks reported by the teacher", () => {
   doc.sections[1].items[0] = { number: 1, prompt: "Look. Circle: see / clap.", visual: "eye" };
   assert.deepEqual(youngWorksheetIssues(doc), []);
 });
+
+test("weather and clothes have real printable clues; word exercises need no invented pictures", () => {
+  const items = ['Sun', 'Rain', 'Shirt', 'Shoes', 'Hat'].map((visual, i) => ({ number: i + 1, prompt: 'Look. Write the word.', visual }));
+  const doc = { sections: [{ label: 'A', instructions: 'Look at each picture.', items }] };
+  assert.deepEqual(youngWorksheetIssues(doc), []);
+  for (const item of items) assert.doesNotMatch(pictureSvg(item.visual), /<text|<script/);
+  for (const prompt of ['Look. Circle the weather word: sun / shirt.', 'Look. Circle the word "hat": hat / rain.', 'Read: It is raining. Circle the weather: sun / rain.', 'Draw a picture of a hat.']) {
+    assert.deepEqual(youngWorksheetIssues({ sections: [{ label: 'B', items: [{ number: 1, prompt, visual: '' }] }] }), [], prompt);
+  }
+  for (const prompt of ['Look. Circle: sun / rain.', 'Look. Write the word.', 'Match the word to the picture.', 'Circle the correct picture.']) {
+    assert.match(youngWorksheetIssues({ sections: [{ label: 'B', items: [{ number: 1, prompt, visual: '' }] }] }).join(' '), /missing picture/, prompt);
+  }
+});
 test("long slide text is paginated without dropping content or overlapping the task", () => {
   const text = Array.from({ length: 80 }, (_, i) => "word" + i).join(" ");
   const pages = youngSlidePages({

@@ -2,7 +2,7 @@
 
 The owner authorized resuming reading and adding listening on September 17, 2026.
 
-- Reading and listening scripts: `deepseek/deepseek-v4-flash-0731`, with reasoning disabled and structured output validation. New listening lessons receive a script automatically. Other lessons can add an activity from Listening. Reading remains integrated with printable worksheets.
+- Reading and listening scripts: `deepseek/deepseek-v4-flash-0731`, with reasoning disabled and structured output validation. A1 ages 5–7 listening drafts also receive one content review from the existing main lesson model to correct contradictions and unsupported questions, with at most one validation repair; the reviewed activity is cached. New listening lessons receive a script automatically. Other lessons can add an activity from Listening. Reading remains integrated with printable worksheets; a teacher reading aloud alone does not trigger a separate reading exercise.
 - Standard recording: `x-ai/grok-voice-tts-1.0`, voice `eve`, with xAI provider options `speed: 0.7` and `language: en` for a measured classroom pace. The generic top-level speed option is ignored by this adapter; the provider option was verified with real audio.
 - Economy recording and one transient-error fallback: `canopylabs/orpheus-3b-0.1-ft`, voice `tara`, pinned to DeepInfra. Billing and authentication errors never trigger paid fallback attempts.
 - Local test voice: `deepgram/flux-tts:free`, voice `flux-alexis-en`. Hidden in production and refused by the production server.

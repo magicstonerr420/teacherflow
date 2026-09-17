@@ -3,6 +3,11 @@ export const isYoungA1 = (r: { studentAge: string; level: string }) =>
 
 // Original, print-safe line illustrations. No labels or answer text in the image.
 const parts: Record<string, string> = {
+  sun: '<circle cx="50" cy="50" r="22" fill="#ffdc66"/><path d="M50 5v13m0 64v13M5 50h13m64 0h13M18 18l10 10m44 44 10 10M18 82l10-10m44-44 10-10" stroke="#c47600" stroke-width="4" fill="none"/>',
+  rain: '<path d="M20 52C2 52 4 28 24 28C28 6 57 9 62 25C85 14 101 48 80 52Z" fill="#d6e2ec"/><path d="M24 63l-9 15m32-15-9 15m32-15-9 15m-26 3-7 11m30-11-7 11m32-29-7 11" stroke="#166791" stroke-width="4" fill="none"/>',
+  shirt: '<path d="M31 17L9 32l12 20 13-8v43h32V44l13 8 12-20-22-15-10-4H41Z" fill="#81c5df"/><path d="M41 13q9 19 18 0M34 76h32M22 32l-8 6m64-6 8 6" fill="none"/>',
+  shoes: '<path d="M12 23h21l10 12 35 8q14 3 13 16H9Z" fill="#c89566"/><path d="M9 53h82v8H9Z" fill="white"/><path d="M25 23v13h18m2 2-4 8m15-5-4 8m15-5-4 8" fill="none"/><path d="M10 62h21l10 12 35 8q14 3 13 12H7Z" fill="#c89566"/><path d="M7 89h82v8H7Z" fill="white"/><path d="M23 62v13h18m2 2-4 8m15-5-4 8m15-5-3 6" fill="none"/>',
+  hat: '<ellipse cx="50" cy="72" rx="43" ry="15" fill="#f3c46d"/><path d="M25 69l5-40q20-13 40 0l5 40q-25 13-50 0Z" fill="#f3c46d"/><path d="M27 53q23 12 46 0l2 16q-25 13-50 0Z" fill="#e77f72"/>',
   cow: '<path d="M28 27L15 10l23 9m34 8 13-17-23 9" fill="#e8cc92"/><path d="M25 30L7 26q-5 23 22 17m46-13 18-4q5 23-22 17" fill="#ffd1cb"/><ellipse cx="50" cy="50" rx="30" ry="34" fill="white"/><path d="M30 25q22-16 20 15L27 51Z" fill="#76513d"/><circle cx="38" cy="48" r="3"/><circle cx="65" cy="48" r="3"/><ellipse cx="50" cy="72" rx="25" ry="15" fill="#f6b8ac"/><circle cx="41" cy="72" r="3"/><circle cx="59" cy="72" r="3"/>',
   pig: '<path d="M24 37L18 9l25 12m33 16 6-28-25 12" fill="#f6b8c2"/><circle cx="50" cy="52" r="33" fill="#f6b8c2"/><circle cx="36" cy="46" r="3"/><circle cx="64" cy="46" r="3"/><ellipse cx="50" cy="66" rx="21" ry="15" fill="#ef8fa0"/><circle cx="43" cy="65" r="3"/><circle cx="57" cy="65" r="3"/>',
   duck: '<ellipse cx="47" cy="70" rx="33" ry="19" fill="#ffdc66"/><circle cx="61" cy="36" r="22" fill="#ffdc66"/><path d="M77 34l19 9-21 6" fill="#ef943d"/><circle cx="65" cy="30" r="3"/><path d="M31 65q11 20 30 3" fill="none"/>',
@@ -26,7 +31,6 @@ const glyphs: Record<string, string> = {
   star: "★",
   heart: "♥",
   smile: "☺",
-  sun: "☀",
   rocket: "🚀",
   ball: "⚽",
   car: "🚗",
@@ -93,6 +97,8 @@ Never disguise copying as matching ("This word is for your eye: ____", "hand -> 
 A matching task must present genuinely different clues and options; a naming task can say "Look. Write the word." with a picture and word bank.
 For body vocabulary, supported printable item.visual keywords are: ${BODY_VISUALS.join(", ")}. Use them on EVERY item that depends on a body picture, including Version B. Each visual must identify the correct answer, not simply match the topic. These pictures are included in the worksheet and PDF automatically.
 For farm vocabulary, printable picture cues cow, pig, duck, sheep and horse are also available on every item that needs one.
+For weather and clothes, sun, rain, shirt, shoes and hat are supplied printable illustrations. Use these exact keywords when an item needs these pictures; the teacher does not have to draw or source them.
+Use grammatically correct word-bank frames: sun and rain are nouns, while sunny and rainy are adjectives. Never make a child fill "It is ___" with sun or rain; use "I see the ___" or a picture-naming task. If multiple clothes suit a weather condition, add a specific body-part or situation clue for a single-answer question, or explicitly accept multiple appropriate answers. A hat can shade the head from sun; shoes cover feet. Do not teach that an ordinary shirt or sun hat keeps someone dry in rain. Do not force arbitrary one-to-one weather/clothing matches.
 For other topics, use only these supported picture keywords: ${PICTURE_KEYS.join(", ")}; if no supplied picture can identify an answer, write a self-contained meaningful task instead of referring to an absent picture.
 Section C must practice a useful distinct task aligned to the objective, not repeat Section B's word-copy task. For example, recognize a word among options after practicing writing it; only use action vocabulary if those actions were taught. Do not add unknown language just to make a task different.
 Keep slide studentText/bullets concise. Put adult instructions in teacherNote, not studentText. Slides should teach one idea each.
@@ -116,12 +122,13 @@ export function youngWorksheetIssues(doc: any): string[] {
         issues.push(
           `${section.label} item ${item.number}: replace circular word-copy clue with a meaningful task`,
         );
-      if (
-        /(?:look at|name|label|match|circle) (?:the |this |each )?(?:picture|image)|look\.\s*(?:write|circle)/i.test(
-          `${section.instructions} ${item.prompt}`,
-        ) &&
-        !hasPicture
-      )
+      const task = `${section.instructions ?? ''} ${item.prompt ?? ''}`;
+      const explicitlyNeedsPicture = /\b(?:look\s+at|name|label|match|circle|choose|point\s+to|color|identify|find|use|describe)\b[^.!?]{0,70}\b(?:picture|image|illustration|drawing)s?\b/i.test(task);
+      // "Look. Circle the weather word: sun / shirt" supplies its own clue.
+      // A bare "Look. Write." still needs a picture or a supplied text resource.
+      const hasTextResource = !!section.passage?.trim() || /\b(?:read|sentence|clue|passage|text|weather\s+word|clothing\s+word|clothes\s+word|spelling)\b|\bword\s+["'“‘]/i.test(task);
+      const bareLookTask = /\blook[.!]\s*(?:write|circle)\b/i.test(task) && !hasTextResource;
+      if ((explicitlyNeedsPicture || bareLookTask) && !hasPicture)
         issues.push(`${section.label} item ${item.number}: refers to a missing picture`);
     }
   return issues;

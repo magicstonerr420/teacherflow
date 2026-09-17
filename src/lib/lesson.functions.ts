@@ -1,4 +1,4 @@
-import {alternateWorksheetIssue, ALTERNATE_RULES} from './worksheet-versions';
+import {alternateWorksheetIssue, ALTERNATE_RULES, removeRepeatedWorksheetSections} from './worksheet-versions';
 import { americanEnglishContent } from './american-english';
 import { isYoungA1, youngWorksheetIssues, youngPresentationIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
@@ -50,7 +50,7 @@ async function generateNoTechSafe<T>(args: {
     system: args.system,
     input: args.input,
   });
-  if (!args.noTech) return americanEnglishContent(first) as T;
+  if (!args.noTech) return removeRepeatedWorksheetSections(americanEnglishContent(first) as Partial<LessonPackage>) as T;
 
   let current = first;
   for (let attempt = 0; attempt < 1; attempt++) {
@@ -66,7 +66,7 @@ async function generateNoTechSafe<T>(args: {
       )}\n\n${noTechRepairInstruction(found)}`,
     });
   }
-  return americanEnglishContent(current) as T;
+  return removeRepeatedWorksheetSections(americanEnglishContent(current) as Partial<LessonPackage>) as T;
 }
 
 
@@ -148,11 +148,15 @@ export const generateLessonStage = createServerFn({ method: "POST" })
         const issues = youngWorksheetIssues(result.worksheet?.[docKey]);
         if (issues.length) {
           result = await generateNoTechSafe<Partial<LessonPackage>>({
-            schema, schemaName: `teacherflow_${stage}_clarity_repair`, system: MASTER_SYSTEM_PROMPT,
+            schema, schemaName: `teacherflow_${stage}_clarity_repair`, system,
             input: `${contextBlock(request, modelPrior)}\n${STAGE_PROMPTS.materials}\nCURRENT PART: ${stage}. Revise this worksheet: ${JSON.stringify(result)}\nFix these issues: ${issues.join('; ')}`,
             noTech: isNoTechRequest(request.technologyAvailable),
           });
-          if (youngWorksheetIssues(result.worksheet?.[docKey]).length) throw new LessonGenerationError('worksheet_clarity', 'The worksheet still has missing picture clues or unclear tasks. Your earlier lesson sections are saved. Retry this worksheet section.');
+          const remaining = youngWorksheetIssues(result.worksheet?.[docKey]);
+          if (remaining.length) {
+            console.warn('TeacherFlow worksheet clarity', { stage, issues: remaining });
+            throw new LessonGenerationError('worksheet_clarity', 'The worksheet still has missing picture clues or unclear tasks. Your earlier lesson sections are saved. Retry this worksheet section.');
+          }
         }
       }
       if(stage==='studentB'){
@@ -173,7 +177,7 @@ export const generateLessonStage = createServerFn({ method: "POST" })
       const alignmentIssue = answerAlignmentIssue(stage, modelPrior, result);
       if (alignmentIssue) {
         result = await generateNoTechSafe<Partial<LessonPackage>>({
-          schema, schemaName: `teacherflow_${stage}_repair`, system: MASTER_SYSTEM_PROMPT,
+          schema, schemaName: `teacherflow_${stage}_repair`, system,
           input: `${contextBlock(request, modelPrior)}\n\nCURRENT PART: ${stage}. Generate only the required answer-key fields. ${alignmentIssue} Answer the existing worksheet questions exactly. The separate DeepSeek reading is excluded from these keys. Do not invent or change questions.`,
           noTech: isNoTechRequest(request.technologyAvailable),
         });

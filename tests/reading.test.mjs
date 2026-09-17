@@ -39,6 +39,10 @@ try {
   for(const field of ['presentation','activity','assessment','versionB','supportVersion','challengeVersion','lessonPlan']) assert.deepEqual(applied[field],lesson[field]);
   const failure=applyReading(applied,{status:'failed',error:'failed'}); assert.deepEqual(failure.worksheet,applied.worksheet);
   assert.ok(needsReading(request,lesson));
+  const listeningOnly={...request,mainSkill:'Listening',secondarySkill:'Vocabulary',learningObjective:'Identify weather and choose suitable clothes.'};
+  assert.equal(needsReading(listeningOnly,{lessonPlan:{stages:[{teacherActions:'Read the worksheet items aloud.',studentActions:'Listen and choose the word.'}]}}),false);
+  assert.equal(needsReading(listeningOnly,{lessonPlan:{stages:[{teacherActions:'Show the cards.',studentActions:'Read the word cards.'}]}}),false);
+  assert.equal(needsReading(listeningOnly,{lessonPlan:{stages:[{studentActions:'Read the short passage and find details.'}]}}),true);
   assert.deepEqual(readingContext(request,lesson),readingContext(request,{...lesson,presentation:{slides:[]}}));
   assert.notDeepEqual(readingContext(request,lesson),readingContext({...request,learningObjective:'Find the sequence of events.'},lesson));
   const partial=integrateReadingPatch({reading:state},{worksheet:{student:lesson.worksheet.student,title:'Practice'}});

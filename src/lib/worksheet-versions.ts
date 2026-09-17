@@ -1,3 +1,23 @@
+import type { LessonPackage } from './lesson-schema';
+
+/** Models occasionally repeat an entire section verbatim. Preserve every distinct task. */
+export function removeRepeatedWorksheetSections(value: Partial<LessonPackage>): Partial<LessonPackage> {
+ // Only normalize student-generation patches before their keys are written.
+ if (!value.worksheet || value.worksheet.teacher || value.worksheet.teacherB) return value;
+ const worksheet = { ...value.worksheet };
+ for (const key of ['student', 'studentB'] as const) {
+  const doc = worksheet[key];
+  if (!doc) continue;
+  const seen = new Set<string>();
+  worksheet[key] = { ...doc, sections: doc.sections.filter(section => {
+   const signature = JSON.stringify(section);
+   if (seen.has(signature)) return false;
+   seen.add(signature); return true;
+  }) };
+ }
+ return { ...value, worksheet };
+}
+
 /** Ignore labels, numbering, spacing and choice order when comparing versions. */
 const clean=(value:unknown)=>String(value??'').toLowerCase().replace(/[\p{P}\p{S}]/gu,' ').replace(/\s+/g,' ').trim();
 function questions(doc:any):string[]{

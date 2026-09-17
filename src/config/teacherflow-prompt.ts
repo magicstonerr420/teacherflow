@@ -390,12 +390,14 @@ content: never answers, never teacher notes, never explanations of the design.
   multiple-choice items, where each item has its own distinct options; otherwise an empty array),
   answerLines = how many blank writing lines to print
   (0 for multiple choice, 1 for short items, 2-6 for extended writing), and visual.
-- visual: ONLY for children aged 6-9. One lowercase keyword for a small picture cue that is
+- visual: ONLY for children aged 5-9. One lowercase keyword for a small picture cue that is
   genuinely related to this item or to the lesson topic, chosen from: star, heart, smile, sun,
   rocket, ball, car, cat, dog, bird, fish, tree, flower, apple, cake, book, pencil, school,
-  house, clock, music, game, gift, balloon, rainbow. Use it on some items only, never on every
-  item, and never randomly — it must match the item's content. Empty string "" for all other
-  ages and for every item where no picture cue fits.
+  house, clock, music, game, gift, balloon, rainbow. For A1 ages 5-7,
+  the special requirements in the CLASS BRIEF extend this list with body, farm, weather and clothing pictures
+  and take precedence: include a picture on EVERY item that depends on one. For other young
+  children, use pictures only where useful. Never use an unrelated decorative cue. Empty string
+  "" for all other ages and for items with sufficient text clues that need no picture.
 - For matching sections, put the shared option list ONCE in wordBank (e.g. "A. definition one",
   "B. definition two") and leave every item's choices array empty. Never repeat the same option
   list on every item.
