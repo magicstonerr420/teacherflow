@@ -14,6 +14,26 @@ export const GENERATION_PHASES = [
 ] as const;
 export type GenerationStage = (typeof GENERATION_PHASES)[number]["key"];
 const answerText = (s: string) => s.toLowerCase().replace(/[‘’]/g, "'").replace(/^\s*\d+[.)]\s*/, '').replace(/[.!?]+$/, '').trim();
+const optionLabel = (value: string) => /^\s*(?:\(([a-z])\)|([a-z])[.)])\s+/i.exec(value);
+const optionText = (value: string) => answerText(value.slice(optionLabel(value)?.[0].length ?? 0)).replace(/\s+/g, ' ');
+
+/** Compare the same representation on both sides, preserving letter/word agreement. */
+function matchesPrintedOption(key: string, options: string[]): boolean {
+  key = key.replace(/^\s*\d+[.)]\s+/, '');
+  const labeled = optionLabel(key);
+  const letter = (labeled?.[1] ?? labeled?.[2] ?? /^\s*\(?([a-z])[.)]?\s*$/i.exec(key)?.[1])?.toLowerCase();
+  const clean = optionText(key);
+  // A one-letter word (for example the pronoun "I") can itself be a choice.
+  if (!labeled && options.some(option => clean === optionText(option))) return true;
+  return options.some((option, i) => {
+    const printedLabel = optionLabel(option);
+    const expectedLetter = (printedLabel?.[1] ?? printedLabel?.[2] ?? String.fromCharCode(97 + i)).toLowerCase();
+    if (letter && letter !== expectedLetter) return false;
+    if (letter && !labeled) return true;
+    const printed = optionText(option);
+    return clean === printed || clean.startsWith(printed + ' (') || clean.startsWith(printed + ' —');
+  });
+}
 export function answerAlignmentIssue(stage: GenerationStage, prior: Partial<LessonPackage>, patch: Partial<LessonPackage>): string | null {
   if (stage !== "teacher" && stage !== "teacherB") return null;
   const student = stage === "teacher" ? prior.worksheet?.student : prior.worksheet?.studentB;
@@ -32,9 +52,7 @@ export function answerAlignmentIssue(stage: GenerationStage, prior: Partial<Less
       const oneWord = /\b(?:one|a|the|family|color|shape|food) word\b/i.test(`${section.instructions} ${item.prompt}`);
       const options = item.choices.length ? item.choices : oneWord ? section.wordBank : [];
       if (options.length && !personal && !acceptable) {
-        const clean = answerText(key).replace(/^[a-e][.)]\s*/,'');
-        const matches = options.some(c => clean === answerText(c) || clean.startsWith(answerText(c) + ' (') || clean.startsWith(answerText(c) + ' —'));
-        if (!matches && !/^[a-e][.)]?$/i.test(key)) return `Answer section ${i + 1}, item ${j + 1} must match an actual printed choice or word-bank entry: ${options.join(', ')}. Solve this item from its supplied clue.`;
+        if (!matchesPrintedOption(key, options)) return `Answer section ${i + 1}, item ${j + 1} must match an actual printed choice or word-bank entry: ${options.join(', ')}. Solve this item from its supplied clue.`;
       }
       // A literal cloze whose completed sentence appears once in the supplied passage
       // provides a reliable check without guessing the student's intended answer.

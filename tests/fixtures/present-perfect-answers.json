@@ -1,0 +1,361 @@
+{
+  "student": {
+    "title": "Present Perfect: Life Experiences",
+    "instructions": "Read each section carefully. Work with a partner when you see speaking tasks. Write your answers on your own paper.",
+    "sections": [
+      {
+        "label": "Section A",
+        "title": "Key Words In Context",
+        "format": "matching",
+        "instructions": "Read the short definitions. Match each word from the word bank to the correct meaning. Write the word next to each number. Example: 0. not before now = never",
+        "passage": "",
+        "wordBank": [
+          "ever",
+          "never",
+          "already",
+          "yet",
+          "experience",
+          "abroad"
+        ],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "before now, at any time in your life",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "not at any time in your life",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "by now; earlier than expected",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "up to now, in questions and negative sentences",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "something that has happened to you",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 6,
+            "prompt": "in or to another country",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          }
+        ]
+      },
+      {
+        "label": "Section B",
+        "title": "Choose The Correct Form",
+        "format": "multiple-choice",
+        "instructions": "Choose the best answer for each sentence. Circle A, B, or C. Example: I have ______ finished my homework. A. ever B. already C. yet",
+        "passage": "",
+        "wordBank": [],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "Have you ______ been to a concert?",
+            "choices": [
+              "A. ever",
+              "B. already",
+              "C. yet"
+            ],
+            "answerLines": 0,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "I have ______ tried skateboarding, so I want to try it.",
+            "choices": [
+              "A. never",
+              "B. already",
+              "C. ever"
+            ],
+            "answerLines": 0,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "She has ______ visited her cousin in another city.",
+            "choices": [
+              "A. yet",
+              "B. already",
+              "C. never"
+            ],
+            "answerLines": 0,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "We haven’t seen the new trailer ______.",
+            "choices": [
+              "A. ever",
+              "B. already",
+              "C. yet"
+            ],
+            "answerLines": 0,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "Have you ______ met someone famous?",
+            "choices": [
+              "A. already",
+              "B. ever",
+              "C. never"
+            ],
+            "answerLines": 0,
+            "visual": ""
+          }
+        ]
+      },
+      {
+        "label": "Section C",
+        "title": "Build The Question",
+        "format": "rewrite",
+        "instructions": "Rewrite each prompt as a correct present perfect question or answer. Use the words in the prompt. Write one sentence for each item. Example: go / abroad / ever → Have you ever gone abroad?",
+        "passage": "",
+        "wordBank": [],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "you / ever / play / the guitar",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "he / already / finish / the project",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "they / never / travel / abroad",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "we / not / see / that movie / yet",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "she / ever / try / online gaming",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          }
+        ]
+      },
+      {
+        "label": "Section D",
+        "title": "Life Experience Survey",
+        "format": "speaking-prompts",
+        "instructions": "Work with a partner. Ask and answer the questions out loud. Then write short notes about your partner. Example: Q: Have you ever been abroad? A: Yes, I have. I went to Japan last year.",
+        "passage": "Mia: Have you ever been abroad?\nNoah: Yes, I have. I visited my uncle in Canada.\nMia: Have you ever played in a school sports event?\nNoah: No, I haven’t. I have never done that.\nMia: Have you already finished your homework?\nNoah: Yes, I have already finished it.\nMia: Have you done your project yet?\nNoah: Not yet.",
+        "wordBank": [],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "Ask your partner about going abroad. Write one short note about the answer.",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "Ask your partner about a music experience. Write one short note about the answer.",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "Ask your partner about a sport or game experience. Write one short note about the answer.",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "Ask your partner about homework or a school task. Write one short note about the answer.",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "Write one follow-up question you asked or could ask.",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          }
+        ]
+      }
+    ]
+  },
+  "teacher": {
+    "overview": "60-minute B1 speaking lesson on present perfect life experiences. Students learn and practice ask/answer patterns with have/has + past participle, with controlled vocabulary support for ever, never, already, yet, experience, and abroad. The lesson moves from meaning and form to guided pair practice, then a speaking survey with follow-up questions. Main evidence is oral interaction; the worksheet supports accuracy, confidence, and vocabulary recall.",
+    "groupWorkGuidance": "Use pair work throughout. With 24 students, form 12 fixed pairs for the controlled stages, then reorganize into new pairs for the survey so students speak with a different partner. Keep instructions short, model each task once, and use a clear stop signal such as 'Pens down, eyes up.' Circulate continuously, listening for target language and noting strong examples and common errors. Take brief feedback from 4-6 pairs, not the whole class. For mixed ability, pair stronger and weaker students when possible, but keep speaking turns balanced.",
+    "sections": [
+      {
+        "label": "Section A",
+        "title": "Key Words In Context",
+        "answers": [
+          "ever",
+          "never",
+          "already",
+          "yet",
+          "experience",
+          "abroad"
+        ],
+        "explanation": "These are the direct matches from the word bank. Check that students understand the meaning, not just the spelling.",
+        "expectedResponses": [
+          "1. ever",
+          "2. never",
+          "3. already",
+          "4. yet",
+          "5. experience",
+          "6. abroad"
+        ],
+        "commonErrors": [
+          "Mixing ever and yet",
+          "Using 'abroad' to mean 'foreign' without the travel/country idea",
+          "Confusing experience with experiment"
+        ],
+        "corrections": [
+          "ever = before now, at any time in your life",
+          "never = not at any time in your life",
+          "already = by now; earlier than expected",
+          "yet = up to now, usually in questions or negative sentences",
+          "experience = something that has happened to you",
+          "abroad = in or to another country"
+        ],
+        "teacherNotes": "Quickly check pronunciation and concept. Use one simple spoken example for each word, then move on."
+      },
+      {
+        "label": "Section B",
+        "title": "Choose The Correct Form",
+        "answers": [
+          "A. ever",
+          "A. never",
+          "B. already",
+          "C. yet",
+          "B. ever"
+        ],
+        "explanation": "Students choose the correct present perfect adverb based on meaning and sentence position.",
+        "expectedResponses": [
+          "1. A. ever",
+          "2. A. never",
+          "3. B. already",
+          "4. C. yet",
+          "5. B. ever"
+        ],
+        "commonErrors": [
+          "Using already in questions",
+          "Using yet in affirmative sentences",
+          "Choosing ever in negative statements",
+          "Confusing 'Have you ever...?' with past simple"
+        ],
+        "corrections": [
+          "Questions: Have you ever... ?",
+          "Negative experience: I have never...",
+          "Affirmative completed action: I have already...",
+          "Negative unfinished action: I haven’t... yet"
+        ],
+        "teacherNotes": "Have students explain why each choice fits. Briefly contrast 'ever' for questions and 'never' for negative personal experience."
+      },
+      {
+        "label": "Section C",
+        "title": "Build The Question",
+        "answers": [
+          "Have you ever played the guitar?",
+          "He has already finished the project.",
+          "They have never traveled abroad.",
+          "We haven’t seen that movie yet.",
+          "Has she ever tried online gaming?"
+        ],
+        "explanation": "Students rebuild the prompts into correct present perfect sentences. Accept standard subject-verb agreement and natural contractions.",
+        "expectedResponses": [
+          "1. Have you ever played the guitar?",
+          "2. He has already finished the project.",
+          "3. They have never traveled abroad.",
+          "4. We haven’t seen that movie yet.",
+          "5. Has she ever tried online gaming?"
+        ],
+        "commonErrors": [
+          "Using did/didn’t instead of have/has",
+          "Placing ever in statements",
+          "Using past simple verbs instead of past participles",
+          "Missing 'has' with he/she/it",
+          "Putting yet in the wrong place"
+        ],
+        "corrections": [
+          "Have/has + past participle",
+          "Have you ever... ? for experiences",
+          "has already + past participle",
+          "have/has never + past participle",
+          "haven’t + past participle + yet"
+        ],
+        "teacherNotes": "Accept 'Have you ever played guitar?' if the meaning is clear, but model the worksheet form with 'the guitar'."
+      },
+      {
+        "label": "Section D",
+        "title": "Life Experience Survey",
+        "answers": [
+          "Open speaking answers based on the partner's true responses.",
+          "Open speaking answers based on the partner's true responses.",
+          "Open speaking answers based on the partner's true responses.",
+          "Open speaking answers based on the partner's true responses.",
+          "Open speaking answer: one follow-up question such as 'When did you do it?' or 'What happened?'"
+        ],
+        "explanation": "This is a pair speaking task. Students ask about experiences, listen, and write short notes. There is no single fixed answer because responses depend on the partner.",
+        "expectedResponses": [
+          "For item 1: a short note such as 'Yes, went to Japan last summer' or 'No, never been abroad'",
+          "For item 2: a short note about music experience, such as 'Yes, been to a concert' or 'No, never played guitar'",
+          "For item 3: a short note about sport or game experience, such as 'Yes, played in a school match' or 'No, never joined a team'",
+          "For item 4: a short note about homework or a school task, such as 'Yes, already finished math homework' or 'No, not yet finished project'",
+          "For item 5: any sensible follow-up question linked to the partner's answer"
+        ],
+        "commonErrors": [
+          "Answering with only one word",
+          "Using past simple only: 'Did you go abroad?'",
+          "Forgetting to ask a follow-up question",
+          "Writing notes that do not match the spoken answer"
+        ],
+        "corrections": [
+          "Use the present perfect question form: Have you ever... ?",
+          "Use a short answer: Yes, I have. / No, I haven’t.",
+          "Add one detail if possible: when, where, or what happened",
+          "Ask a follow-up question to keep the conversation going"
+        ],
+        "teacherNotes": "Listen for fluency, correct use of ever/never/already/yet, and follow-up questions. Encourage students to answer naturally and then expand with one extra detail."
+      }
+    ]
+  }
+}
