@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { requestReadingOpenRouter } from "./openrouter.server";
 import { READING_MODEL, readingContext, readingSchema, validateReading, type ReadingState } from "./reading";
 import type { LessonPackage, LessonRequestInput } from "./lesson-schema";
-import { findTechTerms, isNoTechRequest } from "./no-tech";
+import { findTechTerms, isNoTechRequest, noTechRepairInstruction } from "./no-tech";
 import { AMERICAN_ENGLISH_RULES, americanEnglishContent } from './american-english';
 import { missingReadingReference, readingShapeScene } from './reading-visuals';
 
@@ -59,12 +59,14 @@ function assembleReading(passage: z.infer<typeof passageSchema>, extracts: strin
 
 /** Persistent results and leases prevent duplicate charges on retries, refreshes and concurrent calls. */
 export async function generateReading(request: LessonRequestInput, lesson: Partial<LessonPackage>, scope: string, operation = "initial", limited = false): Promise<ReadingState> {
+  const noTech = isNoTechRequest(request.technologyAvailable);
+  const system = READING_SYSTEM + (noTech ? '\nNO TECHNOLOGY: This entire reading must work on paper. Use physical classroom and community situations. Avoid references to electronic devices, the internet, online sources, or recordings anywhere in the passage, questions, choices, or teacher guidance. Use in-person discussion, printed evidence, and written notes instead. Do not include forbidden equipment even as a distractor or a statement that it is not needed.' : '');
   const baseContext = readingContext(request, lesson);
   const context = lesson.reading?.status === "ready" ? { ...baseContext, fixedMaterials: {
     previousReading: lesson.reading.value, activity: lesson.activity, assessment: lesson.assessment, versionB: lesson.versionB,
     instruction: "Regenerate only the reading. Preserve all facts, characters, actions and answers tested by these existing activities and assessments so they remain usable unchanged. You may improve the wording and reading questions, but do not invalidate existing lesson materials.",
   } } : baseContext;
-  const baseFingerprint = hash(stable({ model: READING_MODEL, reasoning: false, prompt: READING_SYSTEM, questions: QUESTION_RULES, version: 2, context: baseContext }));
+  const baseFingerprint = hash(stable({ model: READING_MODEL, reasoning: false, prompt: system, questions: QUESTION_RULES, version: 3, context: baseContext }));
   const fingerprint = context === baseContext ? baseFingerprint : hash(stable({ baseFingerprint, context }));
   const file = process.env["TEACHERFLOW_READING_DB"] || ".local-runtime/readings.sqlite";
   const key = hash(`${scope}:${fingerprint}:${operation}`);
@@ -87,24 +89,28 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
       let result: ReadingState;
       try {
         let passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({
-          system: READING_SYSTEM, input: `${JSON.stringify(context)}\nFIRST STEP: Write only the passage, title, purpose and CEFR required by the schema. Keep the stated age/level length. Questions come in a separate request.`, schemaName: "teacherflow_reading_passage",
+          system, input: `${JSON.stringify(context)}\nFIRST STEP: Write only the passage, title, purpose and CEFR required by the schema. Keep the stated age/level length. Questions come in a separate request.`, schemaName: "teacherflow_reading_passage",
           schema: zodToJsonSchema(passageSchema, { $refStrategy: "none" }),
         })));
-        if (missingReadingReference(passage.text)) {
-          passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({ system: READING_SYSTEM,
-            input: `${JSON.stringify(context)}\nRevise this passage: ${JSON.stringify(passage)}. Remove directions that need a missing picture. State all facts in words so the reading can be understood without an illustration. Keep the same objective, topic, age and level.`,
+        const passageTech = noTech ? findTechTerms(passage) : [];
+        if (missingReadingReference(passage.text) || passageTech.length) {
+          // Repair the source BEFORE freezing it for questions and evidence.
+          // A tasks-only repair cannot remove an invalid fact from a fixed passage.
+          passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({ system,
+            input: `${JSON.stringify(context)}\nRevise this passage: ${JSON.stringify(passage)}. Remove directions that need a missing picture. State all facts in words so the reading can be understood without an illustration. Keep the same objective, topic, age and level.\n${passageTech.length ? noTechRepairInstruction(passageTech) : ''}`,
             schemaName: 'teacherflow_reading_passage_reference_repair', schema: zodToJsonSchema(passageSchema, { $refStrategy: 'none' }) })));
         }
         if (passage.cefr !== request.level) throw new Error('DeepSeek returned the wrong reading level.');
         if (missingReadingReference(passage.text)) throw new Error('The reading still depends on an unavailable reference picture.');
+        if (noTech && findTechTerms(passage).length) throw new Error('The reading passage still needs a paper-based classroom version. Your lesson is retained; retry only the reading.');
         const extracts = (passage.text.match(/[^.!?]+(?:[.!?]+|$)/gu) ?? [passage.text]).map(s => s.trim()).filter(Boolean);
         const taskInput = `${JSON.stringify(context)}\nFIXED PASSAGE\n${JSON.stringify(passage)}\nNUMBERED EVIDENCE SENTENCES\n${extracts.map((s, i) => `${i + 1}: ${s}`).join('\n')}\n${QUESTION_RULES}`;
-        let value = await requestReadingOpenRouter({ system: `${READING_SYSTEM}\n${QUESTION_RULES}`, input: taskInput,
+        let value = await requestReadingOpenRouter({ system: `${system}\n${QUESTION_RULES}`, input: taskInput,
           schemaName: 'teacherflow_reading_questions', schema: zodToJsonSchema(taskSchema, { $refStrategy: 'none' }) });
         const validate = (value: unknown) => {
           const r = assembleReading(passage, extracts, value, request.level);
           if (!readingShapeScene(r.text) && missingReadingReference([r.instructions, r.activity, ...r.questions.map(q => q.question)].join('\n'))) throw new Error('These tasks require a missing picture. Replace them with questions about explicitly stated passage facts.');
-          if (isNoTechRequest(request.technologyAvailable)) {
+          if (noTech) {
             const found = findTechTerms(r);
             if (found.length) throw new Error(`This is a no-technology lesson. Remove unnecessary references to ${found.join(", ")}, including distracting answer options. Keep reading tasks printable and self-contained.`);
           }
@@ -113,7 +119,7 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
         try { validate(value); }
         catch (error) {
           // One bounded repair, using the same reading model, only when a complete JSON result fails validation.
-          value = await requestReadingOpenRouter({ system: `${READING_SYSTEM}\n${QUESTION_RULES}`, schemaName: "teacherflow_reading_repair",
+          value = await requestReadingOpenRouter({ system: `${system}\n${QUESTION_RULES}`, schemaName: "teacherflow_reading_repair",
             schema: zodToJsonSchema(taskSchema, { $refStrategy: "none" }),
             input: `${taskInput}\nRepair these reading tasks: ${JSON.stringify(value)}\nValidation issue: ${error instanceof Error ? error.message : "Invalid reading"}. Return corrected tasks only. The passage is fixed.`,
           });

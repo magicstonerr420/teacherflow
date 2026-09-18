@@ -24,6 +24,7 @@ test('OpenRouter server boundary', async t => {
         assert.equal(body.model, 'server-selected-model');
         assert.equal(body.response_format.json_schema.strict, true);
         assert.equal(body.provider.require_parameters, true);
+        assert.equal(body.provider.allow_fallbacks, true);
         assert.deepEqual(body.plugins, [{ id: 'response-healing' }]);
         return Response.json({ choices: [{ finish_reason: 'stop', message: { content: '{"worksheet":"Fractions"}' } }] });
       };
@@ -31,7 +32,7 @@ test('OpenRouter server boundary', async t => {
     });
     for (const [status, pattern] of [[401, /key is invalid/], [402, /needs credits/], [429, /rate limiting/], [500, /could not complete/]]) {
       await t.test(`status ${status} produces a safe actionable error`, async () => {
-        globalThis.fetch = async () => new Response('sensitive upstream diagnostic', { status });
+        globalThis.fetch = async () => new Response('sensitive upstream diagnostic', { status, headers: { 'Retry-After': '60' } });
         await assert.rejects(requestOpenRouter(args), error => pattern.test(error.message) && !error.message.includes('sensitive'));
       });
     }

@@ -48,10 +48,11 @@ try {
   process.env.OPENROUTER_API_KEY = 'test-only';
   process.env.TEACHERFLOW_LISTENING_DB = path.join(await mkdtemp(path.join(tmpdir(), 'teacherflow-listening-')), 'test.sqlite');
   const mp3 = new Uint8Array(2048); mp3.set([0x49, 0x44, 0x33]);
-  let scriptCalls = 0, reviewCalls = 0, voiceCalls = 0;
+  let scriptCalls = 0, reviewCalls = 0, voiceCalls = 0, rateLimits = 0;
   globalThis.fetch = async (url, options) => {
     const body = JSON.parse(options.body);
     if (url.endsWith('/chat/completions')) {
+      if(!rateLimits++){return new Response('',{status:429,headers:{'Retry-After':'0'}});}
       if (body.response_format.json_schema.name.startsWith('teacherflow_listening_review')) { reviewCalls++; assert.notEqual(body.model, 'deepseek/deepseek-v4-flash-0731'); }
       else { scriptCalls++; assert.equal(body.model, 'deepseek/deepseek-v4-flash-0731'); assert.equal(body.reasoning.enabled, false); }
       return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(value) } }] });

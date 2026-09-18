@@ -49,9 +49,12 @@ try {
   assert.equal(partial.worksheet.student.sections.find(s=>s.label===READING_LABEL).passage,reading.text);
   process.env.OPENROUTER_API_KEY='test-key';
   process.env.TEACHERFLOW_READING_DB=path.join(await mkdtemp(path.join(tmpdir(),'teacherflow-reading-')),'test.sqlite');
-  let calls=0;
+  let calls=0;const throttled=new Set();
   globalThis.fetch=async (_url,options)=>{
-    calls++; const body=JSON.parse(options.body);
+    const body=JSON.parse(options.body);
+    const stage=body.response_format.json_schema.name;
+    if(!throttled.has(stage)){throttled.add(stage);return new Response('',{status:429,headers:{'Retry-After':'0'}});}
+    calls++;
     assert.equal(body.model,'deepseek/deepseek-v4-flash-0731'); assert.equal(body.max_tokens,6000);
     assert.ok(body.messages[0].content.includes(READING_SYSTEM));
     await new Promise(r=>setTimeout(r,25));
@@ -60,6 +63,7 @@ try {
   };
   const [a,c]=await Promise.all([generateReading(request,lesson,'teacher'),generateReading(request,lesson,'teacher')]);
   assert.equal(a.status,'ready'); assert.deepEqual(a,c); assert.equal(calls,2);
+  assert.equal(throttled.size,2,'Both passage and questions recover from a rate limit without restarting the passage');
   await generateReading(request,{...lesson,presentation:{slides:[]}},'teacher'); assert.equal(calls,2);
   await generateReading(request,lesson,'teacher','regen-one'); assert.equal(calls,4);
   await generateReading(request,lesson,'teacher','regen-one'); assert.equal(calls,4);
@@ -72,6 +76,30 @@ try {
   };
   const corrected=await generateReading(request,lesson,'teacher','bad-evidence-repair');
   assert.equal(corrected.status,'ready');assert.deepEqual(corrected.value.answers,['Nine.','Nine.','Nine.']);assert.equal(repairs,2);
+  // A question-only repair cannot fix a no-tech violation inside the passage.
+  const phases=[];
+  globalThis.fetch=async(_url,options)=>{
+    const body=JSON.parse(options.body),stage=body.response_format.json_schema.name;phases.push(stage);
+    assert.match(body.messages[0].content,/NO TECHNOLOGY/);
+    let candidate;
+    if(stage==='teacherflow_reading_passage')candidate={cefr:reading.cefr,title:'Community',purpose:'Scan for information',text:'The library opens at nine. Read the notice on the internet.'};
+    else if(stage==='teacherflow_reading_passage_reference_repair'){
+      assert.match(body.messages[1].content,/NO-TECHNOLOGY VIOLATION/);
+      candidate={cefr:reading.cefr,title:reading.title,purpose:reading.purpose,text:reading.text};
+    }else{
+      assert.match(body.messages[1].content,/The library opens at nine/);
+      assert.ok(!body.messages[1].content.includes('Read the notice on the internet.'));
+      candidate={instructions:reading.instructions,activity:reading.activity,assessment:reading.assessment,questions:[1,2,3].map(()=>({...reading.questions[0],evidence:undefined,evidenceSentence:1,answerChoice:0,answer:'Nine.'}))};
+    }
+    return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify(candidate)}}]});
+  };
+  const paperReading=await generateReading({...request,technologyAvailable:'No technology'},lesson,'teacher','paper-reading');
+  assert.equal(paperReading.status,'ready');assert.equal(paperReading.value.text,reading.text);
+  assert.deepEqual(phases,['teacherflow_reading_passage','teacherflow_reading_passage_reference_repair','teacherflow_reading_questions']);
+  let rejectedCalls=0;
+  globalThis.fetch=async()=>{rejectedCalls++;return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({cefr:'A1',title:'Notice',purpose:'Scan',text:'Read the internet notice.'})}}]});};
+  assert.equal((await generateReading({...request,technologyAvailable:'No technology'},lesson,'teacher','paper-reading-failed')).status,'failed');
+  assert.equal(rejectedCalls,2,'Do not charge for questions while the source passage remains invalid');
   for(const [name,content,finish] of [['malformed','oops','stop'],['missing',JSON.stringify({cefr:'A1'}),'stop'],['truncated',JSON.stringify(reading),'length']]) {
     globalThis.fetch=async()=>Response.json({choices:[{finish_reason:finish,message:{content}}]});
     const result=await generateReading(request,lesson,'teacher',name); assert.equal(result.status,'failed'); assert.ok(result.error);

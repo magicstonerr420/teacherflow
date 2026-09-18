@@ -45,6 +45,7 @@ test('all paid transports reserve before fetch; owner bypass, price checks, fail
     await budgetFetch(url,chat('owner'));assert.equal(bodies[0].provider,undefined);
     const b=new BetaBudget();assert.equal(b.status().accountedUsd,0);
     await withBetaBudget('teacher',()=>budgetFetch(url,chat()));
+    assert.equal(bodies[1].provider.allow_fallbacks,true);
     assert.deepEqual(bodies[1].provider.max_price,{prompt:1.5,completion:9,request:0});assert.equal(b.status().accountedUsd,.02);
     await withBetaBudget('teacher',()=>budgetFetch('https://openrouter.ai/api/v1/images',{method:'POST',body:JSON.stringify({model:'google/gemini-3.1-flash-image-preview',n:1,resolution:'1K',prompt:'A red ball'})}));
     assert.deepEqual(bodies[2].provider,{only:['google-ai-studio'],allow_fallbacks:false});assert.equal(b.status().accountedUsd,.04);

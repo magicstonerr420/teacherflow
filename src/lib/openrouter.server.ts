@@ -1,6 +1,7 @@
 import { budgetFetch, BetaBudgetError } from './beta-budget.server.ts';
 import { appendFile, mkdir } from "node:fs/promises";
 import { modelSetting } from "./model-settings.server.ts";
+import { ProviderRateLimitError, retryRateLimited } from './provider-retry.server.ts';
 
 async function recordResult(event: Record<string, unknown>) {
   console.info("TeacherFlow generation", event);
@@ -28,15 +29,16 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
   if (!apiKey) throw new Error("Add your OpenRouter API key to .env.local and restart TeacherFlow.");
   // Model choice comes only from server settings, never a client-supplied userTier.
   let response: Response;
+  const signal = AbortSignal.timeout(240_000);
   try {
-    response = await budgetFetch("https://openrouter.ai/api/v1/chat/completions", {
+    response = await retryRateLimited(() => budgetFetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "X-Title": "TeacherFlow",
       },
-      signal: AbortSignal.timeout(240_000),
+      signal,
       body: JSON.stringify({
         model,
         messages: [
@@ -47,16 +49,16 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
           type: "json_schema",
           json_schema: { name: args.schemaName, strict: true, schema: args.schema },
         },
-        provider: { require_parameters: true },
+        provider: { require_parameters: true, allow_fallbacks: true },
         plugins: [{ id: "response-healing" }],
         max_tokens: maxTokens,
         ...(model === "deepseek/deepseek-v4-flash-0731" ? { reasoning: { enabled: false } } : {}),
         ...(model === "openai/gpt-5.4-mini" ? { reasoning: { effort: "low" } } : {}),
         stream: false,
       }),
-    });
+    }), { signal, onRetry: (attempt, delayMs) => recordResult({ model, section: args.schemaName, outcome: 'rate_limit_retry', attempt, delayMs }) });
   } catch (error) {
-    if (error instanceof BetaBudgetError) throw error;
+    if (error instanceof BetaBudgetError || error instanceof ProviderRateLimitError) throw error;
     const cause = error as { name?: string; cause?: { code?: string } };
     await recordResult({ model, section: args.schemaName, outcome: "network", reason: cause.cause?.code ?? cause.name });
     if (cause.name === "TimeoutError" || cause.name === "AbortError") throw new Error("The AI provider exceeded the four-minute time limit for this part. Retry this part; completed parts are retained.");
@@ -76,7 +78,6 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
       402: "Your OpenRouter account needs credits to generate this lesson.",
       403: "OpenRouter denied this request. Check your key permissions and model access.",
       404: "The configured OpenRouter model is unavailable. Update OPENROUTER_MODEL.",
-      429: "OpenRouter is rate limiting requests. Wait a moment and try again.",
     };
     throw new Error(messages[response.status] || "OpenRouter could not complete this lesson. Please retry.");
   }

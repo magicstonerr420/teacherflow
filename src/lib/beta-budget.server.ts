@@ -96,7 +96,8 @@ async function quote(path: string, body: any): Promise<{ kind: string; reserve: 
     const rate = limits[model];
     if (!rate || !Number.isInteger(body.max_tokens) || body.max_tokens < 1 || body.max_tokens > 12000 || body.tools || body.stream)
       throw new BetaBudgetError('This model or request has not been approved for the private-beta budget. Contact the organizer.');
-    body.provider = { ...body.provider, allow_fallbacks: false, max_price: { ...rate, request: 0 } };
+    // Backup endpoints must still serve the SAME approved model under these caps.
+    body.provider = { ...body.provider, allow_fallbacks: true, max_price: { ...rate, request: 0 } };
     // UTF-8 bytes bound ordinary text tokens; include schema serialization and framing headroom.
     const input = Buffer.byteLength(JSON.stringify(body), 'utf8') + 4096;
     return { kind: 'text', reserve: (input * rate.prompt + body.max_tokens * rate.completion) / 1e6 * 1.1 };
