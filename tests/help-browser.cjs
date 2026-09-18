@@ -1,0 +1,90 @@
+// UI checks using a saved fixture. No AI generation or email is sent.
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'C:/Users/javie/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const fs = require('node:fs/promises');
+const assert = require('node:assert/strict');
+const origin = process.env.TEST_ORIGIN || 'http://127.0.0.1:3007';
+const dir = '.local-runtime/help-ui';
+
+(async () => {
+  await fs.mkdir(dir, { recursive: true });
+  const browser = await chromium.launch({ headless: true, channel: 'msedge' });
+  const errors = [], unexpected = [];
+  try {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    page.on('pageerror', e => errors.push(e.message));
+    await page.goto(origin + '/quick-start');
+    await page.getByRole('heading', { name: 'Your first lesson, step by step' }).waitFor();
+    assert.equal(await page.locator('main ol > li').count(), 6);
+    await page.screenshot({ path: dir + '/guide-desktop.png', fullPage: true });
+    await page.getByRole('link', { name: 'Open Lesson builder', exact: true }).click();
+    await page.getByRole('complementary', { name: 'Getting started' }).waitFor();
+    await page.getByRole('button', { name: 'Dismiss quick-start introduction' }).click();
+    await page.reload();
+    await page.getByRole('heading', { name: 'Build my class', exact: true }).waitFor();
+    assert.equal(await page.getByRole('complementary', { name: 'Getting started' }).count(), 0);
+    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Quick-start guide' }).click();
+    await page.getByRole('heading', { name: 'Your first lesson, step by step' }).waitFor();
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'Guide fits mobile width');
+    await page.screenshot({ path: dir + '/guide-mobile.png', fullPage: true });
+
+    const data = JSON.parse(await fs.readFile('comparison/budget-lesson.json', 'utf8'));
+    delete data.lesson.reading; delete data.lesson.listening;
+    // Ensure the selected B version is exercised regardless of fixture revisions.
+    data.lesson.worksheet.studentB = structuredClone(data.lesson.worksheet.student);
+    await page.routeWebSocket(/.*/, socket => socket.close());
+    await page.route('**/_serverFn/**', route => { unexpected.push(route.request().url()); return route.abort(); });
+    await page.route('**/help-test', route => route.fulfill({ contentType: 'text/html', body: '<html><body><script type="module">window.process={env:{NODE_ENV:"development",TSS_SERVER_FN_BASE:"/_serverFn/"}};import R from "/@react-refresh";R.injectIntoGlobalHook(window);window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>type=>type;window.__vite_plugin_react_preamble_installed__=true;</script></body></html>' }));
+    await page.route('**/src/lib/beta.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: 'export async function betaStatus(){ return {enabled:true,owner:false,claimed:true}; }' }));
+    await page.route('**/src/lib/reading.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: 'export async function regenerateReading(){throw Error("Unexpected generation");}' }));
+    await page.route('**/src/lib/listening.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: 'export async function createListening(){throw Error("Unexpected generation");} export async function createListeningAudio(){throw Error("Unexpected generation");} export async function loadListeningAudio(){throw Error("Unexpected audio load");}' }));
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto(origin + '/help-test');
+    await page.evaluate(async data => { await (await import('/tests/beta-export-fixture.tsx')).mount(data); }, data);
+    const nav = page.locator('nav');
+    const active = page.locator('section.block');
+    await nav.getByRole('button', { name: 'Worksheet', exact: true }).click();
+    await active.getByRole('button', { name: 'Student', exact: true }).click();
+    await active.getByRole('button', { name: 'Version B', exact: true }).click();
+    await active.getByRole('button', { name: 'Report a problem', exact: true }).click();
+    const dialog = page.getByRole('dialog');
+    assert.match(await dialog.innerText(), /Worksheet: Version B · Student Worksheet/);
+    assert.equal(await dialog.getByLabel('What needs help?').inputValue(), 'Worksheets or reading');
+    assert.equal(await dialog.getByRole('button', { name: 'Copy report' }).isDisabled(), true);
+    await dialog.getByLabel('What happened?').fill('A worksheet question is missing.');
+    await dialog.getByLabel('How can we reproduce it? (optional)').fill('Select Student and Version B.');
+    const link = new URL(await dialog.getByRole('link', { name: 'Open email draft' }).getAttribute('href'));
+    assert.equal(link.pathname, 'jepg2407@gmail.com');
+    assert.match(link.searchParams.get('body'), /Worksheet: Version B · Student Worksheet/);
+    assert.ok(link.searchParams.get('body').includes('Lesson topic: ' + data.request.topic));
+    assert.ok(link.searchParams.get('body').includes('Student age: ' + data.request.studentAge));
+    // Exercise both successful copying and the manual fallback without opening an email client.
+    await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async text => { window.copiedReport = text; } } }));
+    await dialog.getByRole('button', { name: 'Copy report' }).click();
+    await dialog.getByRole('status').filter({ hasText: 'Report copied' }).waitFor();
+    assert.match(await page.evaluate(() => window.copiedReport), /Version B · Student Worksheet/);
+    await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => { throw Error('Clipboard unavailable'); } } }));
+    await dialog.getByRole('button', { name: 'Copy report' }).click();
+    assert.match(await dialog.getByLabel('Your report', { exact: true }).inputValue(), /A worksheet question is missing/);
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await dialog.evaluate(e => e.getBoundingClientRect().right <= innerWidth && e.getBoundingClientRect().left >= 0), true, 'Report dialog fits mobile');
+    await page.screenshot({ path: dir + '/report-mobile.png', animations: 'disabled' });
+    assert.equal(await dialog.evaluate(e => e.getBoundingClientRect().top >= 0 && e.getBoundingClientRect().bottom <= innerHeight), true, 'Report remains within the mobile viewport with its own scrolling');
+    await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await active.getByRole('button', { name: 'Answer Key', exact: true }).click();
+    await active.getByRole('button', { name: 'Version A', exact: true }).click();
+    await active.getByRole('button', { name: 'Report a problem', exact: true }).click();
+    assert.match(await dialog.innerText(), /Worksheet: Version A · Answer Key/);
+    await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+    await nav.getByRole('button', { name: 'Listening', exact: true }).click();
+    await active.getByRole('button', { name: 'Report a problem', exact: true }).click();
+    assert.equal(await dialog.getByLabel('What needs help?').inputValue(), 'Listening or audio');
+    assert.match(await dialog.innerText(), /Section: Listening/);
+    assert.doesNotMatch(await dialog.innerText(), /Worksheet: Version/);
+    await page.screenshot({ path: dir + '/report-desktop.png', animations: 'disabled' });
+    assert.deepEqual(errors, []);
+    assert.deepEqual(unexpected, [], 'Help controls do not call generation or other server actions');
+    console.log('PASS: guide navigation, mobile layout, dismissal, selected report context, draft, copy and fallback; no AI calls or emails.');
+  } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });

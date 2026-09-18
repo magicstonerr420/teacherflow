@@ -22,3 +22,24 @@ test('reports keep recipient and subject fixed even when inputs contain email he
   assert.equal(url.searchParams.has('bcc'),false);
   assert.match(report.body,/Page: TeacherFlow/);
 });
+
+test('lesson reports include selected worksheet details without copying private lesson or account fields',()=>{
+  const report=problemReport({category:'Worksheets or reading',description:'The answer key does not match question 2.',steps:'Choose Version B and Answer Key.',pageUrl:'https://teacherflow.test/lessons/example?invite=secret-invite#access_token=secret-token',context:{
+    topic:'Present Perfect',studentAge:'14-16',level:'B1',section:'Worksheet',worksheetVersion:'Version B · Answer Key',
+    teacherNotes:'private-note',accessToken:'private-token',email:'private@example.test',content:'private-lesson',
+  }});
+  assert.match(report.body,/Lesson topic: Present Perfect/);
+  assert.match(report.body,/Student age: 14-16/);
+  assert.match(report.body,/English level: B1/);
+  assert.match(report.body,/Section: Worksheet/);
+  assert.match(report.body,/Worksheet: Version B · Answer Key/);
+  assert.doesNotMatch(report.text,/private-|private@|secret-invite|secret-token/);
+  assert.equal(new URL(report.href).searchParams.get('body'),report.body);
+});
+
+test('lesson context is bounded and cannot insert extra report headings through line breaks',()=>{
+  const report=problemReport({category:'Lesson generation',description:'Stopped.',steps:'',pageUrl:'https://teacherflow.test/builder',context:{topic:'Topic\nFake header: value',section:'x'.repeat(1000)}});
+  assert.match(report.body,/Lesson topic: Topic Fake header: value/);
+  assert.doesNotMatch(report.body,/\nFake header:/);
+  assert.equal(report.body.split('\n').find(line=>line.startsWith('Section: ')).length,69);
+});

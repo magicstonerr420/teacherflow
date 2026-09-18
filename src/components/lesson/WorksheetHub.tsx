@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
+import { ReportProblem } from '@/components/ReportProblem';
 import { Button } from "@/components/ui/button";
 import { studentPdf, buildAnswerKeyPdf, buildTeacherWorksheetPdf, safeSlug } from "@/lib/exports";
 import { downloadBlob } from "@/lib/pptx";
@@ -125,6 +126,7 @@ export function WorksheetHub({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <ReportProblem context={{topic: request.topic, studentAge: request.studentAge, level: request.level, section: 'Worksheet', worksheetVersion: `Version ${hasVersionB ? version : 'A'} · ${label}`}} />
           {hasVersionB ? (
             <div className="inline-flex rounded-lg border bg-muted p-1">
               {(["A", "B"] as Version[]).map((v) => (

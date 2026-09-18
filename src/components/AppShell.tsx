@@ -26,6 +26,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/builder">Lesson builder</Link>
             </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/quick-start" activeProps={{className:'bg-accent', 'aria-current':'page'}}>Quick-start guide</Link>
+            </Button>
             {isAuthenticated ? (
               <>
                 <Button variant="ghost" size="sm" asChild>

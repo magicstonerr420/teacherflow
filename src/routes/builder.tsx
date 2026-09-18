@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { QuickStartTip } from '@/components/QuickStartTip';
+import { ReportProblem } from '@/components/ReportProblem';
 import { BetaAccess } from "@/components/BetaAccess";
 import { GenerationProgress, PHASES, type PhaseKey } from "@/components/lesson/GenerationProgress";
 import { LessonPackageView } from "@/components/lesson/LessonPackageView";
@@ -261,6 +263,7 @@ function Builder() {
           Lesson builder
         </span>
         <h1 className="display-heading mt-4 text-3xl">Build my class</h1>
+        <QuickStartTip />
         <BetaAccess onAccess={setBetaAllowed} onOpen={request => { setForm(request); void build(request); }} />
         <p className="mt-2 text-muted-foreground">
           Tell us the essentials. We will make sensible choices for anything you leave blank.
@@ -276,6 +279,7 @@ function Builder() {
               <Button size="sm" variant="outline" onClick={() => void build(form)}>
                 Retry failed part
               </Button>
+              <ReportProblem context={{topic: form.topic, studentAge: form.studentAge, level: form.level, section: failedPart || 'Lesson generation'}} />
             </AlertDescription>
           </Alert>
         ) : null}

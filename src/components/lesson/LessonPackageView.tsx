@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
+import { ReportProblem } from '@/components/ReportProblem';
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -296,6 +297,7 @@ export function LessonPackageView({
                   {s.label}
                 </h2>
                 <div className="no-print flex flex-wrap gap-2">
+                  {s.key !== 'worksheet' && <ReportProblem context={{topic: request.topic, studentAge: request.studentAge, level: request.level, section: s.label}} />}
                   {SECTION_REGEN[s.key] && editing !== s.key ? (
                     <Button
                       variant="outline"

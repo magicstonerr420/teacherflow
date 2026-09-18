@@ -21,7 +21,7 @@ test('production server renders the home, builder and sign-in routes', { timeout
       await new Promise(resolve => setTimeout(resolve, 100));
     }
     assert.ok(origin, 'Production server did not start');
-    for (const route of ['/', '/builder', '/auth', '/beta-management', '/profile']) {
+    for (const route of ['/', '/builder', '/auth', '/beta-management', '/profile', '/quick-start']) {
       const response = await fetch(origin + route, { signal: AbortSignal.timeout(5000) });
       assert.equal(response.status, 200, `${route} must render successfully`);
       assert.equal(response.headers.get('cache-control'), 'no-cache');
