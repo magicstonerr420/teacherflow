@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { AppShell } from './AppShell';
 import { BetaTeacherControls } from './BetaTeacherControls';
+import { TeacherFeedbackPanel } from './TeacherFeedbackPanel';
 import { Button } from './ui/button';
 import { useBetaStatus } from '@/hooks/useBetaStatus';
 
@@ -40,6 +41,7 @@ export function BetaManagementPage() {
           {status.budget.paused && <p role="alert">Teacher generation is paused because a provider charge needs review.</p>}
         </section>}
         <div className="rounded-xl border bg-card p-5"><BetaTeacherControls /></div>
+        <TeacherFeedbackPanel />
       </>}
     </div>
   </AppShell>;

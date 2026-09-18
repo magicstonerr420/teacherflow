@@ -28,3 +28,15 @@ export const createBetaInvitation = createServerFn({method:'POST'})
     store.createInvitation(actor,data.operation);
     return store.administration();
   });
+
+export const resetBetaAllowance = createServerFn({method:'POST'})
+  .inputValidator((data:unknown)=>z.object({
+    seat:z.number().int().min(1).max(Number.MAX_SAFE_INTEGER),revision:z.string().regex(/^[a-f0-9]{64}$/),
+    user:z.string().min(1).max(128),allowanceRevision:z.string().regex(/^[a-f0-9]{64}$/),operation:z.string().uuid(),
+  }).parse(data))
+  .handler(async({data})=>{
+    setResponseHeader('Cache-Control','no-store');
+    const {actor,store}=await betaAdministrator(getRequest());
+    store.resetTeacherAllowance(actor,data);
+    return store.administration();
+  });

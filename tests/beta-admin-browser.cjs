@@ -25,6 +25,12 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   `}));
   await page.route('**/src/lib/beta-admin.functions.ts*',r=>r.fulfill({contentType:'application/javascript',body:`
    export async function listBetaTeachers(){window.lists++;return structuredClone(window.roster)}
+   export async function resetBetaAllowance({data}){
+    window.resets++;await new Promise(r=>setTimeout(r,150));
+    if(!window.operations[data.operation]){window.operations[data.operation]=true;const seat=window.roster.seats[data.seat-1];seat.remaining=3;seat.completed=0;seat.allowanceRevision='b'.repeat(64);}
+    if(window.loseResponse){window.loseResponse=false;throw Error('Reset response interrupted. Retry safely.');}
+    return structuredClone(window.roster);
+   }
    export async function createBetaInvitation({data}){
     window.creates++;await new Promise(r=>setTimeout(r,150));
     if(!window.operations[data.operation]){
@@ -47,11 +53,12 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
     return structuredClone(window.roster);
    }
   `}));
+  await page.route('**/src/lib/teacher-tools.functions.ts*',r=>r.fulfill({contentType:'application/javascript',body:'export const listTeacherFeedback=async()=>({entries:[],more:false});'}));
   async function mount(owner=true,revoked=false,path='/beta-management',signedOut=false){
    await page.goto(origin+'/beta-admin-test');
    await page.evaluate(async({owner,revoked,path,signedOut})=>{
-    window.owner=owner;window.revoked=revoked;window.signedOut=signedOut;window.profileWrites=0;window.profileUser={id:owner?'owner-id':'teacher-id',email:'teacher@example.test',user_metadata:{full_name:'Test Teacher'}};window.lists=0;window.mutations=0;window.creates=0;window.operations={};
-    window.roster={seats:[1,2,3].map(seat=>({seat,active:true,revision:'a'.repeat(64),user:seat===1?'teacher-id':null,email:seat===1?'teacher@example.test':null,label:'',claimedAt:null,lastSeenAt:null,remaining:seat===1?2:3,completed:0,code:seat===3?'fake-third-invite':null})),removed:[]};
+    window.owner=owner;window.revoked=revoked;window.signedOut=signedOut;window.profileWrites=0;window.profileUser={id:owner?'owner-id':'teacher-id',email:'teacher@example.test',user_metadata:{full_name:'Test Teacher'}};window.lists=0;window.mutations=0;window.creates=0;window.resets=0;window.operations={};
+    window.roster={seats:[1,2,3].map(seat=>({seat,active:true,revision:'a'.repeat(64),allowanceRevision:'a'.repeat(64),pending:0,user:seat===1?'teacher-id':null,email:seat===1?'teacher@example.test':null,label:'',claimedAt:null,lastSeenAt:null,remaining:seat===1?2:3,completed:0,code:seat===3?'fake-third-invite':null})),removed:[]};
     await (await import('/tests/beta-admin-fixture.tsx')).mount(path);
    },{owner,revoked,path,signedOut});
   }
@@ -62,6 +69,15 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   const panel=page.getByRole('region',{name:'Beta teacher controls'});
   await panel.getByText('1 active teachers · 2 unused invitations',{exact:true}).waitFor();
   const first=panel.getByRole('article',{name:'Invitation 1',exact:true});
+  await page.evaluate(()=>window.loseResponse=true);
+  await first.getByRole('button',{name:'Reset lesson allowance',exact:true}).evaluate(button=>{button.click();button.click();});
+  await panel.getByRole('alert').filter({hasText:'Reset response interrupted'}).waitFor();
+  assert.equal(await page.evaluate(()=>window.resets),1,'Double click sends one reset');
+  await first.getByRole('button',{name:'Retry allowance reset',exact:true}).click();
+  await panel.getByRole('status').filter({hasText:'Lesson allowance reset to three'}).waitFor();
+  await first.getByText('0 lessons completed · 3 new lesson slots left').waitFor();
+  assert.equal(await first.getByRole('button',{name:'Reset lesson allowance',exact:true}).isDisabled(),true);
+  assert.equal(await page.evaluate(()=>window.roster.seats[0].user),'teacher-id');
   await first.getByLabel('Private label').fill('Ms. Rivera');await first.getByRole('button',{name:'Save label'}).click();
   await panel.getByRole('status').filter({hasText:'Invitation label saved.'}).waitFor();
   await first.getByRole('button',{name:'Remove access',exact:true}).click();

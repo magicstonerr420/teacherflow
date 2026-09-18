@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { LessonFeedback } from '@/components/LessonFeedback';
 import { LessonPackageView } from "@/components/lesson/LessonPackageView";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/lessons/$id")({
 function LessonDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const fetchLesson = useServerFn(getLesson);
   const removeLesson = useServerFn(deleteLesson);
   const copyLesson = useServerFn(duplicateLesson);
@@ -42,7 +43,7 @@ function LessonDetail() {
   }, [loading, isAuthenticated, navigate, id]);
 
   const { data, isPending, error } = useQuery({
-    queryKey: ["lesson", id],
+    queryKey: ["lesson", user?.id, id],
     queryFn: () => fetchLesson({ data: { id } }),
     enabled: isAuthenticated,
   });
@@ -108,6 +109,7 @@ function LessonDetail() {
         }}
         actions={
           <>
+            <LessonFeedback key={id} lessonId={id} />
             <Button
               variant="outline"
               onClick={() => duplicate.mutate()}

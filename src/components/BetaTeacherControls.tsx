@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { listBetaTeachers, manageBetaTeacher, createBetaInvitation } from '@/lib/beta-admin.functions';
+import { listBetaTeachers, manageBetaTeacher, createBetaInvitation, resetBetaAllowance } from '@/lib/beta-admin.functions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -10,11 +10,13 @@ const date = (value:string|null) => value ? new Date(value).toLocaleString() : '
 
 export function BetaTeacherControls() {
   const list=useServerFn(listBetaTeachers), manage=useServerFn(manageBetaTeacher), create=useServerFn(createBetaInvitation);
+  const reset=useServerFn(resetBetaAllowance);
   const [roster,setRoster]=useState<Roster|null>(null), [error,setError]=useState(''), [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false), [confirm,setConfirm]=useState<(Seat & {intent:'replace'|'deactivate'})|null>(null);
   const [labels,setLabels]=useState<Record<number,string>>({}), [shown,setShown]=useState<number|null>(null);
   const lock=useRef(false);
   const creation=useRef<string|null>(null);
+  const resetAttempt=useRef<{seat:number;user:string;revision:string;allowanceRevision:string;operation:string}|null>(null);
   const confirmation=useRef<HTMLDivElement>(null);
   const invitationLink=useRef<HTMLInputElement>(null);
   useEffect(()=>{
@@ -29,7 +31,7 @@ export function BetaTeacherControls() {
   async function refresh() {
     if(lock.current)return;
     lock.current=true;setBusy(true);setError('');
-    try{accept(await list());setConfirm(null);creation.current=null;}catch(e){setError(e instanceof Error?e.message:'Could not load teacher access.');}
+    try{accept(await list());setConfirm(null);creation.current=null;resetAttempt.current=null;}catch(e){setError(e instanceof Error?e.message:'Could not load teacher access.');}
     finally{lock.current=false;setBusy(false);}
   }
   useEffect(()=>{void refresh();},[]);
@@ -56,6 +58,17 @@ export function BetaTeacherControls() {
     finally{lock.current=false;setBusy(false);}
   }
   function link(seat:Seat) {return `${window.location.origin}/builder#invite=${seat.code}`;}
+  async function resetLessons(seat:Seat) {
+    if(lock.current||!seat.user)return;
+    lock.current=true;setBusy(true);setError('');setMessage('');
+    try {
+      const previous=resetAttempt.current;
+      if(!previous || previous.seat!==seat.seat || previous.user!==seat.user)resetAttempt.current={seat:seat.seat,user:seat.user,revision:seat.revision,allowanceRevision:seat.allowanceRevision,operation:crypto.randomUUID()};
+      accept(await reset({data:resetAttempt.current!}));resetAttempt.current=null;
+      setMessage('Lesson allowance reset to three. Their invitation, saved lessons, and spending history were kept. Ask the teacher to refresh their allowance.');
+    } catch(e) {setError(e instanceof Error?e.message:'Could not reset this allowance. Retry or refresh teachers to check.');}
+    finally {lock.current=false;setBusy(false);}
+  }
   async function copy(seat:Seat) {
     setShown(seat.seat);setMessage('');
     try{await navigator.clipboard.writeText(link(seat));setMessage(`Invitation ${seat.seat} link copied.`);}
@@ -89,6 +102,8 @@ export function BetaTeacherControls() {
             <p className="break-all font-medium">{seat.email??'Email available after their next sign-in check'}</p>
             <p className="break-all text-xs text-muted-foreground">Account: {seat.user}</p>
             <p className="text-sm">{seat.completed} lessons completed · {seat.remaining} new lesson slots left</p>
+            <Button variant="outline" disabled={busy||seat.remaining===3||seat.pending>0} onClick={()=>void resetLessons(seat)}>{resetAttempt.current?.seat===seat.seat?'Retry allowance reset':'Reset lesson allowance'}</Button>
+            {seat.pending>0 && <p className="text-xs text-muted-foreground">{seat.pending} unfinished lesson(s). Finish or resume those before resetting the allowance.</p>}
             <p className="text-xs text-muted-foreground">Joined: {date(seat.claimedAt)}<br/>Last access check: {date(seat.lastSeenAt)}</p>
             <Button variant="destructive" disabled={busy} onClick={()=>{setConfirm({...seat,intent:'replace'});setError('');}}>Remove access</Button>
           </> : <>
@@ -112,7 +127,7 @@ export function BetaTeacherControls() {
         <summary>Removed teachers ({roster.removed.length})</summary>
         <ul className="mt-3 space-y-2 text-sm">{roster.removed.map(t=><li key={t.user} className="break-words">{t.name?`${t.name} · `:''}{t.email||t.user} · Removed {date(t.revokedAt)} · {t.savedLessons} saved lesson records retained</li>)}</ul>
       </details>}
-      <p className="text-sm text-muted-foreground">Each invited teacher gets three lessons. Creating or replacing keys does not increase or reset your shared $10 round budget.</p>
+      <p className="text-sm text-muted-foreground">Each invited teacher gets three lessons. Creating or replacing keys, or resetting an allowance, does not increase or reset your shared $10 round budget. An email used for the beta cannot claim a fresh trial through another account.</p>
     </> : <p>{busy?'Loading teacher access…':'Teacher access is unavailable. Use Refresh teachers to retry.'}</p>}
     {message && <p role="status" className="text-sm">{message}</p>}
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}

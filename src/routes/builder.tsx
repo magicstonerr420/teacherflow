@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
 import { QuickStartTip } from '@/components/QuickStartTip';
+import { SavedClasses } from '@/components/SavedClasses';
+import { LessonFeedback } from '@/components/LessonFeedback';
 import { ReportProblem } from '@/components/ReportProblem';
 import { BetaAccess } from "@/components/BetaAccess";
 import { GenerationProgress, PHASES, type PhaseKey } from "@/components/lesson/GenerationProgress";
@@ -73,7 +75,6 @@ const EMPTY: LessonRequestInput = {
   learningObjective: "",
   numberOfStudents: "",
   previousKnowledge: "",
-  textbookUnit: "",
   requiredVocabulary: "",
   curriculumStandard: "",
   technologyAvailable: "",
@@ -98,7 +99,6 @@ const EXAMPLE: LessonRequestInput = {
     "Students will be able to ask and answer questions about life experiences using the present perfect.",
   numberOfStudents: "24",
   previousKnowledge: "Past simple, regular and irregular past participles",
-  textbookUnit: "",
   requiredVocabulary: "ever, never, already, yet, experience, abroad",
   curriculumStandard: "",
   technologyAvailable: "Projector / screen",
@@ -248,6 +248,7 @@ function Builder() {
               <Button variant="ghost" onClick={() => setLesson(null)}>
                 Edit inputs
               </Button>
+              {savedId && <LessonFeedback lessonId={savedId} />}
             </>
           }
         />
@@ -284,6 +285,7 @@ function Builder() {
           </Alert>
         ) : null}
 
+        <SavedClasses form={form} onApply={settings=>{setForm(previous=>({...previous,...settings}));setErrors({});}} />
         <form onSubmit={submit} className="mt-8 space-y-8">
           <fieldset disabled={!betaAllowed} className="space-y-8 disabled:opacity-60">
           <div className="space-y-6 rounded-xl border bg-card p-6 shadow-sm">
@@ -491,13 +493,6 @@ function Builder() {
                   placeholder="Past simple"
                   value={form.previousKnowledge ?? ""}
                   onChange={(e) => set("previousKnowledge", e.target.value)}
-                />
-              </Field>
-              <Field label="Textbook / unit">
-                <Input
-                  placeholder="Solutions Pre-Intermediate, Unit 4"
-                  value={form.textbookUnit ?? ""}
-                  onChange={(e) => set("textbookUnit", e.target.value)}
                 />
               </Field>
               <Field label="Curriculum standard">

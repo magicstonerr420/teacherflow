@@ -13,8 +13,15 @@ type Job = { attempts: number; lease?: string; until?: number; value?: any };
 type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean; recording?: Job & { fingerprint?: string; choice?: string } };
 type Teacher = { runs: Record<string, Run>; email?: string; name?:string; joinedAt?: string; lastSeenAt?: string; revokedAt?: string };
 type Invite = { digest: string; user?: string; code?: string; label?: string; claimedAt?: string; deactivatedAt?: string };
-type State = { invites: Invite[]; teachers: Record<string, Teacher>; inviteCreations?: Record<string,number>; accessHistory?: { action: string; actor: string; user?: string; seat: number; at: string }[] };
+type State = { invites: Invite[]; teachers: Record<string, Teacher>; usedEmails?:Record<string,string>; allowanceResets?:Record<string,boolean>; inviteCreations?: Record<string,number>; accessHistory?: { action: string; actor: string; user?: string; seat: number; at: string }[] };
 const revision = (invite: Invite) => hash('beta-seat:' + invite.digest + (invite.deactivatedAt??''));
+const allowanceRevision = (teacher: Teacher|undefined) => hash(stable(Object.entries(teacher?.runs??{}).map(([key,run])=>[key,!!run.credited,run.complete])));
+const emailKey = (email:string) => hash(email.trim().toLowerCase());
+function rememberEmails(state:State) {
+  const emails=state.usedEmails??={};
+  for(const [id,teacher] of Object.entries(state.teachers))if(teacher.email)emails[emailKey(teacher.email)]??=id;
+  return emails;
+}
 
 /** Durable, transaction-protected beta allowances. Deploy on one persistent disk. */
 export class BetaStore {
@@ -46,6 +53,8 @@ export class BetaStore {
   claim(user: string, code: string, email?: string, name?:string) {
     return this.transact(s => {
       if (!user) throw new Error('Sign in to claim your invitation.');
+      const emails=rememberEmails(s);
+      if(email && emails[emailKey(email)] && emails[emailKey(email)]!==user) throw new Error('This email has already been used for the teacher beta. Contact the organizer to reset the original account allowance.');
       if (s.teachers[user]?.revokedAt) throw new Error('Your beta access was removed. Contact the organizer.');
       const invite = s.invites.find(i => i.digest === hash(code));
       if (!invite || invite.deactivatedAt || (invite.user && invite.user !== user)) throw new Error('This invitation is invalid, deactivated, or already claimed.');
@@ -56,6 +65,7 @@ export class BetaStore {
       s.teachers[user] ??= {runs:{}};
       s.teachers[user].joinedAt ??= invite.claimedAt;
       if (email) s.teachers[user].email = email;
+      rememberEmails(s);
       if (name!==undefined) s.teachers[user].name=name.trim().slice(0,80);
     });
   }
@@ -74,12 +84,14 @@ export class BetaStore {
     return this.transact(s => {
       const t = s.teachers[user];
       if (!t || t.revokedAt || !s.invites.some(i=>i.user===user&&!i.deactivatedAt)) return {claimed:false, revoked:!!t?.revokedAt, remaining:0, completed:0, lessons:[] as any[]};
+      rememberEmails(s);
       if (email) t.email = email;
       if (name!==undefined) t.name=name.trim().slice(0,80);
       t.lastSeenAt = new Date().toISOString();
       const runs = Object.values(t.runs);
       const counted = runs.filter(r=>!r.credited);
-      return {claimed:true, remaining:3-counted.length, completed:counted.filter(r=>r.complete).length,
+      rememberEmails(s);
+      return {claimed:true, remaining:Math.max(0,3-counted.length), completed:counted.filter(r=>r.complete).length,
         lessons:runs.map(r=>({request:r.request, complete:r.complete}))};
     });
   }
@@ -92,6 +104,7 @@ export class BetaStore {
         return {seat:index+1,revision:revision(invite),active:!invite.deactivatedAt,label:invite.label??'',user:invite.user??null,email:t?.email??null,name:t?.name||null,
           claimedAt:invite.claimedAt??t?.joinedAt??null,lastSeenAt:t?.lastSeenAt??null,
           remaining:invite.user?Math.max(0,3-counted.length):3,completed:counted.filter(r=>r.complete).length,
+          allowanceRevision:allowanceRevision(t),pending:runs.filter(r=>!r.complete).length,
           code:invite.user||invite.deactivatedAt?null:invite.code??null};
       }),
       removed:Object.entries(s.teachers).filter(([,t])=>t.revokedAt).map(([user,t])=>({user,email:t.email??null,name:t.name||null,revokedAt:t.revokedAt!,savedLessons:Object.keys(t.runs).length})),
@@ -137,6 +150,23 @@ export class BetaStore {
       const t=this.teacher(s,user);
       if(Object.values(t.runs).some(r=>!r.complete))throw new Error('Finish any pending lessons before resetting the allowance.');
       for(const run of Object.values(t.runs))run.credited=true;
+    });
+  }
+  /** Owner endpoint supplies a verified actor, a displayed allowance revision and retry token. */
+  resetTeacherAllowance(actor:string, data:{seat:number;revision:string;user:string;allowanceRevision:string;operation:string}) {
+    if(!actor)throw new Error('Owner sign-in is required.');
+    return this.transact(s=>{
+      const operation=hash(actor+':'+data.operation);
+      if(s.allowanceResets?.[operation])return;
+      const invite=s.invites[data.seat-1];
+      if(!invite || invite.deactivatedAt || invite.user!==data.user || revision(invite)!==data.revision)throw new Error('This invitation changed. Refresh teachers before resetting.');
+      if(invite.user===actor)throw new Error('The owner does not need a lesson allowance reset.');
+      const teacher=this.teacher(s,data.user);
+      if(allowanceRevision(teacher)!==data.allowanceRevision)throw new Error('This allowance changed. Refresh teachers before resetting.');
+      if(Object.values(teacher.runs).some(run=>!run.complete))throw new Error('Finish any pending lessons before resetting the allowance.');
+      for(const run of Object.values(teacher.runs))run.credited=true;
+      (s.allowanceResets??={})[operation]=true;
+      (s.accessHistory??=[]).push({action:'reset-allowance',actor,user:data.user,seat:data.seat,at:new Date().toISOString()});
     });
   }
   async stage(user: string, request: any, stage: string, generate: (prior: any) => Promise<any>) {

@@ -24,6 +24,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <nav aria-label="Main navigation" className="flex flex-wrap items-center gap-1">
             <Button variant="ghost" size="sm" asChild>
+              <Link to="/about" activeProps={{className:'bg-accent', 'aria-current':'page'}}>About us</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
               <Link to="/builder">Lesson builder</Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
