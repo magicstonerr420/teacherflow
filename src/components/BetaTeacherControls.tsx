@@ -16,6 +16,10 @@ export function BetaTeacherControls() {
   const lock=useRef(false);
   const creation=useRef<string|null>(null);
   const confirmation=useRef<HTMLDivElement>(null);
+  const invitationLink=useRef<HTMLInputElement>(null);
+  useEffect(()=>{
+    if(shown!==null){invitationLink.current?.scrollIntoView({block:'nearest'});invitationLink.current?.focus({preventScroll:true});invitationLink.current?.select();}
+  },[shown]);
   useEffect(()=>{
     if(confirm){confirmation.current?.scrollIntoView({block:'center'});confirmation.current?.focus({preventScroll:true});}
   },[confirm]);
@@ -57,9 +61,9 @@ export function BetaTeacherControls() {
     try{await navigator.clipboard.writeText(link(seat));setMessage(`Invitation ${seat.seat} link copied.`);}
     catch{setMessage('Select the invitation link below and copy it.');}
   }
-  return <section className="space-y-4 border-t pt-5" aria-label="Beta teacher controls">
+  return <section className="space-y-4" aria-label="Beta teacher controls">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h3 className="text-lg font-semibold">Beta teachers & invitations</h3>
+      <h2 className="text-lg font-semibold">Beta teachers & invitations</h2>
       <div className="flex flex-wrap gap-2">
         <Button disabled={busy} onClick={()=>void addInvitation()}>{creation.current?'Retry create invitation':'Create invitation'}</Button>
         <Button variant="outline" disabled={busy} onClick={()=>void refresh()}>Refresh teachers</Button>
@@ -81,6 +85,7 @@ export function BetaTeacherControls() {
             <p className="text-sm">This key is deactivated. Its previous link no longer works.</p>
             <Button variant="outline" disabled={busy} onClick={()=>{setConfirm({...seat,intent:'replace'});setError('');}}>Activate with new link</Button>
           </> : seat.user ? <>
+            {seat.name && <p className="break-words font-medium">{seat.name}</p>}
             <p className="break-all font-medium">{seat.email??'Email available after their next sign-in check'}</p>
             <p className="break-all text-xs text-muted-foreground">Account: {seat.user}</p>
             <p className="text-sm">{seat.completed} lessons completed · {seat.remaining} new lesson slots left</p>
@@ -89,7 +94,7 @@ export function BetaTeacherControls() {
           </> : <>
             <p className="text-sm">One teacher can claim this invitation and generate three lessons.</p>
             {seat.code ? <Button disabled={busy} onClick={()=>void copy(seat)}>Copy invitation link</Button> : <p className="text-sm">Use your previously saved invitation link, or replace it below.</p>}
-            {shown===seat.seat && seat.code && <Input aria-label={`Invitation ${seat.seat} link`} readOnly value={link(seat)} onFocus={e=>e.target.select()}/>}
+            {shown===seat.seat && seat.code && <Input ref={invitationLink} aria-label={`Invitation ${seat.seat} link`} readOnly value={link(seat)} onFocus={e=>e.target.select()}/>}
             <Button variant="outline" disabled={busy} onClick={()=>{setConfirm({...seat,intent:'replace'});setError('');}}>Replace invitation link</Button>
           </>}
           {seat.active && <Button className="block" variant="outline" disabled={busy} onClick={()=>{setConfirm({...seat,intent:'deactivate'});setError('');}}>Deactivate key</Button>}
@@ -105,7 +110,7 @@ export function BetaTeacherControls() {
       </div>}
       {!!roster.removed.length && <details className="rounded-lg border p-3">
         <summary>Removed teachers ({roster.removed.length})</summary>
-        <ul className="mt-3 space-y-2 text-sm">{roster.removed.map(t=><li key={t.user} className="break-words">{t.email||t.user} · Removed {date(t.revokedAt)} · {t.savedLessons} saved lesson records retained</li>)}</ul>
+        <ul className="mt-3 space-y-2 text-sm">{roster.removed.map(t=><li key={t.user} className="break-words">{t.name?`${t.name} · `:''}{t.email||t.user} · Removed {date(t.revokedAt)} · {t.savedLessons} saved lesson records retained</li>)}</ul>
       </details>}
       <p className="text-sm text-muted-foreground">Each invited teacher gets three lessons. Creating or replacing keys does not increase or reset your shared $10 round budget.</p>
     </> : <p>{busy?'Loading teacher access…':'Teacher access is unavailable. Use Refresh teachers to retry.'}</p>}

@@ -17,7 +17,9 @@ test('owner removal restores three unused invitations, preserves records and cha
     // Existing deployments only stored digests. Loading them must not change any link.
     store.transact(s=>s.invites.forEach(i=>delete i.code));
     assert.equal(store.administration().seats.filter(s=>s.code).length,0);
-    store.claim('teacher-1',codes[0],'teacher@example.test');
+    store.claim('teacher-1',codes[0],'teacher@example.test','Original Name');
+    store.status('teacher-1','teacher@example.test','Updated Name');
+    assert.equal(store.administration().seats[0].name,'Updated Name');
     await store.stage('teacher-1',{topic:'Saved lesson'},'foundation',async()=>({overview:'Keep this lesson'}));
     const before=store.transact(s=>structuredClone(s.teachers['teacher-1'].runs));
     const charge=budget.reserve('teacher-1','request-1','text','test',0.2);
@@ -29,6 +31,7 @@ test('owner removal restores three unused invitations, preserves records and cha
     const after=store.administration();
     assert.equal(after.seats.filter(s=>!s.user).length,3);
     assert.equal(after.removed[0].email,'teacher@example.test');
+    assert.equal(after.removed[0].name,'Updated Name');
     assert.equal(store.status('teacher-1').claimed,false);
     assert.equal(store.status('teacher-1').revoked,true);
     assert.deepEqual(store.transact(s=>s.teachers['teacher-1'].runs),before);

@@ -5,7 +5,7 @@ import { betaMode, betaStatus, claimBeta } from '@/lib/beta.functions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { LessonRequestInput } from '@/lib/lesson-schema';
-import { BetaTeacherControls } from './BetaTeacherControls';
+import { Link } from '@tanstack/react-router';
 
 export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestInput)=>void; onAccess: (allowed:boolean)=>void}) {
   const {isAuthenticated,loading}=useAuth();
@@ -41,13 +41,7 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
     <h2 className="font-semibold">Owner workspace</h2>
     <p>You can generate lessons without the three-lesson beta limit.</p>
     <p className="text-sm">AI usage is billed to your OpenRouter account. Teacher invitations still have their own three-lesson allowance.</p>
-    {'budget' in status && status.budget && <div className="space-y-1 text-sm">
-      <p>Teacher beta budget: ${status.budget.limitUsd.toFixed(2)} total · ${status.budget.remainingUsd.toFixed(2)} available</p>
-      <p>${status.budget.accountedUsd.toFixed(2)} accounted for · ${status.budget.reservedUsd.toFixed(2)} reserved for requests in progress or awaiting charge confirmation.</p>
-      <p>Your owner testing is separate. This budget does not reset on refresh or deployment.</p>
-      {status.budget.paused && <p role="alert">Teacher generation is paused because a provider charge needs review.</p>}
-    </div>}
-    <BetaTeacherControls />
+    <Button asChild variant="outline"><Link to="/beta-management">Open Beta management</Link></Button>
   </section>;
   return <section className="my-6 space-y-3 rounded-xl border bg-card p-5" aria-label="Teacher beta access">
     <h2 className="font-semibold">Private teacher beta</h2>

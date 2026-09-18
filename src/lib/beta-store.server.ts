@@ -11,7 +11,7 @@ const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 const stable = (value: any): string => JSON.stringify(value, (_key, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
 type Job = { attempts: number; lease?: string; until?: number; value?: any };
 type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean; recording?: Job & { fingerprint?: string; choice?: string } };
-type Teacher = { runs: Record<string, Run>; email?: string; joinedAt?: string; lastSeenAt?: string; revokedAt?: string };
+type Teacher = { runs: Record<string, Run>; email?: string; name?:string; joinedAt?: string; lastSeenAt?: string; revokedAt?: string };
 type Invite = { digest: string; user?: string; code?: string; label?: string; claimedAt?: string; deactivatedAt?: string };
 type State = { invites: Invite[]; teachers: Record<string, Teacher>; inviteCreations?: Record<string,number>; accessHistory?: { action: string; actor: string; user?: string; seat: number; at: string }[] };
 const revision = (invite: Invite) => hash('beta-seat:' + invite.digest + (invite.deactivatedAt??''));
@@ -43,7 +43,7 @@ export class BetaStore {
       return codes;
     });
   }
-  claim(user: string, code: string, email?: string) {
+  claim(user: string, code: string, email?: string, name?:string) {
     return this.transact(s => {
       if (!user) throw new Error('Sign in to claim your invitation.');
       if (s.teachers[user]?.revokedAt) throw new Error('Your beta access was removed. Contact the organizer.');
@@ -56,6 +56,7 @@ export class BetaStore {
       s.teachers[user] ??= {runs:{}};
       s.teachers[user].joinedAt ??= invite.claimedAt;
       if (email) s.teachers[user].email = email;
+      if (name!==undefined) s.teachers[user].name=name.trim().slice(0,80);
     });
   }
   teacher(s: State, user: string): Teacher {
@@ -69,11 +70,12 @@ export class BetaStore {
     if (!t) throw new Error('The saved teacher record is unavailable.');
     return t;
   }
-  status(user: string, email?: string) {
+  status(user: string, email?: string, name?:string) {
     return this.transact(s => {
       const t = s.teachers[user];
       if (!t || t.revokedAt || !s.invites.some(i=>i.user===user&&!i.deactivatedAt)) return {claimed:false, revoked:!!t?.revokedAt, remaining:0, completed:0, lessons:[] as any[]};
       if (email) t.email = email;
+      if (name!==undefined) t.name=name.trim().slice(0,80);
       t.lastSeenAt = new Date().toISOString();
       const runs = Object.values(t.runs);
       const counted = runs.filter(r=>!r.credited);
@@ -87,12 +89,12 @@ export class BetaStore {
       seats:s.invites.map((invite,index)=>{
         const t=invite.user?s.teachers[invite.user]:undefined;
         const runs=Object.values(t?.runs??{}), counted=runs.filter(r=>!r.credited);
-        return {seat:index+1,revision:revision(invite),active:!invite.deactivatedAt,label:invite.label??'',user:invite.user??null,email:t?.email??null,
+        return {seat:index+1,revision:revision(invite),active:!invite.deactivatedAt,label:invite.label??'',user:invite.user??null,email:t?.email??null,name:t?.name||null,
           claimedAt:invite.claimedAt??t?.joinedAt??null,lastSeenAt:t?.lastSeenAt??null,
           remaining:invite.user?Math.max(0,3-counted.length):3,completed:counted.filter(r=>r.complete).length,
           code:invite.user||invite.deactivatedAt?null:invite.code??null};
       }),
-      removed:Object.entries(s.teachers).filter(([,t])=>t.revokedAt).map(([user,t])=>({user,email:t.email??null,revokedAt:t.revokedAt!,savedLessons:Object.keys(t.runs).length})),
+      removed:Object.entries(s.teachers).filter(([,t])=>t.revokedAt).map(([user,t])=>({user,email:t.email??null,name:t.name||null,revokedAt:t.revokedAt!,savedLessons:Object.keys(t.runs).length})),
     }));
   }
   createInvitation(actor:string,operation:string) {

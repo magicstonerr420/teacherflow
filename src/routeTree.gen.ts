@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BetaManagementRouteImport } from './routes/beta-management'
 import { Route as BuilderRouteImport } from './routes/builder'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 import { Route as LessonsIndexRouteImport } from './routes/lessons.index'
 import { Route as LessonsIdRouteImport } from './routes/lessons.$id'
@@ -26,9 +28,19 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BetaManagementRoute = BetaManagementRouteImport.update({
+  id: '/beta-management',
+  path: '/beta-management',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuilderRoute = BuilderRouteImport.update({
   id: '/builder',
   path: '/builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
@@ -50,7 +62,9 @@ const LessonsIdRoute = LessonsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/beta-management': typeof BetaManagementRoute
   '/builder': typeof BuilderRoute
+  '/profile': typeof ProfileRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/lessons/': typeof LessonsIndexRoute
@@ -58,7 +72,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/beta-management': typeof BetaManagementRoute
   '/builder': typeof BuilderRoute
+  '/profile': typeof ProfileRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/lessons': typeof LessonsIndexRoute
@@ -67,7 +83,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/beta-management': typeof BetaManagementRoute
   '/builder': typeof BuilderRoute
+  '/profile': typeof ProfileRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/lessons/': typeof LessonsIndexRoute
@@ -77,7 +95,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/beta-management'
     | '/builder'
+    | '/profile'
     | '/api/generate-image'
     | '/lessons/$id'
     | '/lessons/'
@@ -85,7 +105,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/beta-management'
     | '/builder'
+    | '/profile'
     | '/api/generate-image'
     | '/lessons/$id'
     | '/lessons'
@@ -93,7 +115,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/beta-management'
     | '/builder'
+    | '/profile'
     | '/api/generate-image'
     | '/lessons/$id'
     | '/lessons/'
@@ -102,7 +126,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  BetaManagementRoute: typeof BetaManagementRoute
   BuilderRoute: typeof BuilderRoute
+  ProfileRoute: typeof ProfileRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
   LessonsIdRoute: typeof LessonsIdRoute
   LessonsIndexRoute: typeof LessonsIndexRoute
@@ -124,11 +150,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/beta-management': {
+      id: '/beta-management'
+      path: '/beta-management'
+      fullPath: '/beta-management'
+      preLoaderRoute: typeof BetaManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/builder': {
       id: '/builder'
       path: '/builder'
       fullPath: '/builder'
       preLoaderRoute: typeof BuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/generate-image': {
@@ -158,7 +198,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  BetaManagementRoute: BetaManagementRoute,
   BuilderRoute: BuilderRoute,
+  ProfileRoute: ProfileRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
   LessonsIdRoute: LessonsIdRoute,
   LessonsIndexRoute: LessonsIndexRoute,

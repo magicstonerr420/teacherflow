@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-export async function betaIdentity(request: Request): Promise<{id:string; email?:string}> {
+export async function betaIdentity(request: Request): Promise<{id:string; email?:string; name?:string}> {
   const token = request.headers.get('authorization')?.match(/^Bearer (.+)$/)?.[1];
   if (!token) throw new Error('Sign in to use your teacher beta invitation.');
   const url = process.env['SUPABASE_URL'];
@@ -9,7 +9,8 @@ export async function betaIdentity(request: Request): Promise<{id:string; email?
   const client = createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data,error} = await client.auth.getUser(token);
   if(error || !data.user?.id) throw new Error('Your sign-in expired. Please sign in again.');
-  return {id:data.user.id,...(data.user.email?{email:data.user.email}:{})};
+  const name=data.user.user_metadata?.['full_name'];
+  return {id:data.user.id,...(data.user.email?{email:data.user.email}:{}),...(typeof name==='string'?{name:name.trim().slice(0,80)}:{})};
 }
 
 export async function betaUser(request: Request): Promise<string> {
