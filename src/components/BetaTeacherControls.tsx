@@ -74,7 +74,7 @@ export function BetaTeacherControls() {
     try{await navigator.clipboard.writeText(link(seat));setMessage(`Invitation ${seat.seat} link copied.`);}
     catch{setMessage('Select the invitation link below and copy it.');}
   }
-  return <section className="space-y-4" aria-label="Beta teacher controls">
+  return <section id="lesson-allowances" tabIndex={-1} className="scroll-mt-24 space-y-4 outline-none" aria-label="Beta teacher controls">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 className="text-lg font-semibold">Beta teachers & invitations</h2>
       <div className="flex flex-wrap gap-2">

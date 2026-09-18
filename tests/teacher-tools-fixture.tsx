@@ -9,12 +9,15 @@ import {Route as Detail} from '../src/routes/lessons.$id';
 import {Route as About} from '../src/routes/about';
 import {BetaManagementPage} from '../src/components/BetaManagementPage';
 import {Toaster} from '../src/components/ui/sonner';
+import {AppShell} from '../src/components/AppShell';
 
 export function mount(path='/builder') {
   const div=document.createElement('div');document.body.replaceChildren(div);
   const cache=new QueryClient({defaultOptions:{queries:{retry:false}}});
   const root=createRootRoute({component:()=> <QueryClientProvider client={cache}><Outlet/><Toaster/></QueryClientProvider>});
   const tree=root.addChildren([
+    createRoute({getParentRoute:()=>root,path:'/',component:()=> <AppShell><h1>Home</h1></AppShell>}),
+    createRoute({getParentRoute:()=>root,path:'/auth',validateSearch:(search:Record<string,unknown>)=>search,component:()=> <AppShell><h1>Account access</h1></AppShell>}),
     createRoute({getParentRoute:()=>root,path:'/builder',component:Builder.options.component}),
     createRoute({getParentRoute:()=>root,path:'/lessons/',component:Lessons.options.component}),
     createRoute({getParentRoute:()=>root,path:'/lessons/$id',component:Detail.options.component}),

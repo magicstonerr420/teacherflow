@@ -64,7 +64,7 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   }
   await mount();
   await page.getByRole('heading',{name:'Beta management',exact:true}).waitFor();
-  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Beta management',exact:true}).waitFor();
+  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Admin',exact:true}).waitFor();
   assert.ok((await page.getByRole('region',{name:'Sharing invitations'}).innerText()).includes('WhatsApp'));
   const panel=page.getByRole('region',{name:'Beta teacher controls'});
   await panel.getByText('1 active teachers · 2 unused invitations',{exact:true}).waitFor();
@@ -129,15 +129,24 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'No horizontal overflow on phones');
   await page.screenshot({path:'.local-runtime/teacher-admin/ui/owner-mobile.png',fullPage:true});
   const nav=page.getByRole('navigation',{name:'Main navigation'});
-  await nav.getByRole('link',{name:'Lesson builder',exact:true}).click();
+  async function go(name,group){
+   if(await page.getByRole('button',{name:'Menu',exact:true}).isVisible()){
+    await page.getByRole('button',{name:'Menu',exact:true}).click();
+    await page.getByRole('dialog',{name:'Menu',exact:true}).getByRole('link',{name,exact:true}).click();
+   }else if(group){
+    await nav.getByRole('button',{name:group,exact:true}).click();
+    await page.getByRole('menu',{name:group,exact:true}).getByRole('menuitem',{name,exact:true}).click();
+   }else await nav.getByRole('link',{name,exact:true}).click();
+  }
+  await go('Lesson builder');
   await page.getByRole('region',{name:'Owner workspace'}).waitFor();
   assert.equal(await panel.count(),0,'Builder contains no teacher management form');
   assert.equal(await page.getByRole('button',{name:'Create invitation',exact:true}).count(),0);
-  await nav.getByRole('link',{name:'Beta management',exact:true}).click();
+  await go('Teachers & invitations','Admin');
   await panel.getByText('0 active teachers · 5 unused invitations',{exact:true}).waitFor();
   assert.equal(await page.evaluate(()=>window.testRouter.state.location.pathname),'/beta-management');
   // Profiles are available to teachers as well as the owner, and save only profile fields.
-  await nav.getByRole('link',{name:'My profile',exact:true}).click();
+  await go('My profile','Account');
   const profile=page.getByRole('form',{name:'My profile details'});
   await profile.getByLabel('Full name',{exact:true}).waitFor();
   await profile.getByLabel('Full name',{exact:true}).fill('María Rivera');
@@ -155,8 +164,8 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   await profile.getByRole('alert').waitFor();
   assert.equal(await profile.getByLabel('Full name',{exact:true}).inputValue(),'Unsaved change');
   assert.equal(await profile.getByRole('status').count(),0,'Failed save cannot show a saved message');
-  await nav.getByRole('link',{name:'Lesson builder',exact:true}).click();
-  await nav.getByRole('link',{name:'My profile',exact:true}).click();
+  await go('Lesson builder');
+  await go('My profile','Account');
   await page.waitForFunction(()=>document.querySelector('input[autocomplete="name"]')?.value==='María Rivera');
   assert.equal(await profile.getByLabel('School or organization (optional)').inputValue(),'Escuela Norte');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Profile navigation fits mobile');
@@ -164,8 +173,8 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   await mount(false,false,'/builder');
   await page.getByRole('region',{name:'Teacher beta access'}).waitFor();
   assert.equal(await panel.count(),0);assert.equal(await page.evaluate(()=>window.lists),0,'Teacher UI never loads private roster');
-  assert.equal(await nav.getByRole('link',{name:'Beta management',exact:true}).count(),0);
-  await nav.getByRole('link',{name:'My profile',exact:true}).click();
+  assert.equal(await nav.getByRole('button',{name:'Admin',exact:true}).count(),0);
+  await go('My profile','Account');
   await profile.getByLabel('Full name',{exact:true}).waitFor();
   await mount(false,false,'/beta-management');
   await page.getByRole('status').filter({hasText:'This page is only available to the beta owner.'}).waitFor();

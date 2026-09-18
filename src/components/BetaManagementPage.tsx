@@ -1,4 +1,5 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useLocation } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { AppShell } from './AppShell';
 import { BetaTeacherControls } from './BetaTeacherControls';
 import { TeacherFeedbackPanel } from './TeacherFeedbackPanel';
@@ -7,6 +8,12 @@ import { useBetaStatus } from '@/hooks/useBetaStatus';
 
 export function BetaManagementPage() {
   const {isAuthenticated,checking,status,error,refresh}=useBetaStatus();
+  const hash=useLocation({select:location=>location.hash});
+  useEffect(()=>{
+    if(!status?.owner||checking)return;
+    const target=document.getElementById(hash);
+    if(target){target.scrollIntoView({block:'start'});target.focus({preventScroll:true});}
+  },[hash,status?.owner,checking]);
   return <AppShell>
     <div className="mx-auto max-w-6xl space-y-6 px-5 py-10">
       <div className="space-y-2">
@@ -31,7 +38,7 @@ export function BetaManagementPage() {
             <li>The teacher opens the link and signs in or creates an account. The key inside the link claims their invitation automatically.</li>
           </ol>
         </section>
-        {'budget' in status && status.budget && <section className="space-y-2 rounded-xl border bg-card p-5 text-sm" aria-label="Beta budget">
+        {'budget' in status && status.budget && <section id="budget" tabIndex={-1} className="scroll-mt-24 space-y-2 rounded-xl border bg-card p-5 text-sm outline-none" aria-label="Beta budget">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold">Teacher beta budget: ${status.budget.limitUsd.toFixed(2)} total · ${status.budget.remainingUsd.toFixed(2)} available</h2>
             <Button size="sm" variant="outline" onClick={()=>void refresh()}>Refresh budget</Button>
@@ -40,8 +47,8 @@ export function BetaManagementPage() {
           <p>Your owner testing is separate. This budget does not reset on refresh or deployment.</p>
           {status.budget.paused && <p role="alert">Teacher generation is paused because a provider charge needs review.</p>}
         </section>}
-        <div className="rounded-xl border bg-card p-5"><BetaTeacherControls /></div>
-        <TeacherFeedbackPanel />
+        <div id="teachers" tabIndex={-1} className="scroll-mt-24 rounded-xl border bg-card p-5 outline-none"><BetaTeacherControls /></div>
+        <div id="feedback" tabIndex={-1} className="scroll-mt-24 outline-none"><TeacherFeedbackPanel /></div>
       </>}
     </div>
   </AppShell>;

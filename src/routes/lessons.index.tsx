@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { listFavorites, setLessonFavorite } from '@/lib/teacher-tools.functions';
 import { filterLibrary } from '@/lib/teacher-tools';
 import { useAuth } from "@/hooks/useAuth";
@@ -57,7 +58,7 @@ function LessonsPage() {
     onError:()=>toast.error('Could not update this favorite. Please try again.'),
   });
   const visible = filterLibrary(data??[],filters,favorites.data??[]);
-  const hasFilters = !!(filters.search.trim()||filters.level||filters.skill||filters.favoritesOnly);
+  const hasFilters = !!(filters.search.trim()||filters.level||filters.skill);
 
   const duplicate = useMutation({
     mutationFn: (id: string) => copyLesson({ data: { id } }),
@@ -88,6 +89,12 @@ function LessonsPage() {
           </Button>
         </div>
 
+        <Tabs className="mt-6" value={filters.favoritesOnly?'favorites':'all'} onValueChange={value=>setFilters(f=>({...f,favoritesOnly:value==='favorites'}))}>
+          <TabsList aria-label="Lesson library views">
+            <TabsTrigger value="all">All lessons</TabsTrigger>
+            <TabsTrigger value="favorites" disabled={favorites.isPending||favorites.isError}><Star className="mr-2 size-4"/>Favorites</TabsTrigger>
+          </TabsList>
+          <TabsContent value={filters.favoritesOnly?'favorites':'all'}>
         {error ? (
           <p className="mt-8 text-sm text-destructive">We could not load your lessons. Please refresh.</p>
         ) : null}
@@ -116,8 +123,7 @@ function LessonsPage() {
             <div className="space-y-2"><Label htmlFor="lesson-skill">Main skill</Label><select id="lesson-skill" className="h-10 w-full rounded-md border bg-background px-3 text-sm" value={filters.skill} onChange={e=>setFilters(f=>({...f,skill:e.target.value}))}><option value="">All skills</option>{[...new Set(data.map(l=>l.main_skill))].sort().map(s=><option key={s}>{s}</option>)}</select></div>
           </div>
           <div className="flex flex-wrap items-center gap-4">
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={filters.favoritesOnly} disabled={favorites.isPending||favorites.isError} onChange={e=>setFilters(f=>({...f,favoritesOnly:e.target.checked}))} />Favorites only</label>
-            {hasFilters && <Button variant="ghost" size="sm" onClick={()=>setFilters({search:'',level:'',skill:'',favoritesOnly:false})}>Clear filters</Button>}
+            {hasFilters && <Button variant="ghost" size="sm" onClick={()=>setFilters(f=>({...f,search:'',level:'',skill:''}))}>Clear filters</Button>}
             <p role="status" className="text-sm text-muted-foreground">{visible.length} of {data.length} lessons</p>
           </div>
           {favorites.isError && <p role="alert" className="text-sm">Favorites could not load. <Button variant="outline" size="sm" onClick={()=>void favorites.refetch()}>Retry favorites</Button></p>}
@@ -185,7 +191,8 @@ function LessonsPage() {
             </div>
           ))}
         </div>
-
+          </TabsContent>
+        </Tabs>
       </div>
     </AppShell>
   );
