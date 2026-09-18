@@ -1,3 +1,4 @@
+import { withBetaBudget } from './beta-budget.server';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { z } from 'zod';
@@ -17,7 +18,8 @@ export const createListening = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const { user, limited } = await identity();
     const lesson = limited ? betaStore().readingLesson(user, data.request) : data.lesson;
-    const result = await generateListening(data.request, lesson, user, limited);
+    const generate = () => generateListening(data.request, lesson, user, limited);
+    const result = await (limited ? withBetaBudget(user, generate) : generate());
     if (limited && result.status === 'ready') betaStore().retainReading(user, data.request, value => applyListening(value, result));
     return result;
   });
@@ -33,9 +35,9 @@ export const createListeningAudio = createServerFn({ method: 'POST' })
       if (lesson.listening?.fingerprint !== data.fingerprint) throw new Error('Generate the listening activity for this lesson first.');
       if (data.choice === 'test') throw new Error('The test voice is reserved for local development.');
     }
-    const result = await generateListeningAudio(data.fingerprint, user, data.choice, limited);
-    if (limited) betaStore().retainReading(user, data.request, lesson => ({ ...lesson, listening: { ...lesson.listening, audio: result.audio } }));
-    return result;
+    const generate = () => generateListeningAudio(data.fingerprint, user, data.choice, limited);
+    if (limited) return betaStore().recording(user, data.request, data.fingerprint, data.choice, id => getListeningAudio(id, user), choice => generateListeningAudio(data.fingerprint, user, choice as 'standard' | 'economy', true));
+    return generate();
   });
 export const loadListeningAudio = createServerFn({ method: 'POST' })
   .inputValidator((input: unknown) => z.object({ id: z.string().regex(/^[a-f0-9]{64}$/) }).parse(input))

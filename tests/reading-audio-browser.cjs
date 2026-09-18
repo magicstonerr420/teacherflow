@@ -30,19 +30,21 @@ const dir = '.local-runtime/reading-audio-ui';
     await page.routeWebSocket(/.*/, socket => socket.close());
     await page.route('**/_serverFn/**', route => { unexpected.push(route.request().url()); return route.abort(); });
     await page.route('**/reading-audio-test', route => route.fulfill({ contentType: 'text/html', body: '<html><body><script type="module">window.process={env:{NODE_ENV:"development",TSS_SERVER_FN_BASE:"/_serverFn/"}};import R from "/@react-refresh";R.injectIntoGlobalHook(window);window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>type=>type;window.__vite_plugin_react_preamble_installed__=true;</script></body></html>' }));
+    await page.route('**/src/lib/beta.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: `export async function betaStatus(){ return { enabled:true, owner:!window.betaLimited, claimed:true }; }` }));
     await page.route('**/src/lib/reading.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: `export async function regenerateReading({data}) { window.calls.reading++; window.readingRequest=data; return window.nextReading; }` }));
     await page.route('**/src/lib/listening.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: `
       export async function createListening({data}) { window.calls.script++; window.listeningRequest=data; return window.nextListening; }
       export async function createListeningAudio({data}) { window.calls.audio++; window.audioRequest=data; if(window.failAudio) { window.failAudio=false; throw Error('Recording test failure. Your script is saved.'); } return {audio:{id:'a'.repeat(64),choice:data.choice,model:'test-existing-recording',voice:'test',mime:'audio/mpeg',accent:'en-US'},dataUrl:window.audioUrl}; }
       export async function loadListeningAudio({data}) { window.calls.load++; return {dataUrl:window.audioUrl}; }
     ` }));
-    async function mount(value) {
+    async function mount(value, limited = false) {
       await page.goto(origin + '/reading-audio-test');
-      await page.evaluate(async ({ data, reading, listening, audioUrl }) => {
+      await page.evaluate(async ({ data, reading, listening, audioUrl, limited }) => {
+        window.betaLimited = limited;
         window.calls = { reading: 0, script: 0, audio: 0, load: 0 };
         window.nextReading = reading; window.nextListening = listening; window.audioUrl = audioUrl;
         await (await import('/tests/reading-fixture.tsx')).mount(data);
-      }, { data: value, reading, listening, audioUrl });
+      }, { data: value, reading, listening, audioUrl, limited });
     }
     await mount(data);
     const nav = page.locator('nav');
@@ -134,6 +136,13 @@ const dir = '.local-runtime/reading-audio-ui';
     assert.equal(await page.evaluate(() => window.calls.script), 0, 'Accent replacement reuses the saved script');
     assert.equal(await page.evaluate(() => window.calls.audio), 1);
     assert.equal(await active.getByRole('button', { name: 'Create American English recording', exact: true }).count(), 0);
+    await mount({ request: data.request, lesson: older }, true);
+    await nav.getByRole('button', { name: 'Listening', exact: true }).click();
+    await active.getByText('Your beta includes one recording per lesson.', { exact: false }).waitFor();
+    await active.locator('audio').waitFor();
+    assert.equal(await active.getByLabel('Recording voice').isDisabled(), true, 'Invited teachers cannot buy a second voice');
+    assert.equal(await active.getByRole('button', { name: 'Create American English recording', exact: true }).count(), 0);
+    assert.equal(await page.evaluate(() => window.calls.audio), 0, 'Opening an old teacher recording does not buy a replacement');
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'No mobile horizontal overflow');
     await page.screenshot({ path: dir + '/listening-mobile.png', fullPage: true });
@@ -142,7 +151,7 @@ const dir = '.local-runtime/reading-audio-ui';
     await active.getByRole('article', { name: 'Reading passage' }).waitFor();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     assert.deepEqual(errors, []); assert.deepEqual(unexpected, []);
-    const result = { duration, providerCalls: 0, checked: ['visible Reading tab and optional creation', 'passage/questions/activity', 'teacher answer isolation', 'worksheet integration and print isolation', 'retained reading on failure', 'no-tech script and optional audio', 'recording failure preserves script', 'rewind including start boundary', 'rewind during playback', 'restart', '0.5/0.75/1 playback and preserved pitch', 'no generation on playback controls or saved reopen', 'MP3 download', 'mobile navigation and layout'] };
+    const result = { duration, providerCalls: 0, checked: ['visible Reading tab and optional creation', 'passage/questions/activity', 'teacher answer isolation', 'worksheet integration and print isolation', 'retained reading on failure', 'no-tech script and optional audio', 'recording failure preserves script', 'rewind including start boundary', 'rewind during playback', 'restart', '0.5/0.75/1 playback and preserved pitch', 'no generation on playback controls or saved reopen', 'MP3 download', 'one recording allowance and locked teacher voice', 'owner replacement retained', 'mobile navigation and layout'] };
     await fs.writeFile(dir + '/browser-checks.json', JSON.stringify(result, null, 2));
     console.log(JSON.stringify(result));
   } finally { await browser.close(); }

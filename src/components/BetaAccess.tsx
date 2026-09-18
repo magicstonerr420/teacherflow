@@ -40,10 +40,16 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
     <h2 className="font-semibold">Owner workspace</h2>
     <p>You can generate lessons without the three-lesson beta limit.</p>
     <p className="text-sm">AI usage is billed to your OpenRouter account. Teacher invitations still have their own three-lesson allowance.</p>
+    {'budget' in status && status.budget && <div className="space-y-1 text-sm">
+      <p>Teacher beta budget: ${status.budget.limitUsd.toFixed(2)} total · ${status.budget.remainingUsd.toFixed(2)} available</p>
+      <p>${status.budget.accountedUsd.toFixed(2)} accounted for · ${status.budget.reservedUsd.toFixed(2)} reserved for requests in progress or awaiting charge confirmation.</p>
+      <p>Your owner testing is separate. This budget does not reset on refresh or deployment.</p>
+      {status.budget.paused && <p role="alert">Teacher generation is paused because a provider charge needs review.</p>}
+    </div>}
   </section>;
   return <section className="my-6 space-y-3 rounded-xl border bg-card p-5" aria-label="Teacher beta access">
     <h2 className="font-semibold">Private teacher beta</h2>
-    <p className="text-sm">Three lessons per invited account, with up to six illustrations each. Progress and completed images are saved for reuse.</p>
+    <p className="text-sm">Three lessons per invited account, with up to six illustrations and one recording per lesson. Progress and completed images are saved for reuse.</p>
     {loading ? <p>Checking sign-in…</p> : !isAuthenticated ? <a className="underline" href="/auth?redirect=%2Fbuilder">Sign in or create an account to claim your invitation</a> : !status && !error ? <p>Checking your account access…</p> : status?.claimed ? <>
       <p className="font-medium">{status.remaining} new lesson slots remaining · {status.completed} of 3 lessons completed</p>
       <p className="text-sm">Starting a lesson reserves a slot. Failed parts can resume in that slot; they do not use another. Each part has up to three attempts, and each illustration has up to two.</p>

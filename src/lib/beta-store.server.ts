@@ -1,3 +1,4 @@
+import { withBetaBudget } from './beta-budget.server.ts';
 import {alternateWorksheetIssue} from './worksheet-versions.ts';
 import { lessonImagePrompts } from './image-plan.ts';
 import { DatabaseSync } from 'node:sqlite';
@@ -9,7 +10,7 @@ const phases = ['foundation','student','teacher','studentB','teacherB','presenta
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 const stable = (value: any): string => JSON.stringify(value, (_key, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
 type Job = { attempts: number; lease?: string; until?: number; value?: any };
-type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean };
+type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean; recording?: Job & { fingerprint?: string; choice?: string } };
 type Teacher = { runs: Record<string, Run> };
 type State = { invites: { digest: string; user?: string }[]; teachers: Record<string, Teacher> };
 
@@ -101,7 +102,7 @@ export class BetaStore {
     });
     if ('cached' in reservation) return reservation.cached;
     try {
-      const value = await generate(reservation.prior);
+      const value = await withBetaBudget(user, () => generate(reservation.prior));
       this.transact(s => {
         const run = this.teacher(s,user).runs[key]!;
         const job = run.parts[stage]!;
@@ -134,7 +135,7 @@ export class BetaStore {
     });
     if('cached' in reservation) return reservation.cached!;
     try {
-      const value=await generate();
+      const value=await withBetaBudget(user, generate);
       this.transact(s=>{const job=this.teacher(s,user).runs[key]!.images[imageKey]!;if(job.lease!==reservation.lease)throw new Error('Image request expired.');job.value=value;delete job.until;delete job.lease;});
       return value;
     }catch(e){this.transact(s=>{const job=this.teacher(s,user).runs[key]!.images[imageKey]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});throw e;}
@@ -153,7 +154,7 @@ export class BetaStore {
       return job.lease;
     });
     try {
-      const patch=await generate(lesson);
+      const patch=await withBetaBudget(user, () => generate(lesson));
       if(!patch?.worksheet?.studentB || alternateWorksheetIssue(lesson.worksheet.student,patch.worksheet.studentB))throw new Error('Version B repair did not produce a distinct worksheet.');
       this.transact(s=>{
         const run=this.teacher(s,user).runs[key]!;
@@ -165,6 +166,53 @@ export class BetaStore {
       });
       return {worksheet:{...lesson.worksheet,studentB:patch.worksheet.studentB,teacherB:patch.worksheet.teacherB}};
     }catch(e){this.transact(s=>{const job=this.teacher(s,user).runs[key]!.alternateRepair!;if(job.lease===lease){delete job.until;delete job.lease;}});throw e;}
+  }
+  /** One recording per owned lesson, shared by every voice and script fingerprint. */
+  async recording(user: string, request: any, fingerprint: string, choice: string, load: (id: string) => any, generate: (choice: string) => Promise<any>) {
+    const lesson = this.readingLesson(user, request);
+    const key = hash(stable(request));
+    if (lesson.listening?.status !== 'ready' || lesson.listening.fingerprint !== fingerprint)
+      throw new Error('Generate the listening activity for this lesson first.');
+    const reservation = this.transact(s => {
+      const run = this.teacher(s, user).runs[key]!;
+      const job = run.recording ??= { attempts: 0 };
+      if (job.value) {
+        if (job.fingerprint !== fingerprint) throw new Error('This beta lesson already has its recording. Contact the organizer if the script needs replacing.');
+        return { cached: job.value };
+      }
+      // Adopt existing paid recordings without buying a replacement on migration.
+      if (lesson.listening.audio?.id) {
+        job.value = { audio: lesson.listening.audio }; job.fingerprint = fingerprint;
+        return { cached: job.value };
+      }
+      if ((job.until ?? 0) > Date.now()) throw new Error('This lesson recording is already running. Wait, then load the saved recording.');
+      if (job.fingerprint && job.fingerprint !== fingerprint) throw new Error('This beta lesson already reserved its recording for a saved script. Contact the organizer to replace it.');
+      if (job.attempts >= 3) throw new Error('This recording reached the beta retry limit. Your script is saved; contact the organizer.');
+      job.attempts++; job.lease = randomUUID(); job.until = Date.now() + 10 * 60_000;
+      job.fingerprint = fingerprint; job.choice ??= choice;
+      return { lease: job.lease, choice: job.choice };
+    });
+    if ('cached' in reservation) {
+      const value = await load(reservation.cached.audio.id);
+      this.retainReading(user, request, saved => ({ ...saved, listening: { ...saved.listening, audio: value.audio } }));
+      return value;
+    }
+    try {
+      const value = await withBetaBudget(user, () => generate(reservation.choice));
+      this.transact(s => {
+        const job = this.teacher(s, user).runs[key]!.recording!;
+        if (job.lease !== reservation.lease) throw new Error('This recording request expired. Reopen the lesson.');
+        job.value = { audio: value.audio }; delete job.lease; delete job.until;
+      });
+      this.retainReading(user, request, saved => ({ ...saved, listening: { ...saved.listening, audio: value.audio } }));
+      return value;
+    } catch (error) {
+      this.transact(s => {
+        const job = this.teacher(s, user).runs[key]!.recording!;
+        if (job.lease === reservation.lease) { delete job.lease; delete job.until; }
+      });
+      throw error;
+    }
   }
   readingLesson(user: string, request: any) {
     return this.transact(s => {

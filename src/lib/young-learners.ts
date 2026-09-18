@@ -1,5 +1,5 @@
 import { beginnerPictures } from './beginner-pictures.ts';
-import { readingShapeScene } from './reading-visuals';
+import { readingShapeScene } from './reading-visuals.ts';
 
 export const isYoungA1 = (r: { studentAge: string; level: string }) =>
   r.level === "A1" && /^5\s*[-–]\s*7$/.test(r.studentAge.trim());

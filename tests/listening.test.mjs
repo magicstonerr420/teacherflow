@@ -85,6 +85,17 @@ try {
     let calls = 0; globalThis.fetch = async () => { calls++; return new Response('', { status }); };
     await assert.rejects(() => generateSpeech(script)); assert.equal(calls, 1, 'Do not retry auth or credit failures');
   }
+  for (const failure of ['network', 'invalid', 'download']) {
+    let requests = 0;
+    globalThis.fetch = async () => {
+      requests++;
+      if (failure === 'network') throw Error('Connection interrupted');
+      if (failure === 'download') return { ok:true, headers:new Headers({'Content-Type':'audio/mpeg'}), arrayBuffer:async()=>{ throw Error('Interrupted download'); } };
+      return new Response('not an mp3', { headers: { 'Content-Type': 'audio/mpeg' } });
+    };
+    await assert.rejects(() => generateSpeech(script, 'standard'));
+    assert.equal(requests, 1, 'Never automatically buy fallback audio after uncertain or invalid delivery');
+  }
   globalThis.fetch = async () => new Response('not an mp3', { headers: { 'Content-Type': 'audio/mpeg' } });
   await assert.rejects(() => generateSpeech(script, 'economy'), /invalid recording/);
   process.env.NODE_ENV = 'production';

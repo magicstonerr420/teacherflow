@@ -1,3 +1,4 @@
+import { BetaBudgetError } from './beta-budget.server';
 import {alternateWorksheetIssue, removeRepeatedWorksheetSections} from './worksheet-versions';
 import { generateAlternateWorksheet } from './alternate-worksheet.server';
 import { americanEnglishContent } from './american-english';
@@ -76,7 +77,7 @@ async function generateNoTechSafe<T>(args: {
 type StageName = GenerationStage;
 
 function friendly(error: unknown): never {
-  if (error instanceof LessonGenerationError) throw new Error(error.message);
+  if (error instanceof LessonGenerationError || error instanceof BetaBudgetError) throw new Error(error.message);
   console.error(error);
   throw new Error("Something went wrong while building the class. Your inputs are safe — please retry.");
 }

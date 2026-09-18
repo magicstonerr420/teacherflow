@@ -1,3 +1,4 @@
+import { betaStatus } from '@/lib/beta.functions';
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,9 @@ export function ListeningPanel({ lesson, request, onChange }: {
   const ready = state?.status === 'ready' ? state : undefined;
   const noTech = isNoTechRequest(request.technologyAvailable);
   const [choice, setChoice] = useState<VoiceChoice>(ready?.audio?.choice ?? 'standard');
+  const [limited, setLimited] = useState(false);
+  const statusFn = useServerFn(betaStatus);
+  useEffect(() => { let active = true; statusFn().then(s => { if (active) setLimited(!!s.enabled && !s.owner); }).catch(() => {}); return () => { active = false; }; }, []);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const [audio, setAudio] = useState<{ id: string; url: string } | null>(null);
@@ -23,7 +27,7 @@ export function ListeningPanel({ lesson, request, onChange }: {
   const loader = useRef(loadAudio); loader.current = loadAudio;
   const id = ready?.audio?.id;
   const recordedChoice = ready?.audio?.choice;
-  const selectedRecording = recordedChoice === choice;
+  const selectedRecording = !!id && (limited || recordedChoice === choice);
   const recordingLoaded = selectedRecording && !!audio && audio.id === id;
   const generating = useRef(false);
   useEffect(() => { setChoice(recordedChoice ?? 'standard'); }, [id, recordedChoice]);
@@ -68,18 +72,19 @@ export function ListeningPanel({ lesson, request, onChange }: {
       <p>Create an approximately two-minute listening activity about {request.topic}, matched to ages {request.studentAge} and level {request.level}.</p>
       {noTech && <p className="text-sm text-muted-foreground">This lesson works with the teacher reading aloud. You can also create an optional recording to play or download.</p>}
       <label className="flex max-w-sm flex-col gap-2 text-sm font-medium">Recording voice
-        <select className="rounded-md border bg-background p-2" value={choice} disabled={!!busy} onChange={e => setChoice(e.target.value as VoiceChoice)}>
+        <select className="rounded-md border bg-background p-2" value={choice} disabled={!!busy || (limited && !!id)} onChange={e => setChoice(e.target.value as VoiceChoice)}>
           <option value="standard">Standard voice — American English</option><option value="economy">Economy voice — American English</option>
           {import.meta.env.DEV && <option value="test">Free test voice</option>}
         </select>
       </label>
+      {limited && <p className="text-sm text-muted-foreground">Your beta includes one recording per lesson. Replaying, slowing down, rewinding, and downloading the saved recording use no additional allowance.</p>}
       <div className="flex flex-wrap gap-3">
         <Button onClick={() => void generate(!noTech || !!ready)} disabled={!!busy || recordingLoaded}>
           {busy || (recordingLoaded ? 'Recording ready' : selectedRecording ? 'Load saved recording' : ready ? noTech ? 'Generate optional recording' : 'Generate recording' : noTech ? 'Generate listening activity' : 'Generate listening activity and audio')}
         </Button>
         {noTech && !ready && <Button variant="outline" onClick={() => void generate(true)} disabled={!!busy}>Generate activity with optional audio</Button>}
       </div>
-      {ready?.audio && ready.audio.accent !== 'en-US' && <div className="space-y-2">
+      {!limited && ready?.audio && ready.audio.accent !== 'en-US' && <div className="space-y-2">
         <p className="text-sm text-muted-foreground">This recording used an older voice. You can create an American English recording from the saved script.</p>
         <Button variant="outline" onClick={() => void generate(true, true)} disabled={!!busy}>Create American English recording</Button>
       </div>}

@@ -1,4 +1,4 @@
-import { beginnerPictures, teachingColors, teachingShapes } from './beginner-pictures';
+import { beginnerPictures, teachingColors, teachingShapes } from './beginner-pictures.ts';
 import type { Reading } from './reading';
 
 const color = Object.keys(teachingColors).join('|'), shape = Object.keys(teachingShapes).join('|');

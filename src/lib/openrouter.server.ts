@@ -1,3 +1,4 @@
+import { budgetFetch, BetaBudgetError } from './beta-budget.server.ts';
 import { appendFile, mkdir } from "node:fs/promises";
 import { modelSetting } from "./model-settings.server.ts";
 
@@ -28,7 +29,7 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
   // Model choice comes only from server settings, never a client-supplied userTier.
   let response: Response;
   try {
-    response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    response = await budgetFetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -55,6 +56,7 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
       }),
     });
   } catch (error) {
+    if (error instanceof BetaBudgetError) throw error;
     const cause = error as { name?: string; cause?: { code?: string } };
     await recordResult({ model, section: args.schemaName, outcome: "network", reason: cause.cause?.code ?? cause.name });
     if (cause.name === "TimeoutError" || cause.name === "AbortError") throw new Error("The AI provider exceeded the four-minute time limit for this part. Retry this part; completed parts are retained.");

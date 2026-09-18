@@ -1,3 +1,4 @@
+import { budgetFetch } from './beta-budget.server.ts';
 import { modelSetting } from "./model-settings.server.ts";
 
 export class IllustrationBillingError extends Error {
@@ -28,7 +29,7 @@ export async function generateIllustration(prompt: string, age: string, level: s
   const key = process.env["OPENROUTER_API_KEY"]?.trim();
   if (!key) throw new Error("The OpenRouter image key is not configured.");
   const model = modelSetting("OPENROUTER_IMAGE_MODEL", "google/gemini-3.1-flash-image-preview");
-  const response = await fetch("https://openrouter.ai/api/v1/images", {
+  const response = await budgetFetch("https://openrouter.ai/api/v1/images", {
     method: "POST",
     signal: AbortSignal.timeout(180_000),
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },

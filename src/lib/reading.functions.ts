@@ -1,3 +1,4 @@
+import { withBetaBudget } from './beta-budget.server';
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
@@ -23,7 +24,8 @@ export const regenerateReading = createServerFn({ method: "POST" })
     // A beta teacher may regenerate only a completed lesson belonging to their account.
     const lesson = limited ? betaStore().readingLesson(user, data.request) : data.lesson;
     try {
-      const result = await generateReading(data.request, lesson, user, data.operation, limited);
+      const generate = () => generateReading(data.request, lesson, user, data.operation, limited);
+      const result = await (limited ? withBetaBudget(user, generate) : generate());
       if (limited && result.status === "ready") betaStore().retainReading(user, data.request, lesson => applyReading(lesson, result));
       return result;
     }
