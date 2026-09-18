@@ -9,11 +9,12 @@ import { READING_MODEL, readingContext, readingSchema, validateReading, type Rea
 import type { LessonPackage, LessonRequestInput } from "./lesson-schema";
 import { findTechTerms, isNoTechRequest } from "./no-tech";
 import { AMERICAN_ENGLISH_RULES, americanEnglishContent } from './american-english';
+import { missingReadingReference, readingShapeScene } from './reading-visuals';
 
 export const READING_SYSTEM = `You write integrated English reading materials for TeacherFlow: One topic. One complete class. ${AMERICAN_ENGLISH_RULES}
 Use the supplied objective, lesson progression, target vocabulary/grammar, prior knowledge and teaching context. Select a specific reading purpose that advances the SAME objective. Questions, a short reading activity and assessment guidance must assess that purpose, not a generic list of every question type. Questions must be answerable from the text; inference must have evidence. Include all options needed for matching or sequencing. Put correct answers ONLY in each question's answer and teacher-only answerExplanation, never in student instructions or question text.
 Before returning, check EVERY question and answer against the actual passage. Each question must include its own answer, evidence (an EXACT, contiguous quote from the passage, without added quote marks or ellipses) and answerExplanation (teacher-only justification explaining why the answer follows). These are hidden from students. Explain how the answer follows from the quoted evidence. Include short answers explicitly in the explanation. If choices are provided, copy the correct choice verbatim into answer; never answer with only a letter or index. For questions with multiple correct parts, use choices=[] and a short complete textual answer. Do not ask about locations, objects, people or events the passage does not state. For true/false, false means explicitly contradicted, NEVER merely unstated: a passage saying people read in a library does not make 'children read in the library' false. Prefer direct detail/scanning questions over ambiguous true/false at A1/A2. Every multiple-choice item must have exactly one defensible answer; other options must be contradicted or irrelevant to that specific question.
-The reading activity and assessment guidance must be self-contained and use THIS passage. Never ask teachers to supply a new notice, new reading, missing picture or unspecified extra resource. Students must be able to perform the activity using only this reading and its questions.
+The reading activity and assessment guidance must be self-contained and use THIS passage. Never ask teachers to supply a new notice, new reading, missing picture or unspecified extra resource. Students must be able to perform the activity using only this reading and its questions. Do not write deictic directions such as "Look at the picture", "Point to this", or "Look at the shapes" unless a reference picture is explicitly supplied. Describe facts in words instead. If there are several circles, squares, people or other similar objects, every question MUST distinguish which one is meant or explicitly ask for all correct answers. Never ask "What color is the circle?" when two circles have different colors.
 CEFR controls language, NOT maturity:
 A1: very common words, short simple sentences, concrete ideas, very limited inference.
 A2: short connected paragraphs, everyday vocabulary, basic connectors, simple description or narrative.
@@ -85,17 +86,24 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
       db.exec("COMMIT");
       let result: ReadingState;
       try {
-        const passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({
+        let passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({
           system: READING_SYSTEM, input: `${JSON.stringify(context)}\nFIRST STEP: Write only the passage, title, purpose and CEFR required by the schema. Keep the stated age/level length. Questions come in a separate request.`, schemaName: "teacherflow_reading_passage",
           schema: zodToJsonSchema(passageSchema, { $refStrategy: "none" }),
         })));
+        if (missingReadingReference(passage.text)) {
+          passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({ system: READING_SYSTEM,
+            input: `${JSON.stringify(context)}\nRevise this passage: ${JSON.stringify(passage)}. Remove directions that need a missing picture. State all facts in words so the reading can be understood without an illustration. Keep the same objective, topic, age and level.`,
+            schemaName: 'teacherflow_reading_passage_reference_repair', schema: zodToJsonSchema(passageSchema, { $refStrategy: 'none' }) })));
+        }
         if (passage.cefr !== request.level) throw new Error('DeepSeek returned the wrong reading level.');
+        if (missingReadingReference(passage.text)) throw new Error('The reading still depends on an unavailable reference picture.');
         const extracts = (passage.text.match(/[^.!?]+(?:[.!?]+|$)/gu) ?? [passage.text]).map(s => s.trim()).filter(Boolean);
         const taskInput = `${JSON.stringify(context)}\nFIXED PASSAGE\n${JSON.stringify(passage)}\nNUMBERED EVIDENCE SENTENCES\n${extracts.map((s, i) => `${i + 1}: ${s}`).join('\n')}\n${QUESTION_RULES}`;
         let value = await requestReadingOpenRouter({ system: `${READING_SYSTEM}\n${QUESTION_RULES}`, input: taskInput,
           schemaName: 'teacherflow_reading_questions', schema: zodToJsonSchema(taskSchema, { $refStrategy: 'none' }) });
         const validate = (value: unknown) => {
           const r = assembleReading(passage, extracts, value, request.level);
+          if (!readingShapeScene(r.text) && missingReadingReference([r.instructions, r.activity, ...r.questions.map(q => q.question)].join('\n'))) throw new Error('These tasks require a missing picture. Replace them with questions about explicitly stated passage facts.');
           if (isNoTechRequest(request.technologyAvailable)) {
             const found = findTechTerms(r);
             if (found.length) throw new Error(`This is a no-technology lesson. Remove unnecessary references to ${found.join(", ")}, including distracting answer options. Keep reading tasks printable and self-contained.`);

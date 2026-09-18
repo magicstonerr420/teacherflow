@@ -1,6 +1,7 @@
 import {alternateWorksheetIssue, removeRepeatedWorksheetSections} from './worksheet-versions';
 import { generateAlternateWorksheet } from './alternate-worksheet.server';
 import { americanEnglishContent } from './american-english';
+import { extendNewShapePresentation } from './color-shape-resources';
 import { isYoungA1, youngWorksheetIssues, youngPresentationIssues, worksheetPictureIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
@@ -185,6 +186,7 @@ export const generateLessonStage = createServerFn({ method: "POST" })
         });
         if (answerAlignmentIssue(stage, modelPrior, result)) throw new LessonGenerationError("answer_alignment", "The answer key still needs corrections to match the worksheet questions and clues. Your worksheet is retained. Retry this part.");
       }
+      if (stage === 'presentation' && result.presentation) result = { ...result, presentation: extendNewShapePresentation(result.presentation, request) };
       const patch = reading ? integrateReadingPatch(prior, { ...result, reading }) : result;
       return listening ? integrateListeningPatch(prior, { ...patch, listening }) : patch;
 

@@ -11,7 +11,7 @@ export const listeningSchema = z.object({
 }).strict();
 export type Listening = z.infer<typeof listeningSchema>;
 export type VoiceChoice = 'standard' | 'economy' | 'test';
-export type ListeningAudio = { id: string; model: string; voice: string; choice: VoiceChoice; mime: 'audio/mpeg' };
+export type ListeningAudio = { id: string; model: string; voice: string; choice: VoiceChoice; mime: 'audio/mpeg'; accent?: 'en-US' };
 export type ListeningState = { status: 'ready'; value: Listening; fingerprint: string; audio?: ListeningAudio } | { status: 'failed'; error: string };
 export const LISTENING_LABEL = 'Listening';
 export const LISTENING_HANDOFF = `A dedicated listening script and questions are supplied separately. Use this exact script for listening activities. Do not write a competing script, put its transcript on the student worksheet, repeat its questions in the core worksheet, or ask the teacher to find an external recording. The server adds listening questions and the teacher-only script afterwards. If it failed, retain independent practice without referring to a missing recording. For a no-technology class the teacher reads the script aloud; do not require electronic playback.`;

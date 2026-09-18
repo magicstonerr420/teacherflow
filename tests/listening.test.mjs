@@ -56,8 +56,8 @@ try {
       else { scriptCalls++; assert.equal(body.model, 'deepseek/deepseek-v4-flash-0731'); assert.equal(body.reasoning.enabled, false); }
       return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(value) } }] });
     }
-    voiceCalls++; assert.equal(body.model, 'x-ai/grok-voice-tts-1.0'); assert.equal(body.input, script); assert.equal(body.response_format, 'mp3');
-    assert.deepEqual(body.provider.options.xai, { speed: 0.7, language: 'en' });
+    voiceCalls++; assert.equal(body.model, 'microsoft/mai-voice-2'); assert.equal(body.input, script); assert.equal(body.response_format, 'mp3');
+    assert.equal(body.voice, 'en-US-Harper:MAI-Voice-2'); assert.equal(body.speed, 0.8); assert.deepEqual(body.provider, { only: ['azure'], allow_fallbacks: false });
     return new Response(mp3, { headers: { 'Content-Type': 'audio/mpeg' } });
   };
   const [a, b] = await Promise.all([generateListening(request, fixture.lesson, 'teacher'), generateListening(request, fixture.lesson, 'teacher')]);
@@ -75,12 +75,12 @@ try {
   globalThis.fetch = async (_url, options) => {
     const body = JSON.parse(options.body); models.push(body.model);
     if (models.length === 1) return new Response('Unavailable', { status: 503 });
-    assert.deepEqual(body.provider, { only: ['deepinfra'], allow_fallbacks: false });
-    assert.equal(body.voice, 'tara');
+    assert.deepEqual(body.provider, { only: ['deepinfra'], allow_fallbacks: false, options: { deepinfra: { speed: 0.8 } } });
+    assert.equal(body.voice, 'af_heart');
     return new Response(mp3, { headers: { 'Content-Type': 'audio/mpeg' } });
   };
-  assert.equal((await generateSpeech(script)).model, 'canopylabs/orpheus-3b-0.1-ft');
-  assert.deepEqual(models, ['x-ai/grok-voice-tts-1.0', 'canopylabs/orpheus-3b-0.1-ft']);
+  assert.equal((await generateSpeech(script)).model, 'hexgrad/kokoro-82m');
+  assert.deepEqual(models, ['microsoft/mai-voice-2', 'hexgrad/kokoro-82m']);
   for (const status of [401, 402, 403]) {
     let calls = 0; globalThis.fetch = async () => { calls++; return new Response('', { status }); };
     await assert.rejects(() => generateSpeech(script)); assert.equal(calls, 1, 'Do not retry auth or credit failures');

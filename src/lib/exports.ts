@@ -1,5 +1,8 @@
 import { isYoungA1, picturePng, worksheetPictureKey, worksheetItemPrompt, worksheetPictureIssues } from '@/lib/young-learners';
 import { loadPdfTools } from '@/lib/pdf-tools';
+import { prepareShapeWorksheet } from './worksheet-shapes';
+import { readingScenePng, readingShapeScene } from './reading-visuals';
+import { prepareLessonReading } from './reading';
 import { loadPresentationTools } from '@/lib/presentation-tools';
 import {
   normalizeWorksheet,
@@ -271,6 +274,7 @@ export async function studentPdf(
   return d.blob();
 }
 async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonRequestInput) {
+  studentDoc = prepareShapeWorksheet(studentDoc, request);
   const issues = worksheetPictureIssues(studentDoc);
   if (issues.length) throw new Error(`This worksheet needs picture clues before it can be printed: ${issues.join(' ')}`);
   d.text("Name: ______________________    Class: ____________    Date: ____________", {
@@ -288,9 +292,11 @@ async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonReque
     + Math.max(0, Math.min(8, item.answerLines ?? (item.choices?.length ? 0 : 1))) * ruleSpacing + 3;
 
   for (const section of studentDoc.sections) {
+    const reference = readingShapeScene(section.passage ?? '');
     const headingHeight = 6 + d.textHeight(`${section.label} — ${section.title}`, 14, 0, true)
       + (section.instructions ? d.textHeight(section.instructions) : 0)
       + (section.passage ? 1 + d.textHeight(section.passage, 10.5, 3) : 0)
+      + (reference ? reference.rows * 48 + 12 : 0)
       + (section.wordBank?.length ? 2 + d.textHeight('Word bank', 11.5, 0, true) + d.textHeight(section.wordBank.join('   |   '), 10.5, 3) : 0);
     // Keep the section heading with its first question, and every clue with its choices.
     d.ensure(Math.min(BOTTOM - MARGIN, headingHeight + (section.items[0] ? itemHeight(section.items[0]) : 0) + 3));
@@ -299,6 +305,13 @@ async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonReque
     if (section.passage) {
       d.space(1);
       d.text(section.passage, { size: 10.5, indent: 3 });
+      const scene = readingShapeScene(section.passage);
+      if (scene) {
+        const png = await readingScenePng(section.passage);
+        const height = scene.rows * 48;
+        d.ensure(height + 12); d.text('Reference picture', { size: 10, bold: true });
+        if (png) { d.doc.addImage(png, 'PNG', MARGIN + 3, d.y, 96, height); d.space(height + 4); }
+      }
     }
     if (section.wordBank?.length) {
       d.subheading("Word bank");
@@ -330,6 +343,7 @@ export async function buildStudentWorksheetPdf(
   request: LessonRequestInput,
   version: "A" | "B" = "A",
 ): Promise<Blob> {
+  lesson = prepareLessonReading(lesson);
   const w = normalizeWorksheet(lesson.worksheet, lesson.answerKey);
   const doc = version === "B" ? w.studentB : w.student;
   return studentPdf(doc, request, version === "B" ? " (Version B)" : "");
@@ -342,6 +356,7 @@ export async function buildAnswerKeyPdf(
   request: LessonRequestInput,
   version?: "A" | "B",
 ): Promise<Blob> {
+  lesson = prepareLessonReading(lesson);
   const d = await createDoc(`${request.topic} — Teacher Answer Key`, header(request));
 
   writeAnswerKey(d, lesson, version);
@@ -412,6 +427,7 @@ export async function buildLessonPackageZip(
   images: Record<string, string> = {},
   listeningAudio?: string,
 ): Promise<{ blob: Blob; files: PackageFile[]; name: string }> {
+  lesson = prepareLessonReading(lesson);
   const base = [safeSlug(request.topic), safeSlug(request.level, 10)].filter(Boolean).join("_");
   const w = normalizeWorksheet(lesson.worksheet, lesson.answerKey);
 
@@ -466,6 +482,7 @@ export async function buildLessonPackageZip(
 
 /** Printable content only; no app navigation, duplicate tabs or browser headers. */
 export async function buildCompleteLessonPdf(lesson: LessonPackage, request: LessonRequestInput): Promise<Blob> {
+  lesson = prepareLessonReading(lesson);
   const d=await createDoc(`${request.topic} — Complete Lesson`,header(request));
   writeLessonPlan(d,lesson,request);
   const w=normalizeWorksheet(lesson.worksheet,lesson.answerKey);

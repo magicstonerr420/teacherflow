@@ -2,7 +2,15 @@
 const face = (mouth: string) => `<circle cx="50" cy="50" r="34" fill="#ffdd8b"/><circle cx="38" cy="42" r="3"/><circle cx="62" cy="42" r="3"/><path d="${mouth}" fill="none" stroke-width="3"/>`;
 const portrait = (shirt: string, hair: string, child = false) => `<path d="M${child ? 24 : 13} 95q0-32 ${child ? 26 : 37}-32t${child ? 26 : 37} 32" fill="${shirt}"/><circle cx="50" cy="40" r="${child ? 20 : 25}" fill="#ddb08d"/><path d="${hair}" fill="#654530"/><circle cx="42" cy="40" r="2"/><circle cx="58" cy="40" r="2"/><path d="M43 51q7 6 14 0" fill="none"/>`;
 const person = (head: string, limbs: string) => `<circle ${head} r="8" fill="#ddb08d"/><path d="${limbs}" fill="none" stroke-width="7"/>`;
-const colors: Record<string,string> = { red:'#e53935', blue:'#2575d6', green:'#2e9c54' };
+export const teachingColors: Record<string,string> = { red:'#e53935', blue:'#2575d6', green:'#2e9c54', yellow:'#f4cd32', orange:'#ee872a', purple:'#9255bb' };
+export const teachingShapes: Record<string, (fill: string) => string> = {
+  circle: fill => `<circle cx="50" cy="50" r="34" fill="${fill}"/>`,
+  square: fill => `<rect x="17" y="17" width="66" height="66" fill="${fill}"/>`,
+  triangle: fill => `<polygon points="50,12 88,83 12,83" fill="${fill}"/>`,
+  rectangle: fill => `<rect x="10" y="27" width="80" height="46" fill="${fill}"/>`,
+  oval: fill => `<ellipse cx="50" cy="50" rx="40" ry="25" fill="${fill}"/>`,
+  star: fill => `<polygon points="50,9 61,36 91,38 68,57 76,87 50,70 24,87 32,57 9,38 39,36" fill="${fill}"/>`,
+};
 export const beginnerPictures: Record<string,string> = {
   mom: portrait('#c282ae','M25 43V30q0-27 25-27t25 27v20l-9-16-6-17q-11 15-34 15Z'),
   dad: portrait('#6caecf','M25 30q1-27 25-27t25 27l-15-10-12 6-7-8Z'),
@@ -25,10 +33,10 @@ export const beginnerPictures: Record<string,string> = {
   stand:person('cx="50" cy="16"','M50 32v28M50 38L31 57m19-19 19 19M50 60L38 91m12-31 12 31')+'<path d="M22 96h56" fill="none"/>',
   stop:person('cx="50" cy="18"','M50 34v27M50 40L31 52l-8-17M50 40l20 14M50 61L38 91m12-30 12 30')+'<path d="M16 33V19q0-3 3-3v10-16q3-4 5 0v14-15q4-3 5 2v14-10q4-3 5 1v16q-9 13-18 1Z" fill="#ddb08d"/>',
 };
-for(const [name,color] of Object.entries(colors)) {
+for (const [name, draw] of Object.entries(teachingShapes)) beginnerPictures[name] = draw('#edf1f5');
+for(const [name,color] of Object.entries(teachingColors)) {
   beginnerPictures[name]=`<path d="M18 25q29-22 64 0v52q-30 15-64 0Z" fill="${color}"/>`;
-  beginnerPictures[`${name} circle`]=`<circle cx="50" cy="50" r="34" fill="${color}"/>`;
-  beginnerPictures[`${name} square`]=`<rect x="17" y="17" width="66" height="66" fill="${color}"/>`;
+  for (const [shape, draw] of Object.entries(teachingShapes)) beginnerPictures[`${name} ${shape}`] = draw(color);
 }
 beginnerPictures['family'] = ['mom','dad','brother','sister','baby'].map((word,i)=>
   `<g transform="translate(${i<2 ? 16+i*36 : 1+(i-2)*33},${i<2 ? 1 : 51}) scale(${i<2 ? 0.48 : 0.44})">${beginnerPictures[word]}</g>`).join('');

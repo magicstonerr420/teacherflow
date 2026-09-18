@@ -20,7 +20,7 @@ import { WorksheetHub } from "@/components/lesson/WorksheetHub";
 import { buildLessonPackageZip, buildCompleteLessonPdf, safeSlug } from "@/lib/exports";
 import { regenerateSection, repairDuplicateVersionB } from "@/lib/lesson.functions";
 import { regenerateReading } from "@/lib/reading.functions";
-import { applyReading } from "@/lib/reading";
+import { applyReading, prepareLessonReading } from "@/lib/reading";
 import { ReadingPanel } from './ReadingPanel';
 import { ListeningPanel } from './ListeningPanel';
 import { applyListening } from '@/lib/listening';
@@ -95,7 +95,7 @@ export function LessonPackageView({
   onPersist?: ((lesson: LessonPackage) => Promise<void>) | undefined;
 }) {
   const [active, setActive] = useState<SectionKey>("overview");
-  const [lesson, setLesson] = useState<LessonPackage>(incoming);
+  const [lesson, setLesson] = useState<LessonPackage>(() => prepareLessonReading(incoming));
   const [editing, setEditing] = useState<SectionKey | null>(null);
   const [draft, setDraft] = useState<unknown>(null);
   const [busy, setBusy] = useState<SectionKey | null>(null);
@@ -109,7 +109,7 @@ export function LessonPackageView({
   const runReading = useServerFn(regenerateReading);
   const loadAudio = useServerFn(loadListeningAudio);
 
-  useEffect(() => setLesson(incoming), [incoming]);
+  useEffect(() => setLesson(prepareLessonReading(incoming)), [incoming]);
 
   const runRegenerate = useServerFn(regenerateSection);
   const repairAlternate=useServerFn(repairDuplicateVersionB);

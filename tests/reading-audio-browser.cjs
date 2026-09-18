@@ -33,7 +33,7 @@ const dir = '.local-runtime/reading-audio-ui';
     await page.route('**/src/lib/reading.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: `export async function regenerateReading({data}) { window.calls.reading++; window.readingRequest=data; return window.nextReading; }` }));
     await page.route('**/src/lib/listening.functions.ts*', route => route.fulfill({ contentType: 'application/javascript', body: `
       export async function createListening({data}) { window.calls.script++; window.listeningRequest=data; return window.nextListening; }
-      export async function createListeningAudio({data}) { window.calls.audio++; window.audioRequest=data; if(window.failAudio) { window.failAudio=false; throw Error('Recording test failure. Your script is saved.'); } return {audio:{id:'a'.repeat(64),choice:data.choice,model:'test-existing-recording',voice:'test',mime:'audio/mpeg'},dataUrl:window.audioUrl}; }
+      export async function createListeningAudio({data}) { window.calls.audio++; window.audioRequest=data; if(window.failAudio) { window.failAudio=false; throw Error('Recording test failure. Your script is saved.'); } return {audio:{id:'a'.repeat(64),choice:data.choice,model:'test-existing-recording',voice:'test',mime:'audio/mpeg',accent:'en-US'},dataUrl:window.audioUrl}; }
       export async function loadListeningAudio({data}) { window.calls.load++; return {dataUrl:window.audioUrl}; }
     ` }));
     async function mount(value) {
@@ -124,6 +124,16 @@ const dir = '.local-runtime/reading-audio-ui';
     await active.locator('audio').waitFor();
     assert.equal(await page.evaluate(() => window.calls.audio), 0, 'Reopening a saved lesson only loads its recording');
     assert.equal(await page.evaluate(() => window.calls.script), 0);
+    const older = structuredClone(saved); delete older.listening.audio.accent; older.listening.audio.id = 'b'.repeat(64);
+    await mount({ request: data.request, lesson: older });
+    await nav.getByRole('button', { name: 'Listening', exact: true }).click();
+    await active.locator('audio').waitFor();
+    assert.equal(await page.evaluate(() => window.calls.audio), 0, 'Old audio is retained without automatic charges');
+    await active.getByRole('button', { name: 'Create American English recording', exact: true }).click();
+    await page.waitForFunction(() => window.readingSaved?.listening?.audio?.accent === 'en-US');
+    assert.equal(await page.evaluate(() => window.calls.script), 0, 'Accent replacement reuses the saved script');
+    assert.equal(await page.evaluate(() => window.calls.audio), 1);
+    assert.equal(await active.getByRole('button', { name: 'Create American English recording', exact: true }).count(), 0);
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'No mobile horizontal overflow');
     await page.screenshot({ path: dir + '/listening-mobile.png', fullPage: true });

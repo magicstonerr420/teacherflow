@@ -1,4 +1,6 @@
 import { Button } from '@/components/ui/button';
+import { ReadingReference } from './ReadingReference';
+import { prepareReadingVisuals } from '@/lib/reading-visuals';
 import type { LessonRequestInput } from '@/lib/lesson-schema';
 import type { ReadingState } from '@/lib/reading';
 
@@ -11,7 +13,7 @@ export function ReadingPanel({ state, request, busy, disabled, error, onGenerate
   onGenerate: () => void;
   onOpenWorksheet: () => void;
 }) {
-  const reading = state?.status === 'ready' ? state.value : undefined;
+  const reading = state?.status === 'ready' ? prepareReadingVisuals(state.value) : undefined;
   const message = error || (state?.status === 'failed' ? state.error : null);
   return <div className="space-y-6">
     <div className="space-y-4 rounded-xl border bg-card p-5">
@@ -36,6 +38,7 @@ export function ReadingPanel({ state, request, busy, disabled, error, onGenerate
         </div>
         <p className="text-sm text-muted-foreground">{reading.purpose}</p>
         <div className="whitespace-pre-wrap text-lg leading-loose">{reading.text}</div>
+        <ReadingReference text={reading.text} />
       </article>
       <div className="space-y-5 rounded-xl border p-5">
         <h3 className="text-lg font-semibold">Reading questions</h3>

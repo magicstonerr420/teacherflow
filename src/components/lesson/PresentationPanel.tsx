@@ -71,6 +71,7 @@ function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType
                 <p className="text-base font-bold" style={{ color: `#${theme.highlight}` }}>
                   {capitalizeHeading(v.word)}
                 </p>
+                {!v.imagePrompt && pictureUrl(v.word) && <img src={pictureUrl(v.word)!} alt={v.word} className="my-3 h-32 w-32 object-contain" />}
                 <p className="mt-1 text-sm" style={{ color: `#${theme.ink}` }}>
                   {v.definition}
                 </p>
@@ -175,15 +176,15 @@ export function PresentationActions({
     [lesson, request],
   );
   const cards = useMemo(() => flashcardsFor(lesson, request), [lesson, request]);
-  const shapeResources = useMemo(() => colorShapeResources(request), [request]);
+  const shapeResources = useMemo(() => colorShapeResources(request, lesson.presentation), [request, lesson]);
   const exportCount = isYoungA1(request)
     ? 1 +
       slides.reduce(
         (n, s) => n + (s.layout === "vocabulary" && s.vocabulary.length ? s.vocabulary.reduce((count, v) => count + youngSlidePages({ ...s, title: v.word, layout: "content", studentText: v.definition, bullets: v.example ? [v.example] : [], vocabulary: [] }).length, 0) : 1),
         0,
       ) +
-      cards.length * 2 + (shapeResources ? 1 : 0)
-    : 1 + slides.reduce((n, s) => n + (s.layout === 'vocabulary' && s.vocabulary.length ? s.vocabulary.length : 1), 0) + cards.length * 2 + (shapeResources ? 1 : 0);
+      cards.length * 2 + (shapeResources?.boards.length ?? 0)
+    : 1 + slides.reduce((n, s) => n + (s.layout === 'vocabulary' && s.vocabulary.length ? s.vocabulary.length : 1), 0) + cards.length * 2 + (shapeResources?.boards.length ?? 0);
   const imagePrompts = useMemo(() => collectImagePrompts(lesson, 6, request), [lesson, request]);
 
   async function generate() {
@@ -359,7 +360,7 @@ export function PresentationActions({
           {shapeResources && (
             <section aria-label="Color and shape matching board" className="rounded-xl border bg-white p-5 text-slate-900">
               <h3 className="text-xl font-bold">Listen and point</h3>
-              <div className="my-4 grid gap-3" style={{ gridTemplateColumns: `repeat(${shapeResources.colors.length}, minmax(0, 1fr))` }}>
+              <div className="my-4 grid grid-cols-3 gap-3">
                 {shapeResources.words.map((word, i) => <img key={word} src={pictureUrl(word) ?? undefined} alt={`Matching picture ${i + 1}`} data-picture={word} className="mx-auto aspect-square w-full max-w-40 object-contain" />)}
               </div>
               <p className="text-sm">Use these {shapeResources.words.length} pictures together. Say a color and a shape for students to find. Compare the same shape in different colors, then the same color on different shapes.</p>

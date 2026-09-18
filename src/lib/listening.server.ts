@@ -161,10 +161,10 @@ export async function generateListening(request: LessonRequestInput, lesson: Par
 export async function generateListeningAudio(fingerprint: string, scope: string, choice: VoiceChoice, limited = false) {
   const script = lookup<ListeningState>(fingerprint, scope);
   if (script.status !== 'ready') throw new Error('Generate the listening script first.');
-  const id = hash(stable({ scope, fingerprint, choice, version: 2 }));
+  const id = hash(stable({ scope, fingerprint, choice, version: 3, accent: 'en-US' }));
   return cached(id, scope, limited, async () => {
     const audio = await generateSpeech(script.value.script, choice);
-    return { audio: { id, model: audio.model, voice: audio.voice, choice, mime: 'audio/mpeg' } as ListeningAudio,
+    return { audio: { id, model: audio.model, voice: audio.voice, choice, mime: 'audio/mpeg', accent: 'en-US' } as ListeningAudio,
       dataUrl: `data:audio/mpeg;base64,${Buffer.from(audio.bytes).toString('base64')}` };
   });
 }

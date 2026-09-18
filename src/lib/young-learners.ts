@@ -1,4 +1,5 @@
 import { beginnerPictures } from './beginner-pictures.ts';
+import { readingShapeScene } from './reading-visuals';
 
 export const isYoungA1 = (r: { studentAge: string; level: string }) =>
   r.level === "A1" && /^5\s*[-–]\s*7$/.test(r.studentAge.trim());
@@ -58,7 +59,7 @@ const glyphs: Record<string, string> = {
   balloon: "🎈",
   rainbow: "🌈",
 };
-export const PICTURE_KEYS = [...Object.keys(parts), ...Object.keys(glyphs)];
+export const PICTURE_KEYS = [...new Set([...Object.keys(parts), ...Object.keys(glyphs)])];
 export function pictureSvg(keyword: string): string | null {
   const key = keyword
     .trim()
@@ -162,7 +163,9 @@ export function worksheetPictureIssues(doc: any): string[] {
     for (const item of section.items ?? []) {
       const hasPicture = !!pictureSvg(worksheetPictureKey(item));
       const namedPicture = item.prompt?.match(PICTURE_PREFIX)?.[1]?.trim();
-      if (namedPicture && pictureSvg(namedPicture) && hasPicture && pictureSvg(namedPicture) !== pictureSvg(worksheetPictureKey(item)))
+      const compoundPicture = /^(red|blue|green|yellow|orange|purple) (circle|square|triangle|rectangle|oval|star)$/.exec(worksheetPictureKey(item).toLowerCase());
+      const namesAttribute = compoundPicture && [compoundPicture[1], compoundPicture[2]].includes(namedPicture?.toLowerCase());
+      if (namedPicture && pictureSvg(namedPicture) && hasPicture && !namesAttribute && pictureSvg(namedPicture) !== pictureSvg(worksheetPictureKey(item)))
         issues.push(`${section.label} item ${item.number}: the named picture does not match its supplied illustration`);
       if (item.visual?.trim() && !hasPicture)
         issues.push(
@@ -186,15 +189,18 @@ export function worksheetPictureIssues(doc: any): string[] {
       const bareLookTask = /\blook[.!]\s*(?:write|circle)\b/i.test(task) && !hasTextResource;
       const itemNamesPicture = /^\s*(?:picture|image|illustration)\s*:/i.test(item.prompt ?? '');
       const asksWhatYouSee = /^\s*what (?:do|can) you see\s*\?\s*$/i.test(item.prompt ?? '') && !section.passage?.trim();
-      if ((explicitlyNeedsPicture || bareLookTask || itemNamesPicture || asksWhatYouSee) && !hasPicture)
+      const hasReadingPicture = section.format === 'reading' && !!readingShapeScene(section.passage ?? '');
+      if ((explicitlyNeedsPicture || bareLookTask || itemNamesPicture || asksWhatYouSee) && !hasPicture && !hasReadingPicture)
         issues.push(`${section.label} item ${item.number}: refers to a missing picture`);
       const namesPicturedObject = asksWhatYouSee || /\b(?:name|label) (?:the |each |this )?picture\b/i.test(task)
         || (/\blook at (?:the |each |this )?picture\b/i.test(task) && /\b(?:write|circle|choose) (?:the |one )?(?:correct )?word\b/i.test(task));
       if (namesPicturedObject && hasPicture) {
         const offered = item.choices?.length ? item.choices : section.wordBank;
-        const coloredShape = /^(red|blue|green) (circle|square)$/.exec(worksheetPictureKey(item).toLowerCase());
+        const coloredShape = /^(red|blue|green|yellow|orange|purple) (circle|square|triangle|rectangle|oval|star)$/.exec(worksheetPictureKey(item).toLowerCase());
         const requestedAttribute = /\bcolor(?: word)?\b/i.test(item.prompt ?? '') ? coloredShape?.[1]
-          : /\bshape(?: word)?\b/i.test(item.prompt ?? '') ? coloredShape?.[2] : undefined;
+          : /\bshape(?: word)?\b/i.test(item.prompt ?? '') ? coloredShape?.[2]
+          : offered?.every((word: string) => /^(?:circle|square|triangle|rectangle|oval|star)[.!?]?$/i.test(word.trim())) ? coloredShape?.[2]
+          : offered?.every((word: string) => /^(?:red|blue|green|yellow|orange|purple)[.!?]?$/i.test(word.trim())) ? coloredShape?.[1] : undefined;
         if (offered?.length && !offered.some((word: string) => pictureSvg(word.replace(/[.!?]$/, '')) === pictureSvg(requestedAttribute ?? worksheetPictureKey(item))))
           issues.push(`${section.label} item ${item.number}: the pictured object '${worksheetPictureKey(item)}' is absent from the answer choices or word bank. Supply the intended exact picture and its correct word; do not use a decorative icon.`);
       }

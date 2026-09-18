@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { prepareReadingVisuals } from './reading-visuals';
 import type { LessonPackage, LessonRequestInput, Worksheet } from "./lesson-schema";
 
 export const READING_MODEL = "deepseek/deepseek-v4-flash-0731";
@@ -86,13 +87,14 @@ export function validateReading(value: unknown, level: string): Reading {
     const supported = q.choices.filter(c => phrase(q.evidence).includes(phrase(c)) && phrase(q.answerExplanation).includes(phrase(c)));
     return supported.length === 1 ? supported[0]! : answer;
   });
-  return { ...reading, answers, word_count: reading.text.split(/\s+/u).length };
+  return prepareReadingVisuals({ ...reading, answers, word_count: reading.text.split(/\s+/u).length });
 }
 
 /** Integrate through existing printable worksheet contracts. Answers never enter student documents. */
 export function applyReading(lesson: LessonPackage, state: ReadingState): LessonPackage {
   if (state.status !== "ready") return { ...lesson, reading: state };
-  const r = state.value;
+  const r = prepareReadingVisuals(state.value);
+  state = { ...state, value: r };
   const studentSection: Worksheet["student"]["sections"][number] = {
     label: READING_LABEL, title: r.title, format: "reading", instructions: r.instructions,
     passage: r.text, wordBank: [], items: r.questions.map((q, i) => ({
@@ -121,4 +123,10 @@ export function applyReading(lesson: LessonPackage, state: ReadingState): Lesson
     ...lesson.answerKey.sections.filter(s => s.notes !== READING_LABEL && s.title !== r.title && s.title !== (lesson.reading?.status === "ready" ? lesson.reading.value.title : "")),
     { title: r.title, answers: r.answers, notes: READING_LABEL },
   ] } };
+}
+
+export function prepareLessonReading<T extends Pick<LessonPackage, 'worksheet' | 'answerKey'> & Partial<LessonPackage>>(lesson: T): T {
+  if (lesson.reading?.status !== 'ready') return lesson;
+  const value = prepareReadingVisuals(lesson.reading.value);
+  return value === lesson.reading.value ? lesson : applyReading(lesson as LessonPackage, { ...lesson.reading, value }) as T;
 }

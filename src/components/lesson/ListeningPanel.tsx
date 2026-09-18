@@ -35,13 +35,13 @@ export function ListeningPanel({ lesson, request, onChange }: {
     return () => { canceled = true; };
   }, [id]);
 
-  async function generate(withRecording: boolean) {
+  async function generate(withRecording: boolean, replaceAccent = false) {
     if (generating.current) return;
     generating.current = true;
     setError('');
     let current = ready;
     try {
-      if (selectedRecording && id) {
+      if (selectedRecording && id && !replaceAccent) {
         setBusy('Loading saved recording…');
         const result = await loadAudio({ data: { id } });
         setAudio({ id, url: result.dataUrl });
@@ -69,7 +69,7 @@ export function ListeningPanel({ lesson, request, onChange }: {
       {noTech && <p className="text-sm text-muted-foreground">This lesson works with the teacher reading aloud. You can also create an optional recording to play or download.</p>}
       <label className="flex max-w-sm flex-col gap-2 text-sm font-medium">Recording voice
         <select className="rounded-md border bg-background p-2" value={choice} disabled={!!busy} onChange={e => setChoice(e.target.value as VoiceChoice)}>
-          <option value="standard">Standard voice</option><option value="economy">Economy voice</option>
+          <option value="standard">Standard voice — American English</option><option value="economy">Economy voice — American English</option>
           {import.meta.env.DEV && <option value="test">Free test voice</option>}
         </select>
       </label>
@@ -79,6 +79,10 @@ export function ListeningPanel({ lesson, request, onChange }: {
         </Button>
         {noTech && !ready && <Button variant="outline" onClick={() => void generate(true)} disabled={!!busy}>Generate activity with optional audio</Button>}
       </div>
+      {ready?.audio && ready.audio.accent !== 'en-US' && <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">This recording used an older voice. You can create an American English recording from the saved script.</p>
+        <Button variant="outline" onClick={() => void generate(true, true)} disabled={!!busy}>Create American English recording</Button>
+      </div>}
       {error && <p role="alert" className="text-destructive">{error}</p>}
       {state?.status === 'failed' && !error && <p role="alert" className="text-destructive">{state.error}</p>}
       {audio && audio.id === id && <div className="space-y-3">

@@ -202,21 +202,22 @@ export async function buildPresentationBlob(
     { x: 0.7, y: 4.2, w: W - 1.4, h: 0.5, fontSize: 13, color: "C9D8D5", fontFace: t.bodyFont },
   );
 
-  const shapeResources = colorShapeResources(request);
-  if (shapeResources) {
+  const shapeResources = colorShapeResources(request, lesson.presentation);
+  const addMatchingBoards = async () => { if (shapeResources) for (const words of shapeResources.boards) {
     const board = pptx.addSlide();
     board.background = { color: 'FFFFFF' };
     board.addText('Listen and point', { x: 0.55, y: 0.3, w: 8.9, h: 0.55, fontSize: 28, bold: true, color: t.title, fontFace: t.titleFont });
-    const columns = shapeResources.colors.length;
-    const width = 8.9 / columns, height = 4.1 / shapeResources.shapes.length;
-    for (const [i, word] of shapeResources.words.entries()) {
+    const columns = Math.min(3, words.length);
+    const width = 8.9 / columns, height = 4.1 / Math.ceil(words.length / columns);
+    for (const [i, word] of words.entries()) {
       const data = await picturePng(word);
       if (!data) throw new Error(`The matching picture for "${word}" could not be prepared.`);
       const size = Math.min(width - 0.25, height - 0.25, 2.1);
       board.addImage({ data, x: 0.55 + (i % columns) * width + (width - size) / 2, y: 1.05 + Math.floor(i / columns) * height + (height - size) / 2, w: size, h: size });
     }
-    board.addNotes(`Use all ${shapeResources.words.length} pictures together. Say each phrase in a mixed order and let students point: ${shapeResources.words.join('; ')}. Compare the same shape in different colors, then the same color on different shapes. Picture order, left to right by row: ${shapeResources.words.join('; ')}.`);
-  }
+    board.addNotes(`First teach these words, then say each phrase in a mixed order and let students point: ${words.join('; ')}. Compare the same shape in different colors, then the same color on different shapes across the boards. Picture order, left to right by row: ${words.join('; ')}.`);
+  } };
+  if (!shapeResources?.extended) await addMatchingBoards();
 
   // -------------------------------------------------------------- Content
   for (const slide of slides) {
@@ -255,6 +256,7 @@ export async function buildPresentationBlob(
     else addStandardSlide(pptx, slide, t, images, W, H);
   }
 
+  if (shapeResources?.extended) await addMatchingBoards();
   for (const [index, card] of flashcardsFor(lesson, request).entries()) {
     const data = card.visual ? await picturePng(card.visual) : images[card.imagePrompt] || (await picturePng(card.word));
     if (!data)
@@ -767,7 +769,7 @@ export async function generateSlideImages(
 }
 
 export function flashcardsFor(lesson: LessonPackage, request: LessonRequestInput) {
-  const shapeResources = colorShapeResources(request);
+  const shapeResources = colorShapeResources(request, lesson.presentation);
   if (
     !shapeResources && !/(?:flash|picture)[ -]?cards?/i.test(
       JSON.stringify([lesson.overview, lesson.lessonPlan, lesson.presentation, lesson.activity]),

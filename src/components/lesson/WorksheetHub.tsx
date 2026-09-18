@@ -1,5 +1,7 @@
 import {PdfPreview} from './PdfPreview';
 import { pictureUrl, worksheetPictureKey, worksheetItemPrompt, worksheetPictureIssues } from '@/lib/young-learners';
+import { prepareShapeWorksheet } from '@/lib/worksheet-shapes';
+import { ReadingReference } from './ReadingReference';
 import { Download, Printer } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -59,6 +61,7 @@ export function WorksheetHub({
   request: LessonRequestInput;
   answerKey?: { sections: { title: string; answers: string[]; notes: string }[] };
 }) {
+  worksheet = { ...worksheet, student: prepareShapeWorksheet(worksheet.student, request), studentB: prepareShapeWorksheet(worksheet.studentB, request) };
   const [tab, setTab] = useState<Tab>("teacher");
   const [version, setVersion] = useState<Version>("A");
   const [pdfFile,setPdfFile]=useState<{blob:Blob;name:string}|null>(null);
@@ -244,6 +247,7 @@ function StudentWorksheet({
             {section.passage ? (
               <div className="mt-3 rounded-md border border-foreground/25 p-4 whitespace-pre-line">
                 {section.passage}
+                <ReadingReference text={section.passage} />
               </div>
             ) : null}
 
@@ -352,7 +356,7 @@ function TeacherWorksheet({
                   {studentSection.instructions ? (
                     <p className="mt-1 text-sm italic">{studentSection.instructions}</p>
                   ) : null}
-                  {studentSection.passage ? <p className="mt-3 whitespace-pre-line rounded-md border p-3">{studentSection.passage}</p> : null}
+                  {studentSection.passage ? <div className="mt-3 whitespace-pre-line rounded-md border p-3">{studentSection.passage}<ReadingReference text={studentSection.passage} /></div> : null}
                   {studentSection.wordBank.length ? (
                     <p className="mt-1 text-sm">Word bank: {studentSection.wordBank.join(", ")}</p>
                   ) : null}

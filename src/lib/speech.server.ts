@@ -1,8 +1,9 @@
 import type { VoiceChoice } from './listening';
 
 export const SPEECH_MODELS = {
-  standard: { model: 'x-ai/grok-voice-tts-1.0', voice: 'eve' },
-  economy: { model: 'canopylabs/orpheus-3b-0.1-ft', voice: 'tara' },
+  // Explicit US voices, including the fallback; generic English does not fix an accent.
+  standard: { model: 'microsoft/mai-voice-2', voice: 'en-US-Harper:MAI-Voice-2' },
+  economy: { model: 'hexgrad/kokoro-82m', voice: 'af_heart' },
   test: { model: 'deepgram/flux-tts:free', voice: 'flux-alexis-en' },
 } as const;
 class SpeechError extends Error {
@@ -21,8 +22,8 @@ async function synthesize(script: string, choice: VoiceChoice) {
     response = await fetch('https://openrouter.ai/api/v1/audio/speech', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'X-Title': 'TeacherFlow' },
       signal: AbortSignal.timeout(150_000), body: JSON.stringify({ ...config, input: script, response_format: 'mp3',
-        ...(choice === 'standard' ? { provider: { options: { xai: { speed: 0.7, language: 'en' } } } } : {}),
-        ...(choice === 'economy' ? { provider: { only: ['deepinfra'], allow_fallbacks: false } } : {}),
+        ...(choice === 'standard' ? { speed: 0.8, provider: { only: ['azure'], allow_fallbacks: false } } : {}),
+        ...(choice === 'economy' ? { provider: { only: ['deepinfra'], allow_fallbacks: false, options: { deepinfra: { speed: 0.8 } } } } : {}),
       }),
     });
   } catch { throw new SpeechError('The voice service did not respond. Your script is saved; retry the recording.', true); }
