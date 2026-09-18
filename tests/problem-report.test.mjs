@@ -43,3 +43,18 @@ test('lesson context is bounded and cannot insert extra report headings through 
   assert.doesNotMatch(report.body,/\nFake header:/);
   assert.equal(report.body.split('\n').find(line=>line.startsWith('Section: ')).length,69);
 });
+
+test('Gmail, Outlook web and default-app drafts contain the same report with safely encoded fields',()=>{
+  const report=problemReport({category:'Lesson generation',description:'A&B + café?\n"Bcc: other@example.test"',steps:'Retry → same error.',pageUrl:'https://teacherflow.test/builder?invite=private#access_token=private'});
+  for(const [href,host,subjectParam] of [[report.gmailHref,'mail.google.com','su'],[report.outlookHref,'outlook.live.com','subject']]){
+    const url=new URL(href);
+    assert.equal(url.protocol,'https:');assert.equal(url.hostname,host);
+    assert.equal(url.searchParams.get('to'),CONTACT_EMAIL);
+    assert.equal(url.searchParams.get(subjectParam),report.subject);
+    assert.equal(url.searchParams.get('body'),report.body);
+    assert.equal(url.searchParams.has('bcc'),false);
+    assert.doesNotMatch(url.searchParams.get('body'),/invite=|access_token=|private/);
+  }
+  assert.equal(new URL(report.href).searchParams.get('body'),report.body);
+  assert.match(report.text,/To: /);
+});

@@ -1,0 +1,597 @@
+{
+  "request": {
+    "subject": "English",
+    "topic": "Persuasive Communication",
+    "studentAge": "16-18",
+    "level": "C2",
+    "durationMinutes": 60,
+    "mainSkill": "Speaking",
+    "secondarySkill": "Writing",
+    "learningObjective": "Students can construct and deliver a persuasive argument using appropriate evidence, rhetorical techniques, and counterarguments.",
+    "requiredVocabulary": "Persuade, Argument, Claim, Counterargument, Rhetoric",
+    "teacherNotes": "Core vocabulary: claims, evidence, counterarguments, persuasion, rhetorical techniques, and audience awareness.",
+    "technologyAvailable": "No technology",
+    "teachingStyle": "Workshop-based",
+    "groupWorkEnabled": false,
+    "studentsPerGroup": null
+  },
+  "student": {
+    "title": "Persuasive Communication: Building and Delivering a Strong Argument",
+    "instructions": "Read each section carefully. Write clear answers on your own paper. Use the model text, the word bank, and the sentence frames. For speaking tasks, prepare your answer in writing first, then say it aloud.",
+    "sections": [
+      {
+        "label": "Section A",
+        "title": "Core Vocabulary",
+        "format": "matching",
+        "instructions": "Read each word and match it to the correct definition. Write one letter for each item. Use each letter once. Example: persuade = make someone agree with you.",
+        "passage": "",
+        "wordBank": [
+          "A. a statement you want people to believe",
+          "B. a reason or support for a claim",
+          "C. an idea that goes against your opinion",
+          "D. the use of language to influence people",
+          "E. to make someone agree with you"
+        ],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "persuade",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "argument",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "claim",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "counterargument",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "rhetoric",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          }
+        ]
+      },
+      {
+        "label": "Section B",
+        "title": "Read the Model Argument",
+        "format": "short-answer",
+        "instructions": "Read the text and answer the questions. Write one short answer for each item. Example: The claim is that school should start later.",
+        "passage": "School should start later. Teenagers often get too little sleep, and tired students do not learn well. For example, many students have early classes after late homework, sports, or part-time jobs. Some people say later starts would make the school day too long. However, schools can adjust the timetable without losing learning time. I contend that a later start would help students focus, participate, and learn more effectively.",
+        "wordBank": [],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "What is the main claim in the passage?",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "Write one piece of evidence from the passage.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "What is one counterargument in the passage?",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "Which phrase shows rhetoric or persuasive language?",
+            "choices": [],
+            "answerLines": 1,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "Who is the audience for this argument? Write one possible audience.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          }
+        ]
+      },
+      {
+        "label": "Section C",
+        "title": "Strengthen the Language",
+        "format": "rewrite",
+        "instructions": "Rewrite each weak sentence so it sounds more persuasive. Use the sentence frame or add a reason. Write one improved sentence for each item. Example: Weak: School is good. Better: School should start later because students learn better when they are rested.",
+        "passage": "",
+        "wordBank": [
+          "I contend that...",
+          "My main claim is...",
+          "One reason is...",
+          "A possible counterargument is...",
+          "In response...",
+          "This shows that..."
+        ],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "Weak claim: Later school start times are nice. Rewrite it as a stronger claim.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "Weak support: Students like sleep. Add a persuasive reason.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "Weak counterargument: Some people disagree. Rewrite it clearly.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "Weak response: That is wrong. Rewrite it as a polite rebuttal.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "Combine the ideas into one persuasive sentence: later start times + better focus.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          }
+        ]
+      },
+      {
+        "label": "Section D",
+        "title": "Plan Your Own Argument",
+        "format": "writing",
+        "instructions": "Plan a short argument for the topic: School should start later. Write brief notes only. Use the example as a guide. Example: Claim: Later starts help students. Evidence: Students sleep more.",
+        "passage": "",
+        "wordBank": [],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "Write your main claim.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "Write two pieces of evidence.",
+            "choices": [],
+            "answerLines": 3,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "Write one counterargument.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "Write one response to the counterargument.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "Write one strong closing sentence.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          }
+        ]
+      },
+      {
+        "label": "Section E",
+        "title": "Speak Your Argument",
+        "format": "speaking-prompts",
+        "instructions": "Prepare your answer in writing, then speak it aloud to a partner or the class. Keep it short and clear. Use at least one claim, two pieces of evidence, one counterargument, and one response. Example: I contend that school should start later because students are more focused.",
+        "passage": "",
+        "wordBank": [],
+        "items": [
+          {
+            "number": 1,
+            "prompt": "Say your main claim in one sentence.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 2,
+            "prompt": "Add your first reason and one example.",
+            "choices": [],
+            "answerLines": 3,
+            "visual": ""
+          },
+          {
+            "number": 3,
+            "prompt": "State one counterargument fairly.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 4,
+            "prompt": "Respond to the counterargument clearly.",
+            "choices": [],
+            "answerLines": 2,
+            "visual": ""
+          },
+          {
+            "number": 5,
+            "prompt": "Deliver your full 30-second argument.",
+            "choices": [],
+            "answerLines": 4,
+            "visual": ""
+          }
+        ]
+      }
+    ]
+  },
+  "rejectedTeacher": {
+    "overview": "Teach the core persuasive-communication vocabulary first, then guide students through a printed model argument, language upgrading, short planning, and a final spoken performance. Keep the pace brisk and insist on clear claim, evidence, counterargument, and response. Use the board for key terms and sentence frames, then circulate during writing preparation and listen for logical structure, audience awareness, and persuasive language in the speaking task.",
+    "groupWorkGuidance": "Use whole-class interaction, individual writing, and paired rehearsal only. After each written stage, have students compare answers with a partner for 1 to 2 minutes, then select a few students to share aloud. For the final speaking task, students rehearse once with a partner, then deliver to the class or to you individually. Keep feedback brief and focused on claim, evidence, counterargument, response, and delivery.",
+    "sections": [
+      {
+        "label": "Section A",
+        "title": "Core Vocabulary",
+        "answers": [
+          "E",
+          "B",
+          "A",
+          "C",
+          "D"
+        ],
+        "explanation": "Match each term to the definition: persuade = make someone agree with you; argument = a set of reasons; claim = a statement you want people to believe; counterargument = an opposing idea; rhetoric = language used to influence people.",
+        "expectedResponses": [
+          "1. E",
+          "2. B",
+          "3. A",
+          "4. C",
+          "5. D"
+        ],
+        "commonErrors": [
+          "Confusing claim with argument.",
+          "Mixing up counterargument and evidence.",
+          "Choosing a definition that describes an example rather than the term."
+        ],
+        "corrections": [
+          "Claim is the statement; argument is the full set of reasons.",
+          "A counterargument is the opposing view, not support for your view.",
+          "Evidence supports the claim; it does not oppose it."
+        ],
+        "teacherNotes": "Accept only the given letter for each item. Briefly check that students can say each word aloud and use it in a sentence."
+      },
+      {
+        "label": "Section B",
+        "title": "Read the Model Argument",
+        "answers": [
+          "School should start later.",
+          "Teenagers often get too little sleep, and tired students do not learn well. / Many students have early classes after late homework, sports, or part-time jobs.",
+          "Some people say later starts would make the school day too long.",
+          "I contend that.",
+          "Students, parents, teachers, or school leaders; any reasonable audience for this argument."
+        ],
+        "explanation": "The passage has one clear claim, two supporting ideas, one counterargument, and one persuasive phrase. The audience question allows any sensible audience that would care about school start times.",
+        "expectedResponses": [
+          "1. School should start later.",
+          "2. Teenagers often get too little sleep.",
+          "2. Tired students do not learn well.",
+          "2. Many students have early classes after late homework, sports, or part-time jobs.",
+          "3. Some people say later starts would make the school day too long.",
+          "4. I contend that.",
+          "5. Students / parents / teachers / school leaders."
+        ],
+        "commonErrors": [
+          "Writing a topic instead of a claim.",
+          "Copying too much of the passage without selecting the key evidence.",
+          "Naming the counterargument as the writer's own opinion.",
+          "Giving an audience that is too vague, such as 'people'."
+        ],
+        "corrections": [
+          "A claim must be a full statement that the writer wants people to believe.",
+          "Choose one clear piece of evidence from the text.",
+          "The counterargument is the view that later starts would make the day too long.",
+          "Name a specific audience that would realistically hear this argument."
+        ],
+        "teacherNotes": "Accept any correct short evidence drawn from the passage. For the audience item, accept one reasonable audience only if it matches the argument context."
+      },
+      {
+        "label": "Section C",
+        "title": "Strengthen the Language",
+        "answers": [
+          "My main claim is that later school start times are better because they help students learn more effectively.",
+          "One reason is that students are more alert when they have had enough sleep.",
+          "A possible counterargument is that later start times could make the school day too long.",
+          "In response, schools can adjust the timetable without losing learning time.",
+          "Later school start times would improve focus, because students are more rested."
+        ],
+        "explanation": "Each weak sentence is upgraded with clearer persuasive language, a reason, or a more respectful rebuttal.",
+        "expectedResponses": [
+          "1. My main claim is that later school start times are better.",
+          "1. I contend that school should start later.",
+          "2. One reason is that students are more rested.",
+          "2. Students learn better when they are not exhausted.",
+          "3. A possible counterargument is that later starts could make the school day too long.",
+          "4. In response, schools can adjust the timetable without losing learning time.",
+          "4. That concern is understandable, but the timetable can be changed.",
+          "5. Later school start times would improve focus because students are more rested."
+        ],
+        "commonErrors": [
+          "Keeping the sentence weak or too general.",
+          "Using a disagreement without acknowledging the other side fairly.",
+          "Forgetting to add a reason, example, or consequence."
+        ],
+        "corrections": [
+          "Add a clear claim phrase such as 'My main claim is' or 'I contend that.'",
+          "Use 'A possible counterargument is...' before the response.",
+          "Strengthen the sentence with because, however, therefore, or an example."
+        ],
+        "teacherNotes": "Accept equivalent persuasive rewrites if they are clear, grammatical, and stronger than the original. Students may vary wording, but the meaning should stay aligned with the model topic."
+      },
+      {
+        "label": "Section D",
+        "title": "Plan Your Own Argument",
+        "answers": [
+          "Main claim: School should start later.",
+          "Evidence 1: Students often go to bed late because of homework, sports, or jobs.",
+          "Evidence 2: More sleep helps students focus and participate better.",
+          "Counterargument: Some people think later starts would make the school day too long.",
+          "Response: Schools can adjust the timetable without losing learning time.",
+          "Closing sentence: Later start times would help students learn more effectively and feel more ready for class."
+        ],
+        "explanation": "This planning task should produce a short, usable speaking outline that includes claim, two pieces of evidence, one counterargument, one response, and a closing line.",
+        "expectedResponses": [
+          "Claim: School should start later.",
+          "Evidence: Students are tired because they stay up late.",
+          "Evidence: More sleep improves focus or participation.",
+          "Counterargument: The school day might become too long.",
+          "Response: The timetable can be adjusted.",
+          "Closing: Later starts would help students learn more effectively."
+        ],
+        "commonErrors": [
+          "Writing full paragraphs instead of brief notes.",
+          "Giving the same reason twice.",
+          "Leaving out the counterargument or response.",
+          "Using vague evidence such as 'it is better' without support."
+        ],
+        "corrections": [
+          "Write short planning notes, not paragraphs.",
+          "Use two different supports: for example, sleep and focus.",
+          "Include both the opposing view and your reply.",
+          "Make evidence specific and relevant."
+        ],
+        "teacherNotes": "This section feeds directly into the speaking task. Encourage concise notes that can be used as speaking prompts, not a script to read word for word."
+      },
+      {
+        "label": "Section E",
+        "title": "Speak Your Argument",
+        "answers": [
+          "I contend that school should start later.",
+          "One reason is that many students are more alert when they have had enough sleep.",
+          "Another reason is that later starts can improve focus and participation in class.",
+          "A possible counterargument is that the school day might become too long.",
+          "In response, schools can adjust the timetable without losing learning time.",
+          "Therefore, later start times would help students learn more effectively and arrive ready to work."
+        ],
+        "explanation": "A strong spoken response includes a clear claim, at least two different pieces of evidence, a fair counterargument, a convincing response, and a logical closing.",
+        "expectedResponses": [
+          "Claim: School should start later.",
+          "Reason: Students sleep more / are more alert / focus better.",
+          "Counterargument: Later starts may make the day too long.",
+          "Response: The timetable can be adjusted.",
+          "Closing: Later starts would help students learn more effectively."
+        ],
+        "commonErrors": [
+          "Speaking only in opinions without evidence.",
+          "Mentioning a counterargument but not answering it.",
+          "Using casual language that weakens authority.",
+          "Speaking without clear order or conclusion."
+        ],
+        "corrections": [
+          "Follow the structure: claim, evidence, counterargument, response, closing.",
+          "Answer the counterargument directly and politely.",
+          "Use formal persuasive phrases such as 'I contend that' and 'In response.'",
+          "Finish with a clear conclusion that restates the main point."
+        ],
+        "teacherNotes": "Assess speaking first: clarity, structure, evidence, counterargument, response, and audience awareness. Accept natural variation if the argument is logically complete and persuasive."
+      }
+    ]
+  },
+  "rejectedRepair": {
+    "overview": "This workshop builds one speaking outcome: students plan and deliver a short persuasive argument with a clear claim, relevant evidence, a fair counterargument, and a convincing response. The model text, vocabulary, rewriting practice, planning grid, and final speaking task all use the same topic: later school start times.",
+    "groupWorkGuidance": "Run the lesson with whole-class instruction, individual writing, and paired rehearsal only. After each short teacher input, give students 1-2 minutes to write, then 2 minutes to rehearse with a partner. Circulate during the planning and speaking stages and give brief feedback on claim clarity, evidence, counterargument, and audience awareness.",
+    "sections": [
+      {
+        "label": "Section A",
+        "title": "Core Vocabulary",
+        "answers": [
+          "E",
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Students match each target word to its definition.",
+        "expectedResponses": [
+          "1 persuade = to make someone agree with you",
+          "2 argument = a statement you want people to believe or a reasoned case",
+          "3 claim = a statement you want people to believe",
+          "4 counterargument = an idea that goes against your opinion",
+          "5 rhetoric = the use of language to influence people"
+        ],
+        "commonErrors": [
+          "Confusing claim and argument",
+          "Choosing a personal opinion instead of the definition",
+          "Mixing up rhetoric with reasons or evidence"
+        ],
+        "corrections": [
+          "Remind students that a claim is the main statement, while an argument includes claim plus support.",
+          "Point out that evidence supports a claim; it is not the claim itself.",
+          "Review that rhetoric is persuasive language, not the topic itself."
+        ],
+        "teacherNotes": "Accept exact letters only."
+      },
+      {
+        "label": "Section B",
+        "title": "Read the Model Argument",
+        "answers": [
+          "The main claim is that school should start later.",
+          "One piece of evidence is that teenagers often get too little sleep, and tired students do not learn well.",
+          "One counterargument is that later starts would make the school day too long.",
+          "The phrase is \"I contend that.\"",
+          "A possible audience is school leaders / teachers / students / parents."
+        ],
+        "explanation": "Students identify claim, evidence, counterargument, rhetorical language, and audience from the model.",
+        "expectedResponses": [
+          "1 The claim is that school should start later.",
+          "2 Any accurate evidence from the passage, such as students having early classes after late homework, sports, or part-time jobs.",
+          "3 Later starts would make the school day too long.",
+          "4 I contend that.",
+          "5 Accept a plausible audience for a school argument, such as school leaders, teachers, students, or parents."
+        ],
+        "commonErrors": [
+          "Writing the topic instead of the claim",
+          "Quoting a general opinion with no evidence",
+          "Naming a phrase that is not rhetorical language",
+          "Giving an unrealistic audience"
+        ],
+        "corrections": [
+          "Ask: What is the author trying to persuade people to believe?",
+          "Require a detail from the passage, not a new idea.",
+          "Remind students that the exact phrase 'I contend that' is the rhetorical language in the text.",
+          "Accept any sensible audience connected to the school issue."
+        ],
+        "teacherNotes": "For Item 5, accept any reasonable audience from the school context."
+      },
+      {
+        "label": "Section C",
+        "title": "Strengthen the Language",
+        "answers": [
+          "I contend that later school start times are better because students are more alert in class.",
+          "One reason is that students who sleep longer can focus better and take in more information.",
+          "A possible counterargument is that later starts could make the school day too long.",
+          "In response, schools can adjust the timetable without losing learning time.",
+          "Later school start times help students focus because they are more rested."
+        ],
+        "explanation": "Students rewrite weak statements into clearer persuasive language using reasons, counterargument, and rebuttal.",
+        "expectedResponses": [
+          "1 A stronger claim that clearly supports later starts, using persuasive language such as I contend that or My main claim is.",
+          "2 A sentence that adds a reason or evidence, not just a preference.",
+          "3 A clear and fair counterargument, e.g. A possible counterargument is that later starts could make the school day too long.",
+          "4 A polite rebuttal, e.g. In response, schools can adjust the timetable without losing learning time.",
+          "5 A combined persuasive sentence linking later starts and better focus."
+        ],
+        "commonErrors": [
+          "Keeping the weak wording 'nice' or 'good'",
+          "Adding no reason to the support sentence",
+          "Using rude or dismissive language in the rebuttal",
+          "Writing two separate sentences when one concise persuasive sentence is needed"
+        ],
+        "corrections": [
+          "Push students to replace vague adjectives with a clear claim.",
+          "Require because, one reason is, or this shows that for support.",
+          "Model a respectful rebuttal with in response.",
+          "Encourage one strong sentence that combines idea and reason."
+        ],
+        "teacherNotes": "Accept close variations if the meaning is stronger, persuasive, and clear."
+      },
+      {
+        "label": "Section D",
+        "title": "Plan Your Own Argument",
+        "answers": [
+          "Later school start times would help students learn more effectively.",
+          "Students get more sleep and are more focused in morning lessons.",
+          "Teenagers often have late homework, sports, or part-time jobs.",
+          "Some people say later starts would make the school day too long.",
+          "Schools can adjust the timetable so students still get the same learning time.",
+          "If students are more rested, they can participate and learn better."
+        ],
+        "explanation": "Students create a brief planning outline for the same argument they will speak.",
+        "expectedResponses": [
+          "1 A clear claim supporting later school start times.",
+          "2 Two relevant pieces of evidence about sleep, focus, workload, participation, or learning.",
+          "3 One reasonable counterargument about timetable length or scheduling.",
+          "4 One response showing the timetable can be adjusted or learning time can be protected.",
+          "5 One strong closing line that reinforces the argument."
+        ],
+        "commonErrors": [
+          "Writing opinions without a clear claim",
+          "Repeating the same evidence twice",
+          "Leaving out the counterargument or response",
+          "Writing a conclusion that is just 'Thank you' or 'That is all'"
+        ],
+        "corrections": [
+          "Remind students the claim must be a full position, not a topic.",
+          "Ask for two different supports, such as a reason and an example.",
+          "Check that both counterargument and response are present.",
+          "Require a closing sentence that restates the argument persuasively."
+        ],
+        "teacherNotes": "For open planning answers, accept any relevant content that matches the school-start-later topic and supports the claim logically."
+      },
+      {
+        "label": "Section E",
+        "title": "Speak Your Argument",
+        "answers": [
+          "Accept a spoken main claim about later school start times.",
+          "Accept a spoken first reason and one example that support the claim.",
+          "Accept a spoken fair counterargument about later starts making the day too long or affecting schedules.",
+          "Accept a spoken response that explains how the timetable can be adjusted or why the benefit outweighs the drawback.",
+          "Accept a spoken 30-second argument that includes claim, evidence, counterargument, response, and a clear ending."
+        ],
+        "explanation": "Students deliver a short persuasive argument orally using the prepared plan.",
+        "expectedResponses": [
+          "1 Any clear spoken claim that later school should start later.",
+          "2 A spoken reason plus example or fact from the passage or plan.",
+          "3 A fair counterargument stated without exaggeration.",
+          "4 A logical response that answers the objection respectfully.",
+          "5 A short, structured argument with clear flow and audience awareness."
+        ],
+        "commonErrors": [
+          "Speaking only in opinions with no evidence",
+          "Ignoring the counterargument",
+          "Using casual fillers instead of structure",
+          "Rushing so the claim and response are unclear"
+        ],
+        "corrections": [
+          "Prompt students to pause after the claim and after the counterargument.",
+          "Encourage them to use linking words such as because, however, and therefore.",
+          "Remind them to speak clearly and adjust tone for the audience.",
+          "If a student misses one element, ask for a brief repeat of that part."
+        ],
+        "teacherNotes": "Accept any coherent 30-second persuasive speech that includes the required elements and stays on the same topic."
+      }
+    ]
+  }
+}

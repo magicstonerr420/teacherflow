@@ -48,5 +48,7 @@ export function problemReport(input: {category: string; description: string; ste
     'You can attach a screenshot before sending this email.',
   ].join('\n');
   return { subject, body, text: `To: ${CONTACT_EMAIL}\nSubject: ${subject}\n\n${body}`,
+    gmailHref: `https://mail.google.com/mail/?${new URLSearchParams({view:'cm',fs:'1',to:CONTACT_EMAIL,su:subject,body})}`,
+    outlookHref: `https://outlook.live.com/mail/0/deeplink/compose?${new URLSearchParams({to:CONTACT_EMAIL,subject,body})}`,
     href: `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}` };
 }

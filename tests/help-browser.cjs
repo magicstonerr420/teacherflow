@@ -51,13 +51,24 @@ const dir = '.local-runtime/help-ui';
     assert.match(await dialog.innerText(), /Worksheet: Version B · Student Worksheet/);
     assert.equal(await dialog.getByLabel('What needs help?').inputValue(), 'Worksheets or reading');
     assert.equal(await dialog.getByRole('button', { name: 'Copy report' }).isDisabled(), true);
+    assert.equal(await dialog.getByRole('button', { name: 'Open Gmail draft' }).isDisabled(), true);
     await dialog.getByLabel('What happened?').fill('A worksheet question is missing.');
     await dialog.getByLabel('How can we reproduce it? (optional)').fill('Select Student and Version B.');
-    const link = new URL(await dialog.getByRole('link', { name: 'Open email draft' }).getAttribute('href'));
+    const link = new URL(await dialog.getByRole('link', { name: 'Open Email app draft' }).getAttribute('href'));
     assert.equal(link.pathname, 'jepg2407@gmail.com');
     assert.match(link.searchParams.get('body'), /Worksheet: Version B · Student Worksheet/);
     assert.ok(link.searchParams.get('body').includes('Lesson topic: ' + data.request.topic));
     assert.ok(link.searchParams.get('body').includes('Student age: ' + data.request.studentAge));
+    for(const [name,host,subjectKey] of [['Open Gmail draft','mail.google.com','su'],['Open Outlook.com draft','outlook.live.com','subject']]){
+      const anchor=dialog.getByRole('link',{name,exact:true});
+      const draft=new URL(await anchor.getAttribute('href'));
+      assert.equal(draft.hostname,host);assert.equal(draft.searchParams.get('to'),link.pathname);
+      assert.equal(draft.searchParams.get('body'),link.searchParams.get('body'));
+      assert.equal(draft.searchParams.get(subjectKey),link.searchParams.get('subject'));
+      assert.equal(await anchor.getAttribute('target'),'_blank');
+      assert.match(await anchor.getAttribute('rel'),/noopener/);
+    }
+    assert.match(await dialog.innerText(),/Yahoo, iCloud, Proton Mail/);
     // Exercise both successful copying and the manual fallback without opening an email client.
     await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async text => { window.copiedReport = text; } } }));
     await dialog.getByRole('button', { name: 'Copy report' }).click();

@@ -40,14 +40,21 @@ export function ReportProblem({ context }: { context?: ProblemContext }) {
         <Textarea id={`${id}-steps`} value={steps} onChange={e => setSteps(e.target.value)} maxLength={600} placeholder="For example: open a saved lesson, choose Presentation, then click Generate PowerPoint." />
       </div>
       <p className="text-xs text-muted-foreground">The current page address is included. You can attach a screenshot in your email.</p>
+      <p className="text-sm font-medium">Choose how to open your draft</p>
       <div className="flex flex-wrap gap-2">
-        {ready ? <Button asChild><a href={report.href} onClick={() => setNotice('Your email app should open with a draft. Send it there to submit your report. If it does not open, use Copy report.')}><Mail className="size-4" />Open email draft</a></Button>
-          : <Button disabled><Mail className="size-4" />Open email draft</Button>}
-        <Button variant="outline" disabled={!ready} onClick={async () => {
+        {[
+          {label:'Gmail',href:report.gmailHref,web:true},
+          {label:'Outlook.com',href:report.outlookHref,web:true},
+          {label:'Email app',href:report.href,web:false},
+        ].map(({label,href,web})=>ready
+          ? <Button key={label} variant={label==='Gmail'?'default':'outline'} size="sm" asChild><a href={href} aria-label={`Open ${label} draft`} {...(web?{target:'_blank',rel:'noopener noreferrer'}:{})} onClick={()=>setNotice(web?`${label} opens in a new tab. Review and send your draft there. If it does not open, use Copy report.`:'Your default email app should open. Review and send your draft there, or choose Gmail, Outlook.com, or Copy report.')}><Mail className="size-4" />{label}</a></Button>
+          : <Button key={label} variant={label==='Gmail'?'default':'outline'} size="sm" disabled aria-label={`Open ${label} draft`}><Mail className="size-4" />{label}</Button>)}
+        <Button variant="outline" size="sm" disabled={!ready} onClick={async () => {
           try { await navigator.clipboard.writeText(report.text); setNotice(`Report copied. Paste it into an email to ${CONTACT_EMAIL}.`); }
           catch { setShowCopy(true); setNotice('Select and copy the report below, then paste it into your email.'); }
         }}><Copy className="size-4" />Copy report</Button>
       </div>
+      <p className="text-xs text-muted-foreground">Using Yahoo, iCloud, Proton Mail, or another provider? Copy the report and paste it into a new email to {CONTACT_EMAIL}.</p>
       {notice && <p role="status" className="text-sm">{notice}</p>}
       {showCopy && <div className="space-y-2"><Label htmlFor={`${id}-copy`}>Your report</Label><Textarea id={`${id}-copy`} readOnly value={report.text} onFocus={e => e.currentTarget.select()} className="min-h-40" /></div>}
     </DialogContent>

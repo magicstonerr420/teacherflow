@@ -26,7 +26,8 @@ try {
     assert.equal(run('F', ['ever', 'never', 'already', 'yet', 'experience', 'abroad']), null);
     assert.equal(run('I', ['I', 'You', 'They']), null, 'A one-letter word is not necessarily an option label');
     assert.equal(run('we haven’t finished', ['We haven\'t finished', 'We finished']), null);
-    for (const key of ['B. ever', 'D', 'Z', 'A. never', 'never', '']) assert.match(run(key), /actual printed choice/, `${stage}: reject unsupported answer ${key}`);
+    for (const key of ['B. ever', 'D', 'Z', 'A. never', 'never']) assert.match(run(key), /actual printed choice/, `${stage}: reject unsupported answer ${key}`);
+    assert.match(run(''), /nonempty answer/, `${stage}: reject blank answers`);
     assert.match(run('A. ever', ['B. ever', 'C. already', 'D. yet']), /actual printed choice/, 'Respect explicit printed labels');
     const incomplete = structuredClone(fixture.teacher);
     incomplete.sections[3].answers.pop();
