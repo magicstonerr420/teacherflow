@@ -27,6 +27,7 @@ import {
   collectImagePrompts,
   downloadBlob,
   generateSlideImages,
+  missingFlashcardPictures,
   presentationFileName,
   splitHighlights,
   themeFor,
@@ -159,11 +160,13 @@ export function PresentationActions({
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({});
   const [failureMessage, setFailureMessage] = useState("");
   const [imageFailure, setImageFailure] = useState(false);
+  const [omittedCards, setOmittedCards] = useState<string[]>([]);
 
   useEffect(() => {
     setBlob(null);
     setImagePreviews({});
     setFailed(false);
+    setOmittedCards([]);
   }, [lesson, request]);
 
   const filename = presentationFileName(request);
@@ -186,25 +189,31 @@ export function PresentationActions({
       cards.length * 2 + (shapeResources?.boards.length ?? 0)
     : 1 + slides.reduce((n, s) => n + (s.layout === 'vocabulary' && s.vocabulary.length ? s.vocabulary.length : 1), 0) + cards.length * 2 + (shapeResources?.boards.length ?? 0);
   const imagePrompts = useMemo(() => collectImagePrompts(lesson, 6, request), [lesson, request]);
+  const requiredPrompts = useMemo(() => [...new Set(missingFlashcardPictures(lesson, request)
+    .map(card => card.imagePrompt).filter(prompt => imagePrompts.includes(prompt)))], [lesson, request, imagePrompts]);
+  const missingCards = missingFlashcardPictures(lesson, request, imagePreviews);
 
-  async function generate() {
+  async function generate(requiredOnly = false) {
     setBusy(true);
     setFailed(false);
+    setBlob(null);
     try {
       setStatus("Loading PowerPoint export tools…");
       await loadPresentationTools();
-      let images = {};
-      if (withImages && imagePrompts.length) {
-        setStatus(`Creating ${imagePrompts.length} illustrations…`);
-        images = await generateSlideImages(imagePrompts, request);
+      let images = { ...imagePreviews };
+      const prompts = withImages && !requiredOnly ? imagePrompts : requiredPrompts;
+      if (prompts.length) {
+        setStatus(`Preparing ${prompts.length} illustrations…`);
+        images = { ...images, ...await generateSlideImages(prompts, request) };
         setImagePreviews(images);
       }
       setStatus("Building slides…");
       const built = await buildPresentationBlob(lesson, request, images);
       setBlob(built);
+      setOmittedCards([]);
     } catch (error) {
       setImageFailure(error instanceof IllustrationGenerationError);
-      if (error instanceof IllustrationGenerationError) setImagePreviews(error.images);
+      if (error instanceof IllustrationGenerationError) setImagePreviews(previous => ({ ...previous, ...error.images }));
       console.error(error);
       setFailureMessage(
         error instanceof Error ? error.message : "PowerPoint generation failed. Please retry.",
@@ -216,10 +225,13 @@ export function PresentationActions({
     }
   }
 
-  async function exportAvailable(withAvailable = true) {
+  async function exportAvailable(withAvailable = true, omitMissingFlashcards = false) {
     setBusy(true);
     try {
-      setBlob(await buildPresentationBlob(lesson, request, withAvailable ? imagePreviews : {}));
+      const images = withAvailable ? imagePreviews : {};
+      const missing = missingFlashcardPictures(lesson, request, images);
+      setBlob(await buildPresentationBlob(lesson, request, images, { omitMissingFlashcards }));
+      setOmittedCards(omitMissingFlashcards ? missing.map(card => card.word) : []);
       setFailed(false);
     } catch (error) {
       setImageFailure(false);
@@ -237,8 +249,8 @@ export function PresentationActions({
             <Presentation className="size-5 text-primary" />
             <div>
               <p className="text-sm font-semibold">
-                {exportCount} slide{exportCount === 1 ? "" : "s"} in the PowerPoint
-                {cards.length ? ", including flashcard fronts and backs" : ""}
+                {exportCount - omittedCards.length * 2} slides in the PowerPoint
+                {cards.length > omittedCards.length ? ", including flashcard fronts and backs" : ""}
               </p>
               <p className="text-sm text-muted-foreground">
                 Teacher notes go into PowerPoint speaker notes, never onto student slides.
@@ -251,7 +263,7 @@ export function PresentationActions({
               <>
                 <span className="flex items-center gap-1.5 text-sm font-medium text-primary">
                   <CheckCircle2 className="size-4" />
-                  PowerPoint ready
+                  {omittedCards.length ? 'PowerPoint ready — some flashcards omitted' : 'PowerPoint ready'}
                 </span>
                 <Button onClick={() => downloadBlob(blob, filename)}>
                   <Download className="size-4" />
@@ -275,15 +287,21 @@ export function PresentationActions({
           </div>
         </div>
 
-        {imagePrompts.length && import.meta.env["VITE_LOCAL_AI"] !== "true" ? (
+        {requiredPrompts.length > 0 && <p className="mt-4 rounded-lg border bg-accent/40 p-3 text-sm">
+          This lesson needs {requiredPrompts.length} original flashcard picture{requiredPrompts.length === 1 ? '' : 's'}. Generate PowerPoint prepares these first, within the six-picture allowance, and reuses pictures already created.
+        </p>}
+        {omittedCards.length > 0 && <Alert className="mt-4">
+          <AlertCircle className="size-4" /><AlertTitle>These flashcards are not included</AlertTitle>
+          <AlertDescription>{omittedCards.join(', ')}. The lesson slides and available pictures are included. Your saved lesson still contains all the original material.</AlertDescription>
+        </Alert>}
+        {imagePrompts.length > requiredPrompts.length && import.meta.env["VITE_LOCAL_AI"] !== "true" ? (
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/20 bg-accent/40 p-3">
             <div className="flex items-start gap-2">
               <Sparkles className="mt-0.5 size-4 text-primary" />
               <div>
                 <p className="text-sm font-semibold">Add original illustrations</p>
                 <p className="text-sm text-muted-foreground">
-                  Draws {imagePrompts.length} pictures for the vocabulary and key slides. Takes a
-                  minute longer and uses OpenRouter credits. Style is matched to age{" "}
+                  Adds optional pictures to the key slides, up to {imagePrompts.length} illustrations in total. Required flashcard pictures are included automatically. Style is matched to age{" "}
                   {request.studentAge} and level {request.level}.
                 </p>
               </div>
@@ -309,17 +327,17 @@ export function PresentationActions({
             <AlertTitle>PowerPoint generation failed</AlertTitle>
             <AlertDescription className="space-y-3">
               <p>{failureMessage}</p>
-              {imageFailure && isYoungA1(request) ? (
+              {missingCards.length > 0 ? (
                 <p>
-                  Export with available pictures keeps completed illustrations and built-in picture
-                  cards. Optional slide illustrations may be absent. A flashcard that still needs a
-                  picture will be reported.
+                  Missing flashcard pictures: {missingCards.map(card => card.word).join(', ')}.
+                  You can download the lesson slides and available pictures now, without those flashcards. This does not create more images or use another lesson slot.
                 </p>
               ) : null}
-              <Button size="sm" variant="outline" onClick={() => void (imageFailure || !Object.keys(imagePreviews).length ? generate() : exportAvailable())} disabled={busy}>
-                {imageFailure ? "Retry missing pictures" : "Retry PowerPoint export"}
+              <Button size="sm" variant="outline" onClick={() => void (imageFailure || missingCards.length || !Object.keys(imagePreviews).length ? generate(missingCards.length > 0) : exportAvailable())} disabled={busy}>
+                {imageFailure || missingCards.length ? "Retry missing pictures" : "Retry PowerPoint export"}
               </Button>
-              {imageFailure ? <Button size="sm" variant="outline" onClick={() => void exportAvailable(false)} disabled={busy}>Export without AI illustrations</Button> : null}
+              {missingCards.length > 0 && <Button size="sm" variant="outline" onClick={() => void exportAvailable(true, true)} disabled={busy}>Export without missing flashcards</Button>}
+              {imageFailure && !missingFlashcardPictures(lesson, request).length ? <Button size="sm" variant="outline" onClick={() => void exportAvailable(false)} disabled={busy}>Export without AI illustrations</Button> : null}
               {imageFailure && Object.keys(imagePreviews).length > 0 ? (
                 <Button
                   size="sm"
@@ -343,7 +361,7 @@ export function PresentationActions({
         <Badge variant="outline">{bandOfRequest(request)} design</Badge>
       </div>
 
-      {Object.keys(imagePreviews).length > 0 && withImages ? (
+      {Object.keys(imagePreviews).length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Generated illustrations">
           {Object.entries(imagePreviews).map(([prompt, url]) => (
             <img
@@ -368,17 +386,17 @@ export function PresentationActions({
           )}
           <h3 className="font-semibold">Flashcards — picture front and word back</h3>
           <p className="text-sm text-muted-foreground">
-            Each card is appended as two consecutive PowerPoint slides. Print each pair and glue
+            Each card with an available picture is appended as two consecutive PowerPoint slides. Print each pair and glue
             back-to-back; check orientation before duplex printing.
           </p>
           {cards.map((card, i) => (
             <div key={card.word} className="grid grid-cols-2 gap-3 rounded-lg border p-3">
               <div>
                 <p className="text-sm">Card {i + 1} · Front</p>
-                {(card.visual ? pictureUrl(card.visual) : (withImages ? imagePreviews[card.imagePrompt] : null) || pictureUrl(card.word)) ? (
+                {(card.visual ? pictureUrl(card.visual) : imagePreviews[card.imagePrompt] || pictureUrl(card.word)) ? (
                   <img
                     src={
-                      (card.visual ? pictureUrl(card.visual) : (withImages ? imagePreviews[card.imagePrompt] : null) || pictureUrl(card.word)) ||
+                      (card.visual ? pictureUrl(card.visual) : imagePreviews[card.imagePrompt] || pictureUrl(card.word)) ||
                       undefined
                     }
                     alt="Flashcard picture front"
@@ -387,7 +405,7 @@ export function PresentationActions({
                   />
                 ) : (
                   <p className="text-sm">
-                    Turn on original illustrations and generate PowerPoint to create this picture.
+                    {requiredPrompts.includes(card.imagePrompt) ? 'Generate PowerPoint to prepare this flashcard picture.' : 'This flashcard has no available picture within the six-picture allowance.'}
                   </p>
                 )}
               </div>

@@ -189,7 +189,7 @@ export class BetaStore {
       if(!run?.complete) throw new Error('Complete your own lesson before creating illustrations.');
       // Previously paid pictures remain usable when prompt prioritisation changes.
       if (run.images[imageKey]?.value !== undefined) return {cached:run.images[imageKey]!.value as string};
-      const prompts=lessonImagePrompts(run.parts['presentation']?.value, request);
+      const prompts=lessonImagePrompts(Object.assign({}, ...phases.map(stage => run.parts[stage]?.value)), request);
       if(!prompts.includes(prompt)) throw new Error('The beta includes only the six selected illustrations from this lesson.');
       if (!run.images[imageKey] && Object.keys(run.images).length >= 6) throw new Error('This lesson already used its six illustration slots. Reuse the existing pictures.');
       const job=run.images[imageKey] ??= {attempts:0};

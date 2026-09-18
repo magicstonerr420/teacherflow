@@ -1,8 +1,8 @@
 import {repairDrawingParagraphs} from './pptx-xml';
 import { americanEnglishContent } from './american-english';
 import { loadPresentationTools } from './presentation-tools';
-import { lessonImagePrompts } from "./image-plan";
-import { isYoungA1, picturePng, youngPresentationIssues } from "./young-learners";
+import { lessonImagePrompts, vocabularyImagePrompt } from "./image-plan";
+import { isYoungA1, picturePng, pictureSvg, youngPresentationIssues } from "./young-learners";
 import { youngSlidePages, youngSlideRows, wrapSlideText } from "./young-slides";
 import { capitalizeHeading, presentationParagraphs } from "./presentation-text";
 import { colorShapeResources } from './color-shape-resources';
@@ -130,14 +130,20 @@ export async function buildPresentationBlob(
   lesson: LessonPackage,
   request: LessonRequestInput,
   images: SlideImages = {},
+  options: { omitMissingFlashcards?: boolean } = {},
 ): Promise<Blob> {
-  if (isYoungA1(request)) {
-    const issues = youngPresentationIssues(lesson.presentation, lesson);
+  if (isYoungA1(request) && !options.omitMissingFlashcards) {
+    const plannedPresentation = { slides: normalizeSlides(lesson.presentation).map(slide => ({ ...slide,
+      vocabulary: slide.vocabulary.map(v => ({ ...v, imagePrompt: vocabularyImagePrompt(v.word, v.imagePrompt) })),
+    })) };
+    const issues = youngPresentationIssues(plannedPresentation, lesson);
     if (issues.length)
       throw new Error(
         "Flashcard material is incomplete. Regenerate only the presentation to include the required word cards and picture prompts.",
       );
   }
+  const missing = missingFlashcardPictures(lesson, request, images);
+  if (missing.length && !options.omitMissingFlashcards) throw new MissingFlashcardPicturesError(missing.map(card => card.word));
   images = { ...images };
   const { PptxGenJS } = await loadPresentationTools();
   const pptx = new PptxGenJS();
@@ -223,7 +229,7 @@ export async function buildPresentationBlob(
   for (const slide of slides) {
     if (slide.layout === "vocabulary" && slide.vocabulary.length) {
       for (const v of slide.vocabulary) {
-        const prompt = v.imagePrompt || "built-in:" + v.word;
+        const prompt = vocabularyImagePrompt(v.word, v.imagePrompt) || "built-in:" + v.word;
         if (!images[prompt]) {
           const picture = await picturePng(v.word);
           if (picture) {
@@ -259,10 +265,10 @@ export async function buildPresentationBlob(
   if (shapeResources?.extended) await addMatchingBoards();
   for (const [index, card] of flashcardsFor(lesson, request).entries()) {
     const data = card.visual ? await picturePng(card.visual) : images[card.imagePrompt] || (await picturePng(card.word));
-    if (!data)
-      throw new Error(
-        `The flashcard for "${card.word}" needs its picture. Turn on original illustrations and retry; your lesson is retained.`,
-      );
+    if (!data) {
+      if (options.omitMissingFlashcards) continue;
+      throw new MissingFlashcardPicturesError([card.word]);
+    }
     if (!imageRatios.has(data)) {
       const img = new Image();
       img.src = data;
@@ -695,6 +701,17 @@ export class IllustrationGenerationError extends Error {
   }
 }
 
+export class MissingFlashcardPicturesError extends Error {
+  constructor(public words: string[]) {
+    super(`Pictures are still missing for these flashcards: ${words.join(', ')}. Your lesson and completed pictures are retained.`);
+  }
+}
+
+export function missingFlashcardPictures(lesson: LessonPackage, request: LessonRequestInput, images: SlideImages = {}) {
+  return flashcardsFor(lesson, request).filter(card => card.visual
+    ? !pictureSvg(card.visual) : !images[card.imagePrompt] && !pictureSvg(card.word));
+}
+
 /** Successful pictures are retained per signed-in user and lesson for retry/export. */
 const imageCache = new Map<string, string>();
 export async function generateSlideImages(
@@ -780,11 +797,11 @@ export function flashcardsFor(lesson: LessonPackage, request: LessonRequestInput
   for (const slide of normalizeSlides(lesson.presentation))
     for (const v of slide.vocabulary)
       if (v.word.trim())
-        unique.set(v.word.trim().toLowerCase(), { word: v.word, imagePrompt: v.imagePrompt });
+        unique.set(v.word.trim().toLowerCase(), { word: v.word, imagePrompt: vocabularyImagePrompt(v.word, v.imagePrompt) });
   // Cards are physical lesson materials at every age. Include required words even
   // when a model taught one on a content slide instead of a vocabulary slide.
   for (const word of (request.requiredVocabulary ?? '').split(/[,;\n]+/).map(w => w.trim()).filter(Boolean))
-    if (!unique.has(word.toLowerCase())) unique.set(word.toLowerCase(), { word, imagePrompt: '' });
+    if (!unique.has(word.toLowerCase())) unique.set(word.toLowerCase(), { word, imagePrompt: vocabularyImagePrompt(word) });
   if (shapeResources) {
     for (const word of [...shapeResources.colors, ...shapeResources.shapes, ...shapeResources.words]) unique.delete(word);
     // Complete the combinations even if the model supplied only separate word cards.
