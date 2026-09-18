@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { safeAuthPath as safePath, googleReturnUrl } from "@/lib/auth-redirect";
+import { googleSignInStatus } from "@/lib/google-auth.functions";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): {redirect?: string; password?: boolean} => ({
@@ -25,10 +28,6 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-function safePath(value?: string) {
-  return value && value.startsWith("/") && !value.startsWith("//") && !value.includes('\\') ? value : "/lessons";
-}
-
 function AuthPage() {
   const { redirect, password: passwordPage } = Route.useSearch();
   const navigate = useNavigate();
@@ -42,9 +41,18 @@ function AuthPage() {
   const [emailCode, setEmailCode] = useState("");
   const [recovery,setRecovery]=useState(!!passwordPage);
   const [confirmPassword,setConfirmPassword]=useState('');
+  const googleStatus = useServerFn(googleSignInStatus);
+  const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    googleStatus().then(result => { if (active) setGoogleAvailable(result.available); })
+      .catch(() => { if (active) setGoogleAvailable(false); });
+    return () => { active = false; };
+  }, [googleStatus]);
 
   useEffect(()=>{
-    const callbackError=new URLSearchParams(window.location.hash.slice(1)).get('error');
+    const callbackError=new URLSearchParams(window.location.hash.slice(1)).get('error') || new URLSearchParams(window.location.search).get('error');
     if(callbackError){setNotice(callbackError==='access_denied'?'Google sign-in was cancelled or denied. Try again or use an email sign-in link.':'Google sign-in could not finish. Use an email sign-in link or contact the app owner.');history.replaceState(null,'',window.location.pathname+window.location.search);}
     const {data}=supabase.auth.onAuthStateChange(event=>{if(event==='PASSWORD_RECOVERY')setRecovery(true);});
     return ()=>data.subscription.unsubscribe();
@@ -84,11 +92,12 @@ function AuthPage() {
   }
 
   async function google() {
+    if (!googleAvailable || busy) return;
     setBusy(true);setNotice('');
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth?redirect=${encodeURIComponent(safePath(redirect))}` },
+        options: { redirectTo: googleReturnUrl(window.location.origin, redirect), queryParams: { prompt: 'select_account' } },
       });
       if(error)throw error;
     }catch{setNotice('Google sign-in could not start. Try an email sign-in link instead.');}
@@ -150,7 +159,7 @@ function AuthPage() {
           {recovery && isAuthenticated ? 'Set your TeacherFlow password' : mode === "signin" ? "Welcome back" : "Create your account"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Save your lesson packages and open them again any time.
+          Sign in to explore TeacherFlow and access your saved lessons. Generating lessons, illustrations, or audio requires an active beta invitation from the owner.
         </p>
 
         {notice && !(recovery && isAuthenticated)?<p role="status" className="mt-5 rounded-lg border p-4 text-sm">{notice}</p>:null}
@@ -193,11 +202,10 @@ function AuthPage() {
           <Button type="button" variant="outline" className="w-full" onClick={emailLink} disabled={busy}>Email me a sign-in link</Button>
           <Button type="button" variant="ghost" className="w-full" onClick={resetPassword} disabled={busy}>Set or reset my password</Button>
           <p className="text-xs text-muted-foreground">An email sign-in link works without a password. Your TeacherFlow password is separate from your email account password.</p>
-          {import.meta.env['VITE_GOOGLE_AUTH_ENABLED']==='true' ? <>
-          <Button type="button" variant="outline" className="w-full" onClick={google} disabled={busy}>
-            Continue with Google
+          <Button type="button" variant="outline" className="w-full" onClick={google} disabled={busy || !googleAvailable}>
+            {googleAvailable === null ? 'Checking Google sign-in…' : 'Continue with Google'}
           </Button>
-          </> : <p className="text-xs text-muted-foreground">Google sign-in is currently unavailable. Please use email.</p>}
+          {googleAvailable === false && <p className="text-xs text-muted-foreground">Google sign-in is being set up. You can use email or try again later.</p>}
         </form>}
         {notice.includes('sign-in code')?<div className="mt-4 space-y-2"><Label htmlFor="email-code">Email sign-in code (if provided)</Label><Input id="email-code" autoComplete="one-time-code" value={emailCode} onChange={e=>setEmailCode(e.target.value)} /><Button onClick={verifyCode} disabled={busy||!emailCode.trim()}>Verify code</Button></div>:null}
 

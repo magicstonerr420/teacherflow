@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { generateIllustration, IllustrationBillingError } from "@/lib/illustration.server";
 import { betaEnabled, betaStore } from "@/lib/beta-store.server";
-import { betaUser, isOwner } from "@/lib/beta-auth.server";
+import { generationAccess } from "@/lib/generation-access.server";
 import { lessonRequestSchema } from "@/lib/lesson-schema";
 
 /**
@@ -12,14 +12,17 @@ export const Route = createFileRoute("/api/generate-image")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        let access;
+        try { access = await generationAccess(request); }
+        catch (error) { return Response.json({ error: error instanceof Error ? error.message : "Sign in and claim a beta invitation." }, { status: 403 }); }
         if (betaEnabled()) {
           try {
-            const user = await betaUser(request);
+            const { user, limited } = access;
             const input = await request.json();
             const lessonRequest = lessonRequestSchema.parse(input.request);
             if (typeof input.prompt !== 'string' || input.prompt.length > 4000) throw new Error('Invalid illustration prompt.');
             const generate = () => generateIllustration(input.prompt, lessonRequest.studentAge, lessonRequest.level);
-            const dataUrl = isOwner(user) ? await generate() : await betaStore().image(user, lessonRequest, input.prompt, generate);
+            const dataUrl = limited ? await betaStore().image(user, lessonRequest, input.prompt, generate) : await generate();
             return Response.json({dataUrl});
           } catch (error) {
             if (error instanceof IllustrationBillingError) return Response.json({error:error.message,code:error.code}, {status:402});

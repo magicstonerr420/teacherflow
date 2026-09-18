@@ -27,8 +27,6 @@ services:
         value: google/gemini-3.1-flash-image-preview
       - key: VITE_LOCAL_AI
         value: "false"
-      - key: VITE_GOOGLE_AUTH_ENABLED
-        value: "false"
       - key: TEACHERFLOW_BETA
         value: "true"
       - key: TEACHERFLOW_BETA_DB

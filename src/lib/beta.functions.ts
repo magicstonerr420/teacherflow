@@ -3,6 +3,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { betaEnabled, betaStore } from './beta-store.server';
 import { betaIdentity, isOwner } from './beta-auth.server';
+import { generationRequiresInvitation } from './generation-access.server';
 
 export const betaStatus = createServerFn({method:'GET'}).handler(async()=>{
   if(!betaEnabled()) return {enabled:false,owner:false,claimed:false,remaining:0,completed:0,lessons:[]};
@@ -17,4 +18,4 @@ export const claimBeta = createServerFn({method:'POST'})
     if (!isOwner(user.id)) betaStore().claim(user.id,data,user.email,user.name);
     return {ok:true};
   });
-export const betaMode = createServerFn({method:'GET'}).handler(()=>betaEnabled());
+export const betaMode = createServerFn({method:'GET'}).handler(()=>generationRequiresInvitation());

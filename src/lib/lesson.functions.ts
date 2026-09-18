@@ -6,8 +6,8 @@ import { extendNewShapePresentation } from './color-shape-resources';
 import { isYoungA1, youngWorksheetIssues, youngPresentationIssues, worksheetPictureIssues } from './young-learners';
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { betaEnabled, betaStore } from "./beta-store.server";
-import { betaUser, isOwner } from "./beta-auth.server";
+import { betaStore } from "./beta-store.server";
+import { generationAccess } from "./generation-access.server";
 import { generateReading } from "./reading.server";
 import { needsReading, integrateReadingPatch, withoutReadingSections, READING_HANDOFF } from "./reading";
 import { generateListening } from './listening.server';
@@ -117,7 +117,7 @@ export const generateLessonStage = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     const { request, stage } = data;
-    const user = betaEnabled() ? await betaUser(getRequest()) : "local";
+    const { user, limited } = await generationAccess(getRequest());
     const generate = async (prior: Partial<LessonPackage>) => {
     const schemas = STAGE_SCHEMAS;
     if (ageBand(request.studentAge) !== "Kids" && stage === "studentB") return { worksheet: { studentB: { title: "", instructions: "", sections: [] } } };
@@ -125,12 +125,12 @@ export const generateLessonStage = createServerFn({ method: "POST" })
     let reading = prior.reading;
     let listening = prior.listening;
     if (stage === "student" && needsReading(request, prior)) {
-      try { reading = await generateReading(request, prior, user, "initial", betaEnabled() && !isOwner(user)); }
+      try { reading = await generateReading(request, prior, user, "initial", limited); }
       catch { reading = { status: "failed", error: "Reading generation could not start. Your lesson is retained; retry only the reading." }; }
       prior = { ...prior, reading };
     }
     if (stage === 'student' && needsListening(request)) {
-      try { listening = await generateListening(request, prior, user, betaEnabled() && !isOwner(user)); }
+      try { listening = await generateListening(request, prior, user, limited); }
       catch { listening = { status: 'failed', error: 'The listening script could not be generated. Your lesson is retained; retry in Listening.' }; }
       prior = { ...prior, listening };
     }
@@ -195,9 +195,7 @@ export const generateLessonStage = createServerFn({ method: "POST" })
       friendly(error);
     }
     };
-    if (betaEnabled()) {
-      if (!isOwner(user)) return betaStore().stage(user, request, stage, generate);
-    }
+    if (limited) return betaStore().stage(user, request, stage, generate);
     return generate(data.prior);
   });
 
@@ -310,7 +308,7 @@ export const regenerateSection = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data }) => {
-    if (betaEnabled() && !isOwner(await betaUser(getRequest()))) throw new Error("AI section regeneration is disabled during the beta to protect your allowance. You can edit and export your existing lesson.");
+    if ((await generationAccess(getRequest())).limited) throw new Error("AI section regeneration is disabled during the beta to protect your allowance. You can edit and export your existing lesson.");
     const { request, lesson, section } = data;
     const readingEnabled = true;
     const schema = section === "worksheet" && readingEnabled && lesson.reading
@@ -416,11 +414,11 @@ async function createDistinctVersionB(request: LessonRequest, lesson: LessonPack
 export const repairDuplicateVersionB=createServerFn({method:'POST'})
  .inputValidator((input:unknown)=>{const i=input as {request:unknown;lesson:LessonPackage};return {request:lessonRequestSchema.parse(i.request),lesson:i.lesson};})
  .handler(async({data})=>{
-  const user=await betaUser(getRequest());
+  const {user,limited}=await generationAccess(getRequest());
   const generate=async(lesson:LessonPackage)=>{
     if(!alternateWorksheetIssue(lesson.worksheet?.student,lesson.worksheet?.studentB))return {worksheet:lesson.worksheet};
     try{return await createDistinctVersionB(data.request,lesson);}catch(error){friendly(error);}
   };
-  if(betaEnabled()&&!isOwner(user))return betaStore().repairAlternate(user,data.request,generate);
+  if(limited)return betaStore().repairAlternate(user,data.request,generate);
   return generate(data.lesson);
  });

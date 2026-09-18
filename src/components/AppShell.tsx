@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useBetaStatus } from "@/hooks/useBetaStatus";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportProblem } from "./ReportProblem";
+import { CONTACT_EMAIL, INQUIRY_LINK } from "@/config/contact";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -59,6 +61,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main>{children}</main>
+      <footer className="no-print border-t">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8">
+          <div className="text-sm"><p className="font-semibold">Questions about TeacherFlow?</p>
+            <a href={INQUIRY_LINK} className="mt-1 inline-block break-all text-primary underline underline-offset-4">{CONTACT_EMAIL}</a>
+          </div>
+          <ReportProblem />
+        </div>
+      </footer>
     </div>
   );
 }

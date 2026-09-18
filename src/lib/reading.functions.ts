@@ -3,8 +3,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { foundationSchema, lessonRequestSchema, materialsSchema, assessmentSchema } from "./lesson-schema";
-import { betaEnabled, betaStore } from "./beta-store.server";
-import { betaUser, isOwner } from "./beta-auth.server";
+import { betaStore } from "./beta-store.server";
+import { generationAccess } from "./generation-access.server";
 import { generateReading } from "./reading.server";
 import { applyReading, readingSchema } from "./reading";
 
@@ -19,8 +19,7 @@ export const regenerateReading = createServerFn({ method: "POST" })
     }), operation: z.string().uuid(),
   }).parse(input))
   .handler(async ({ data }) => {
-    const user = betaEnabled() || process.env['NODE_ENV'] === 'production' ? await betaUser(getRequest()) : "local";
-    const limited = betaEnabled() && !isOwner(user);
+    const { user, limited } = await generationAccess(getRequest());
     // A beta teacher may regenerate only a completed lesson belonging to their account.
     const lesson = limited ? betaStore().readingLesson(user, data.request) : data.lesson;
     try {

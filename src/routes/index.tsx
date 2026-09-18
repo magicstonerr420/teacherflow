@@ -64,6 +64,7 @@ function Home() {
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
             Turn your lesson idea into a classroom-ready lesson package in minutes.
           </p>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">Explore TeacherFlow freely. Creating lessons requires an active private-beta invitation.</p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Button size="lg" asChild>
               <Link to="/builder">

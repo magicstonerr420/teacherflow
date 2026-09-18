@@ -26,8 +26,22 @@ the names used by server authentication; explicit server settings take precedenc
 Keep TEACHERFLOW_BETA=true on the private beta, configure the verified owner ID,
 and retain the persistent /var/data disk. Invitations, usage accounting, readings,
 and recordings depend on that disk. Creating invitations does not reset the shared
-beta budget. Disabling beta mode currently removes some generation access checks;
-do not use that configuration for a public service.
+beta budget. Production generation stops when beta mode is disabled or missing;
+it never falls back to unrestricted paid access. Signing in with Google or email
+does not issue an invitation or grant generation privileges.
+
+## Google sign-in and support
+
+Google credentials belong in the Supabase authentication provider settings, never
+in the browser bundle. The sign-in page checks provider readiness and enables
+Google automatically once the service redirects successfully to Google. A full
+browser sign-in must still be tested after credentials and allowed redirects are
+configured. See GOOGLE-SIGNIN-SETUP.md for the account setup.
+
+The temporary inquiry and problem-report mailbox is defined in src/config/contact.ts.
+The report form prepares an email draft; the teacher reviews and sends it in their
+email app. It does not claim to send mail automatically. Query strings and URL
+fragments are excluded from the page address included in reports.
 
 ## Ownership and migration
 
@@ -37,6 +51,13 @@ be verified separately before retiring the original project or disconnecting its
 backend. Preserve user IDs, saved lessons, policies, and persistent beta data
 during any migration. Repository synchronization and domain ownership are separate
 account settings; changing this source code does not revoke external account access.
+
+Before switching authentication projects, run
+`node scripts/backup-before-auth-migration.mjs` in the existing Render service's
+Shell. It snapshots configured SQLite databases to the persistent disk, verifies
+their integrity, and records the existing owner ID in a private manifest. It leaves
+the original databases and invitation allowances untouched. Retain the disk and
+owner setting through the switch, and rebuild after changing public Vite settings.
 
 ## Checks
 

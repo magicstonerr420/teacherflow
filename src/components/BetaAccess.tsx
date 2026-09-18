@@ -8,7 +8,7 @@ import type { LessonRequestInput } from '@/lib/lesson-schema';
 import { Link } from '@tanstack/react-router';
 
 export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestInput)=>void; onAccess: (allowed:boolean)=>void}) {
-  const {isAuthenticated,loading}=useAuth();
+  const {isAuthenticated,loading,user}=useAuth();
   const statusFn=useServerFn(betaStatus), claimFn=useServerFn(claimBeta), modeFn=useServerFn(betaMode);
   const [enabled,setEnabled]=useState(false);
   const [status,setStatus]=useState<Awaited<ReturnType<typeof betaStatus>> | null>(null);
@@ -22,7 +22,12 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
     try {const saved=JSON.parse(localStorage.getItem('teacherflow-beta-invite')||'null');if(saved?.expires>Date.now())setCode(saved.code);else localStorage.removeItem('teacherflow-beta-invite');}catch{localStorage.removeItem('teacherflow-beta-invite');}
     modeFn().then(mode=>{setEnabled(mode);if(!mode)onAccess(true);}).catch(()=>setError('Could not check beta access. Refresh to retry.'));
   },[]);
-  useEffect(()=>{if(enabled && isAuthenticated)statusFn().then(setStatus).catch(e=>setError(e.message));else setStatus(null);},[enabled,isAuthenticated]);
+  useEffect(()=>{
+    let active=true;
+    setStatus(null);if(enabled)onAccess(false);
+    if(enabled && isAuthenticated)statusFn().then(value=>{if(active)setStatus(value);}).catch(e=>{if(active)setError(e.message);});
+    return ()=>{active=false;};
+  },[enabled,isAuthenticated,user?.id]);
   useEffect(()=>{if(enabled)onAccess(!!status?.owner || (!!status?.claimed && status.remaining>0));},[enabled,status]);
   useEffect(()=>{
     if(enabled && isAuthenticated && status && !status.claimed && code && automaticAttempt.current!==code){
@@ -37,6 +42,7 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
     finally{setBusy(false);}
   }
   if(!enabled && !error)return null;
+  if(status && !status.enabled)return <section role="status" className="my-6 rounded-xl border bg-card p-5">Lesson generation is temporarily paused. You can still explore TeacherFlow and open saved lessons.</section>;
   if(status?.owner)return <section className="my-6 space-y-3 rounded-xl border bg-card p-5" aria-label="Owner workspace">
     <h2 className="font-semibold">Owner workspace</h2>
     <p>You can generate lessons without the three-lesson beta limit.</p>
@@ -45,6 +51,7 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
   </section>;
   return <section className="my-6 space-y-3 rounded-xl border bg-card p-5" aria-label="Teacher beta access">
     <h2 className="font-semibold">Private teacher beta</h2>
+    <p className="text-sm">Signing in, including with Google, does not activate generation. You need an active invitation from the owner.</p>
     <p className="text-sm">Three lessons per invited account, with up to six illustrations and one recording per lesson. Progress and completed images are saved for reuse.</p>
     {loading ? <p>Checking sign-in…</p> : !isAuthenticated ? <a className="underline" href="/auth?redirect=%2Fbuilder">Sign in or create an account to claim your invitation</a> : !status && !error ? <p>Checking your account access…</p> : status?.claimed ? <>
       <p className="font-medium">{status.remaining} new lesson slots remaining · {status.completed} of 3 lessons completed</p>
