@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { GraduationCap, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="no-print sticky top-0 z-30 border-b bg-background/85 backdrop-blur">
         <div className="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-3">
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <GraduationCap className="size-4" />
-            </span>
+            <img src="/teacherflow-icon.svg" alt="" width={36} height={36} className="size-9" />
             <span className="display-heading text-lg">TeacherFlow</span>
           </Link>
           <nav aria-label="Main navigation" className="flex flex-wrap items-center gap-1">

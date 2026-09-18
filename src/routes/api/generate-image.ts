@@ -41,51 +41,7 @@ export const Route = createFileRoute("/api/generate-image")({
         if (process.env["TEACHERFLOW_AI_PROVIDER"] === "ollama") {
           return Response.json({ error: "AI illustrations are not configured for this provider. Export slides without AI illustrations." }, { status: 503 });
         }
-        const { prompt } = (await request.json()) as { prompt?: string };
-        if (!prompt || !prompt.trim()) {
-          return new Response(JSON.stringify({ error: "Missing prompt" }), { status: 400 });
-        }
-        const key = process.env["LOVABLE_API_KEY"];
-        if (!key) {
-          return new Response(JSON.stringify({ error: "Image generation is not configured." }), {
-            status: 500,
-          });
-        }
-
-        const upstream = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "google/gemini-3.1-flash-image",
-            messages: [
-              {
-                role: "user",
-                content: `${prompt}\n\nStyle: clean original educational illustration for a classroom slide, flat vector style, bright friendly colours, plain light background, single clear subject, no text or letters anywhere in the image, no logos, no brands, no real people.`,
-              },
-            ],
-            modalities: ["image", "text"],
-          }),
-        });
-
-        if (!upstream.ok) {
-          const text = await upstream.text().catch(() => "");
-          return new Response(JSON.stringify({ error: text || "Image generation failed" }), {
-            status: upstream.status,
-          });
-        }
-
-        const json = (await upstream.json()) as any;
-        const b64 =
-          json?.data?.[0]?.b64_json ??
-          json?.choices?.[0]?.message?.images?.[0]?.image_url?.url ??
-          null;
-        if (!b64) {
-          return new Response(JSON.stringify({ error: "No image returned" }), { status: 502 });
-        }
-        const dataUrl = String(b64).startsWith("data:") ? String(b64) : `data:image/png;base64,${b64}`;
-        return new Response(JSON.stringify({ dataUrl }), {
-          headers: { "Content-Type": "application/json" },
-        });
+        return Response.json({ error: "Configure OpenRouter to generate illustrations." }, { status: 503 });
       },
     },
   },

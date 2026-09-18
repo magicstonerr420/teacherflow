@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <title>TeacherFlow</title>
+  <rect width="160" height="160" rx="32" fill="#FAF8F0"/>
+  <g transform="translate(18 26)">
+    <path fill="#00565B" d="M14 11C35 8 56 21 65 39C57 56 65 66 83 74C59 69 42 58 14 62Z"/>
+    <path fill="#00565B" d="M70 37C81 22 100 10 116 10V79C98 72 73 72 68 55C66 48 67 43 70 37Z"/>
+    <path fill="#00565B" d="M7 23C4 23 3 25 3 28L0 94C25 82 47 85 64 106C62 78 39 64 10 70L11 28C11 25 10 23 7 23Z"/>
+    <path fill="#00565B" d="M122 23C119 23 118 25 118 28L122 88C96 78 79 79 59 70C69 81 70 94 68 106C83 92 102 90 128 97L126 28C126 25 125 23 122 23Z"/>
+    <path d="M4 103C26 91 46 93 59 108" fill="none" stroke="#F5A019" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>
