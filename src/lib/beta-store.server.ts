@@ -11,8 +11,10 @@ const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 const stable = (value: any): string => JSON.stringify(value, (_key, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
 type Job = { attempts: number; lease?: string; until?: number; value?: any };
 type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean; recording?: Job & { fingerprint?: string; choice?: string } };
-type Teacher = { runs: Record<string, Run> };
-type State = { invites: { digest: string; user?: string }[]; teachers: Record<string, Teacher> };
+type Teacher = { runs: Record<string, Run>; email?: string; joinedAt?: string; lastSeenAt?: string; revokedAt?: string };
+type Invite = { digest: string; user?: string; code?: string; label?: string; claimedAt?: string; deactivatedAt?: string };
+type State = { invites: Invite[]; teachers: Record<string, Teacher>; inviteCreations?: Record<string,number>; accessHistory?: { action: string; actor: string; user?: string; seat: number; at: string }[] };
+const revision = (invite: Invite) => hash('beta-seat:' + invite.digest + (invite.deactivatedAt??''));
 
 /** Durable, transaction-protected beta allowances. Deploy on one persistent disk. */
 export class BetaStore {
@@ -37,33 +39,95 @@ export class BetaStore {
     return this.transact(s => {
       if (s.invites.length) throw new Error('The three invitations already exist. Refusing to create extra seats.');
       const codes = Array.from({length:3}, () => randomBytes(24).toString('base64url'));
-      s.invites = codes.map(code => ({digest:hash(code)}));
+      s.invites = codes.map(code => ({digest:hash(code),code}));
       return codes;
     });
   }
-  claim(user: string, code: string) {
+  claim(user: string, code: string, email?: string) {
     return this.transact(s => {
       if (!user) throw new Error('Sign in to claim your invitation.');
+      if (s.teachers[user]?.revokedAt) throw new Error('Your beta access was removed. Contact the organizer.');
       const invite = s.invites.find(i => i.digest === hash(code));
-      if (!invite || (invite.user && invite.user !== user)) throw new Error('This invitation is invalid or already claimed.');
+      if (!invite || invite.deactivatedAt || (invite.user && invite.user !== user)) throw new Error('This invitation is invalid, deactivated, or already claimed.');
       if (s.teachers[user] && invite.user !== user) throw new Error('Your account already has beta access.');
       invite.user = user;
+      invite.claimedAt ??= new Date().toISOString();
+      delete invite.code;
       s.teachers[user] ??= {runs:{}};
+      s.teachers[user].joinedAt ??= invite.claimedAt;
+      if (email) s.teachers[user].email = email;
     });
   }
   teacher(s: State, user: string): Teacher {
     const t = s.teachers[user];
-    if (!user || !t) throw new Error('Claim a teacher invitation before generating lessons.');
+    if (!user || !t || t.revokedAt || !s.invites.some(i=>i.user===user&&!i.deactivatedAt)) throw new Error('Your beta access is inactive. Claim an invitation or contact the organizer.');
     return t;
   }
-  status(user: string) {
+  /** A previously authorized request may finish after removal; retain its paid result. */
+  private retainedTeacher(s: State, user: string): Teacher {
+    const t = s.teachers[user];
+    if (!t) throw new Error('The saved teacher record is unavailable.');
+    return t;
+  }
+  status(user: string, email?: string) {
     return this.transact(s => {
       const t = s.teachers[user];
-      if (!t) return {claimed:false, remaining:0, completed:0, lessons:[] as any[]};
+      if (!t || t.revokedAt || !s.invites.some(i=>i.user===user&&!i.deactivatedAt)) return {claimed:false, revoked:!!t?.revokedAt, remaining:0, completed:0, lessons:[] as any[]};
+      if (email) t.email = email;
+      t.lastSeenAt = new Date().toISOString();
       const runs = Object.values(t.runs);
       const counted = runs.filter(r=>!r.credited);
       return {claimed:true, remaining:3-counted.length, completed:counted.filter(r=>r.complete).length,
         lessons:runs.map(r=>({request:r.request, complete:r.complete}))};
+    });
+  }
+  /** Called only through the server's verified owner boundary. No lesson content is exposed. */
+  administration() {
+    return this.transact(s => ({
+      seats:s.invites.map((invite,index)=>{
+        const t=invite.user?s.teachers[invite.user]:undefined;
+        const runs=Object.values(t?.runs??{}), counted=runs.filter(r=>!r.credited);
+        return {seat:index+1,revision:revision(invite),active:!invite.deactivatedAt,label:invite.label??'',user:invite.user??null,email:t?.email??null,
+          claimedAt:invite.claimedAt??t?.joinedAt??null,lastSeenAt:t?.lastSeenAt??null,
+          remaining:invite.user?Math.max(0,3-counted.length):3,completed:counted.filter(r=>r.complete).length,
+          code:invite.user||invite.deactivatedAt?null:invite.code??null};
+      }),
+      removed:Object.entries(s.teachers).filter(([,t])=>t.revokedAt).map(([user,t])=>({user,email:t.email??null,revokedAt:t.revokedAt!,savedLessons:Object.keys(t.runs).length})),
+    }));
+  }
+  createInvitation(actor:string,operation:string) {
+    if (!actor) throw new Error('Owner sign-in is required.');
+    return this.transact(s=>{
+      const key=hash(actor+':'+operation);
+      if(s.inviteCreations?.[key]) return;
+      const code=randomBytes(24).toString('base64url');
+      s.invites.push({digest:hash(code),code});
+      (s.inviteCreations??={})[key]=s.invites.length;
+      (s.accessHistory??=[]).push({action:'create',actor,seat:s.invites.length,at:new Date().toISOString()});
+    });
+  }
+  manageSeat(actor: string, data: {seat:number; revision:string; user:string|null; action:'replace'|'label'|'deactivate'; label?:string}) {
+    if (!actor) throw new Error('Owner sign-in is required.');
+    return this.transact(s=>{
+      const invite=s.invites[data.seat-1];
+      if (!invite || revision(invite)!==data.revision || (invite.user??null)!==data.user)
+        throw new Error('This invitation changed. Refresh the teacher list before trying again.');
+      if (data.action==='label') { invite.label=(data.label??'').trim().slice(0,100); return; }
+      if (data.action==='deactivate' && invite.deactivatedAt) throw new Error('This key is already deactivated.');
+      if (invite.user===actor) throw new Error('The owner account cannot be removed.');
+      const at=new Date().toISOString();
+      if (invite.user) {
+        const teacher=s.teachers[invite.user];
+        if (!teacher) throw new Error('The teacher record is missing. No access was changed.');
+        teacher.revokedAt=at;
+      }
+      (s.accessHistory??=[]).push({action:data.action==='deactivate'?'deactivate':invite.user?'remove':'replace-unused',actor,seat:data.seat,at,...(invite.user?{user:invite.user}:{})});
+      if (data.action==='deactivate') {
+        invite.deactivatedAt=at;delete invite.user;delete invite.code;delete invite.claimedAt;
+        return;
+      }
+      const code=randomBytes(24).toString('base64url');
+      s.invites[data.seat-1]={digest:hash(code),code};
     });
   }
   resetAllowance(user: string) {
@@ -104,7 +168,7 @@ export class BetaStore {
     try {
       const value = await withBetaBudget(user, () => generate(reservation.prior));
       this.transact(s => {
-        const run = this.teacher(s,user).runs[key]!;
+        const run = this.retainedTeacher(s,user).runs[key]!;
         const job = run.parts[stage]!;
         if(job.lease!==reservation.lease) throw new Error('This request expired. Resume the lesson.');
         job.value=value; delete job.until; delete job.lease;
@@ -112,7 +176,7 @@ export class BetaStore {
       });
       return value;
     } catch(e) {
-      this.transact(s => {const job=this.teacher(s,user).runs[key]!.parts[stage]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});
+      this.transact(s => {const job=this.retainedTeacher(s,user).runs[key]!.parts[stage]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});
       throw e;
     }
   }
@@ -136,9 +200,9 @@ export class BetaStore {
     if('cached' in reservation) return reservation.cached!;
     try {
       const value=await withBetaBudget(user, generate);
-      this.transact(s=>{const job=this.teacher(s,user).runs[key]!.images[imageKey]!;if(job.lease!==reservation.lease)throw new Error('Image request expired.');job.value=value;delete job.until;delete job.lease;});
+      this.transact(s=>{const job=this.retainedTeacher(s,user).runs[key]!.images[imageKey]!;if(job.lease!==reservation.lease)throw new Error('Image request expired.');job.value=value;delete job.until;delete job.lease;});
       return value;
-    }catch(e){this.transact(s=>{const job=this.teacher(s,user).runs[key]!.images[imageKey]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});throw e;}
+    }catch(e){this.transact(s=>{const job=this.retainedTeacher(s,user).runs[key]!.images[imageKey]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});throw e;}
   }
   /** Repair an existing duplicate B without consuming a fourth lesson or reopening other AI work. */
   async repairAlternate(user:string, request:any, generate:(lesson:any)=>Promise<any>) {
@@ -157,7 +221,7 @@ export class BetaStore {
       const patch=await withBetaBudget(user, () => generate(lesson));
       if(!patch?.worksheet?.studentB || alternateWorksheetIssue(lesson.worksheet.student,patch.worksheet.studentB))throw new Error('Version B repair did not produce a distinct worksheet.');
       this.transact(s=>{
-        const run=this.teacher(s,user).runs[key]!;
+        const run=this.retainedTeacher(s,user).runs[key]!;
         if(run.alternateRepair?.lease!==lease)throw new Error('Version B repair expired.');
         run.parts['studentB']!.value={worksheet:{studentB:patch.worksheet.studentB}};
         run.parts['teacherB']!.value={worksheet:{teacherB:patch.worksheet.teacherB}};
@@ -165,7 +229,7 @@ export class BetaStore {
         delete run.alternateRepair.until;delete run.alternateRepair.lease;
       });
       return {worksheet:{...lesson.worksheet,studentB:patch.worksheet.studentB,teacherB:patch.worksheet.teacherB}};
-    }catch(e){this.transact(s=>{const job=this.teacher(s,user).runs[key]!.alternateRepair!;if(job.lease===lease){delete job.until;delete job.lease;}});throw e;}
+    }catch(e){this.transact(s=>{const job=this.retainedTeacher(s,user).runs[key]!.alternateRepair!;if(job.lease===lease){delete job.until;delete job.lease;}});throw e;}
   }
   /** One recording per owned lesson, shared by every voice and script fingerprint. */
   async recording(user: string, request: any, fingerprint: string, choice: string, load: (id: string) => any, generate: (choice: string) => Promise<any>) {
@@ -200,7 +264,7 @@ export class BetaStore {
     try {
       const value = await withBetaBudget(user, () => generate(reservation.choice));
       this.transact(s => {
-        const job = this.teacher(s, user).runs[key]!.recording!;
+        const job = this.retainedTeacher(s, user).runs[key]!.recording!;
         if (job.lease !== reservation.lease) throw new Error('This recording request expired. Reopen the lesson.');
         job.value = { audio: value.audio }; delete job.lease; delete job.until;
       });
@@ -208,7 +272,7 @@ export class BetaStore {
       return value;
     } catch (error) {
       this.transact(s => {
-        const job = this.teacher(s, user).runs[key]!.recording!;
+        const job = this.retainedTeacher(s, user).runs[key]!.recording!;
         if (job.lease === reservation.lease) { delete job.lease; delete job.until; }
       });
       throw error;

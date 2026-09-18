@@ -5,6 +5,7 @@ import { betaMode, betaStatus, claimBeta } from '@/lib/beta.functions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { LessonRequestInput } from '@/lib/lesson-schema';
+import { BetaTeacherControls } from './BetaTeacherControls';
 
 export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestInput)=>void; onAccess: (allowed:boolean)=>void}) {
   const {isAuthenticated,loading}=useAuth();
@@ -46,6 +47,7 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
       <p>Your owner testing is separate. This budget does not reset on refresh or deployment.</p>
       {status.budget.paused && <p role="alert">Teacher generation is paused because a provider charge needs review.</p>}
     </div>}
+    <BetaTeacherControls />
   </section>;
   return <section className="my-6 space-y-3 rounded-xl border bg-card p-5" aria-label="Teacher beta access">
     <h2 className="font-semibold">Private teacher beta</h2>
@@ -54,7 +56,7 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
       <p className="font-medium">{status.remaining} new lesson slots remaining · {status.completed} of 3 lessons completed</p>
       <p className="text-sm">Starting a lesson reserves a slot. Failed parts can resume in that slot; they do not use another. Each part has up to three attempts, and each illustration has up to two.</p>
       {status.lessons.map((item:any,i:number)=><div key={i}><Button variant="outline" onClick={()=>onOpen(item.request)}>{item.complete?'Reopen':'Resume'}: {item.request.topic}</Button></div>)}
-    </> : <div className="flex flex-wrap gap-2"><Input aria-label="Invitation code" placeholder="Invitation code" value={code} onChange={e=>setCode(e.target.value)} /><Button onClick={()=>void claim()} disabled={busy||!code.trim()}>{busy?'Claiming…':'Claim invitation'}</Button></div>}
+    </> : status && 'revoked' in status && status.revoked ? <p role="status">Your beta access has been removed. Contact the organizer about future access. Your saved lessons have been kept.</p> : <div className="flex flex-wrap gap-2"><Input aria-label="Invitation code" placeholder="Invitation code" value={code} onChange={e=>setCode(e.target.value)} /><Button onClick={()=>void claim()} disabled={busy||!code.trim()}>{busy?'Claiming…':'Claim invitation'}</Button></div>}
     {error?<p role="alert" className="text-destructive">{error}</p>:null}
   </section>;
 }
