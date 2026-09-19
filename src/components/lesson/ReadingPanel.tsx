@@ -3,6 +3,7 @@ import { ReadingReference } from './ReadingReference';
 import { prepareReadingVisuals } from '@/lib/reading-visuals';
 import type { LessonRequestInput } from '@/lib/lesson-schema';
 import type { ReadingState } from '@/lib/reading';
+import { generationErrorMessage } from '@/lib/generation-errors';
 
 export function ReadingPanel({ state, request, busy, disabled, error, onGenerate, onOpenWorksheet }: {
   state: ReadingState | undefined;
@@ -27,7 +28,7 @@ export function ReadingPanel({ state, request, busy, disabled, error, onGenerate
         </Button>
         {reading && <Button variant="outline" onClick={onOpenWorksheet}>Open worksheet</Button>}
       </div>
-      {message && <p role="alert" className="text-destructive">{message}</p>}
+      {message && <p role="alert" className="text-destructive break-words">{generationErrorMessage(message, 'reading')}</p>}
       {reading && <p className="text-sm text-muted-foreground">The passage and questions are also in the worksheets. Answers are in the teacher copy.</p>}
     </div>
     {reading && <>

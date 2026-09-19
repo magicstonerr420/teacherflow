@@ -1,5 +1,6 @@
 import { budgetFetch } from './beta-budget.server.ts';
 import { modelSetting } from "./model-settings.server.ts";
+import { retryRateLimited } from './provider-retry.server.ts';
 
 export class IllustrationBillingError extends Error {
   readonly code = 'image_billing';
@@ -29,9 +30,10 @@ export async function generateIllustration(prompt: string, age: string, level: s
   const key = process.env["OPENROUTER_API_KEY"]?.trim();
   if (!key) throw new Error("The OpenRouter image key is not configured.");
   const model = modelSetting("OPENROUTER_IMAGE_MODEL", "google/gemini-3.1-flash-image-preview");
-  const response = await budgetFetch("https://openrouter.ai/api/v1/images", {
+  const signal = AbortSignal.timeout(180_000);
+  const response = await retryRateLimited(() => budgetFetch("https://openrouter.ai/api/v1/images", {
     method: "POST",
-    signal: AbortSignal.timeout(180_000),
+    signal,
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model,
@@ -40,10 +42,12 @@ export async function generateIllustration(prompt: string, age: string, level: s
       ...(model === "google/gemini-3.1-flash-image-preview" ? { resolution: "1K" } : {}),
       n: 1,
     }),
-  });
+  }), { signal });
   if (response.status === 402) throw new IllustrationBillingError();
   if (!response.ok) throw new Error("OpenRouter could not generate an illustration. Please retry.");
-  const result = await response.json();
+  let result;
+  try { result = await response.json(); }
+  catch { throw new Error('The image service returned an incomplete picture. Your completed pictures have been kept; retry only the missing picture.'); }
   const item = result?.data?.[0];
   const url = typeof item?.b64_json === "string" && /^image\/(png|jpeg|webp)$/.test(item.media_type)
     ? `data:${item.media_type};base64,${item.b64_json}` : null;

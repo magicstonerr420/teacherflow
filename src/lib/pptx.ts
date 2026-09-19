@@ -1,4 +1,6 @@
 import {repairDrawingParagraphs} from './pptx-xml';
+import { generationErrorMessage, isInterruptedResponse } from './generation-errors';
+import { recoverSavedImage } from './image-recovery';
 import { americanEnglishContent } from './american-english';
 import { loadPresentationTools } from './presentation-tools';
 import { lessonImagePrompts, vocabularyImagePrompt } from "./image-plan";
@@ -742,7 +744,7 @@ export async function generateSlideImages(
         images[prompt] = cached;
         continue;
       }
-      try {
+      const send = async (recoverOnly = false) => {
         const res = await fetch("/api/generate-image", {
           method: "POST",
           headers: {
@@ -750,19 +752,33 @@ export async function generateSlideImages(
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
+            recoverOnly,
             prompt,
             request,
             studentAge: request.studentAge,
             level: request.level,
           }),
         });
-        const json = await res.json();
+        // Read JSON only. A hosting gateway may return a whole HTML error page.
+        const json = await res.json().catch(() => null);
+        if (!json) throw Object.assign(new Error('The image response was interrupted. Please retry only the missing picture.'), { status: res.status });
         if (res.status === 402 || json.code === 'image_billing') {
-          billingError = json.error || 'OpenRouter needs credits or an available API-key spending allowance for illustrations.';
+          billingError = generationErrorMessage(json.error || 'OpenRouter needs credits or an available API-key spending allowance for illustrations.', 'illustrations');
           throw new Error(billingError);
         }
+        if (!res.ok) throw Object.assign(new Error(generationErrorMessage(json.error, 'illustrations')), { status: res.status });
+        return json;
+      };
+      try {
+        let json;
+        try { json = await send(); }
+        catch (error) {
+          if (!isInterruptedResponse(error)) throw error;
+          const dataUrl = await recoverSavedImage(() => send(true));
+          if (!dataUrl) throw error;
+          json = { dataUrl };
+        }
         if (
-          !res.ok ||
           typeof json.dataUrl !== "string" ||
           !/^data:image\/(png|jpeg|webp);base64,/.test(json.dataUrl)
         )
@@ -770,7 +786,7 @@ export async function generateSlideImages(
         images[prompt] = json.dataUrl;
         imageCache.set(key, json.dataUrl);
       } catch (e) {
-        errors.push(e instanceof Error ? e.message : "Image request failed.");
+        errors.push(generationErrorMessage(e, 'illustrations'));
       }
     }
   }

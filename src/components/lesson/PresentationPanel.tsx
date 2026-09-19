@@ -4,6 +4,7 @@ import { youngSlidePages } from "@/lib/young-slides";
 import { loadPresentationTools } from "@/lib/presentation-tools";
 import { capitalizeHeading, presentationParagraphs } from "@/lib/presentation-text";
 import { colorShapeResources } from '@/lib/color-shape-resources';
+import { generationErrorMessage } from '@/lib/generation-errors';
 import {
   AlertCircle,
   CheckCircle2,
@@ -216,7 +217,7 @@ export function PresentationActions({
       if (error instanceof IllustrationGenerationError) setImagePreviews(previous => ({ ...previous, ...error.images }));
       console.error(error);
       setFailureMessage(
-        error instanceof Error ? error.message : "PowerPoint generation failed. Please retry.",
+        generationErrorMessage(error, 'presentation'),
       );
       setFailed(true);
     } finally {
@@ -236,7 +237,7 @@ export function PresentationActions({
     } catch (error) {
       setImageFailure(false);
       setFailed(true);
-      setFailureMessage(error instanceof Error ? error.message : "Could not export the slides.");
+      setFailureMessage(generationErrorMessage(error, 'presentation'));
     } finally {
       setBusy(false);
     }

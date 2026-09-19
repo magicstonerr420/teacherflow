@@ -1,5 +1,6 @@
 import { budgetFetch, BetaBudgetError } from './beta-budget.server.ts';
 import type { VoiceChoice } from './listening';
+import { ProviderRateLimitError, retryRateLimited } from './provider-retry.server.ts';
 
 export const SPEECH_MODELS = {
   // Explicit US voices, including the fallback; generic English does not fix an accent.
@@ -19,16 +20,17 @@ async function synthesize(script: string, choice: VoiceChoice) {
   const key = process.env['OPENROUTER_API_KEY']?.trim();
   if (!key) throw new SpeechError('The listening voice service is not configured. Contact the organizer.');
   let response: Response;
+  const signal = AbortSignal.timeout(150_000);
   try {
-    response = await budgetFetch('https://openrouter.ai/api/v1/audio/speech', {
+    response = await retryRateLimited(() => budgetFetch('https://openrouter.ai/api/v1/audio/speech', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'X-Title': 'TeacherFlow' },
-      signal: AbortSignal.timeout(150_000), body: JSON.stringify({ ...config, input: script, response_format: 'mp3',
+      signal, body: JSON.stringify({ ...config, input: script, response_format: 'mp3',
         ...(choice === 'standard' ? { speed: 0.8, provider: { only: ['azure'], allow_fallbacks: false } } : {}),
         ...(choice === 'economy' ? { provider: { only: ['deepinfra'], allow_fallbacks: false, options: { deepinfra: { speed: 0.8 } } } } : {}),
       }),
-    });
+    }), { signal });
   } catch (error) {
-    if (error instanceof BetaBudgetError) throw error;
+    if (error instanceof BetaBudgetError || error instanceof ProviderRateLimitError) throw error;
     throw new SpeechError('The voice service did not respond. Your script is saved; retry the recording.');
   }
   if (!response.ok) {

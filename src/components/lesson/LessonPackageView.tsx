@@ -2,7 +2,7 @@ import {alternateWorksheetIssue} from '@/lib/worksheet-versions';
 import {PdfPreview} from './PdfPreview';
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, Package, Pencil, Printer, RefreshCw, Save, X } from "lucide-react";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,7 @@ import { WorksheetHub } from "@/components/lesson/WorksheetHub";
 import { buildLessonPackageZip, buildCompleteLessonPdf, safeSlug } from "@/lib/exports";
 import { regenerateSection, repairDuplicateVersionB } from "@/lib/lesson.functions";
 import { regenerateReading } from "@/lib/reading.functions";
+import { generationErrorMessage, isGenerationPending, retryRetainedRequest } from '@/lib/generation-errors';
 import { applyReading, prepareLessonReading } from "@/lib/reading";
 import { ReadingPanel } from './ReadingPanel';
 import { ListeningPanel } from './ListeningPanel';
@@ -107,6 +108,7 @@ export function LessonPackageView({
 
   const [readingBusy, setReadingBusy] = useState(false);
   const [readingError, setReadingError] = useState<string | null>(null);
+  const readingAttempt = useRef<{ context: string; operation: string } | null>(null);
   const runReading = useServerFn(regenerateReading);
   const loadAudio = useServerFn(loadListeningAudio);
 
@@ -122,12 +124,21 @@ export function LessonPackageView({
     if (readingBusy) return;
     setReadingBusy(true);
     setReadingError(null);
+    const context = JSON.stringify([request, lesson.overview, lesson.lessonPlan, lesson.reading]);
+    if (readingAttempt.current?.context !== context) readingAttempt.current = { context, operation: crypto.randomUUID() };
+    const operation = readingAttempt.current.operation;
     try {
-      const result = await runReading({ data: { request, lesson, operation: crypto.randomUUID() } });
+      const result = await retryRetainedRequest(async () => {
+        const result = await runReading({ data: { request, lesson, operation } });
+        if (result.status === 'failed' && isGenerationPending(result.error)) throw new Error(result.error);
+        return result;
+      });
+      // Keep the operation on transport failure, including a later manual retry.
+      readingAttempt.current = null;
       if (result.status === "failed") { setReadingError(result.error); return; }
       await commit(applyReading(lesson, result), "Reading updated. The rest of your lesson was kept.");
     } catch (error) {
-      setReadingError(error instanceof Error ? error.message : "Reading generation failed. Your lesson has been kept.");
+      setReadingError(generationErrorMessage(error, 'reading'));
     } finally { setReadingBusy(false); }
   }
   const checks: QualityCheck[] = useMemo(

@@ -8,6 +8,7 @@ import { safeSlug } from '@/lib/exports';
 import type { LessonPackage, LessonRequestInput } from '@/lib/lesson-schema';
 import type { ListeningState, VoiceChoice } from '@/lib/listening';
 import { ListeningAudioPlayer } from './ListeningAudioPlayer';
+import { generationErrorMessage, retryRetainedRequest } from '@/lib/generation-errors';
 
 export function ListeningPanel({ lesson, request, onChange }: {
   lesson: LessonPackage; request: LessonRequestInput; onChange: (state: ListeningState) => Promise<void>;
@@ -34,7 +35,7 @@ export function ListeningPanel({ lesson, request, onChange }: {
   useEffect(() => {
     if (!id) { setAudio(null); return; }
     let canceled = false;
-    loader.current({ data: { id } }).then(result => { if (!canceled) setAudio({ id, url: result.dataUrl }); })
+    retryRetainedRequest(() => loader.current({ data: { id } })).then(result => { if (!canceled) setAudio({ id, url: result.dataUrl }); })
       .catch(() => { if (!canceled) setError('The saved recording could not be loaded. Click Load saved recording to try again.'); });
     return () => { canceled = true; };
   }, [id]);
@@ -44,26 +45,30 @@ export function ListeningPanel({ lesson, request, onChange }: {
     generating.current = true;
     setError('');
     let current = ready;
+    let part: 'listening' | 'recording' = current ? 'recording' : 'listening';
+    const recovery = { onRetry: () => setBusy('Reconnecting to your saved progress…') };
     try {
       if (selectedRecording && id && !replaceAccent) {
         setBusy('Loading saved recording…');
-        const result = await loadAudio({ data: { id } });
+        const result = await retryRetainedRequest(() => loadAudio({ data: { id } }), recovery);
         setAudio({ id, url: result.dataUrl });
         return;
       }
       if (!current) {
         setBusy('Writing the listening activity…');
-        const result = await runScript({ data: { request, lesson } });
+        const result = await retryRetainedRequest(() => runScript({ data: { request, lesson } }), recovery);
         if (result.status !== 'ready') throw new Error(result.error);
         current = result;
         await change.current(current);
       }
       if (!withRecording) return;
+      part = 'recording';
       setBusy('Preparing your recording…');
-      const result = await runAudio({ data: { request, fingerprint: current.fingerprint, choice } });
+      const fingerprint = current.fingerprint;
+      const result = await retryRetainedRequest(() => runAudio({ data: { request, fingerprint, choice } }), recovery);
       setAudio({ id: result.audio.id, url: result.dataUrl });
       await change.current({ ...current, audio: result.audio });
-    } catch (err) { setError(err instanceof Error ? err.message : 'Listening generation failed. Your existing materials are saved.'); }
+    } catch (err) { setError(generationErrorMessage(err, part)); }
     finally { generating.current = false; setBusy(''); }
   }
 
@@ -88,8 +93,8 @@ export function ListeningPanel({ lesson, request, onChange }: {
         <p className="text-sm text-muted-foreground">This recording used an older voice. You can create an American English recording from the saved script.</p>
         <Button variant="outline" onClick={() => void generate(true, true)} disabled={!!busy}>Create American English recording</Button>
       </div>}
-      {error && <p role="alert" className="text-destructive">{error}</p>}
-      {state?.status === 'failed' && !error && <p role="alert" className="text-destructive">{state.error}</p>}
+      {error && <p role="alert" className="text-destructive break-words">{generationErrorMessage(error, 'listening')}</p>}
+      {state?.status === 'failed' && !error && <p role="alert" className="text-destructive break-words">{generationErrorMessage(state.error, 'listening')}</p>}
       {audio && audio.id === id && <div className="space-y-3">
         <ListeningAudioPlayer src={audio.url} downloadName={`${safeSlug(request.topic)}_Listening.mp3`} />
         <p className="text-sm text-muted-foreground">The questions are in Worksheet A; the transcript and answers are in the teacher copy.</p>

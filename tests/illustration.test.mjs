@@ -28,6 +28,12 @@ test('budget image transport returns export-compatible data URLs and rejects mis
       return Response.json({data:[{media_type:'image/jpeg',b64_json:'dGVzdA=='}]});
     };
     assert.equal(await generateIllustration('Sharing', '15-17', 'A1'), 'data:image/jpeg;base64,dGVzdA==');
+    let attempts = 0;
+    globalThis.fetch = async () => ++attempts === 1 ? new Response('', { status: 429, headers: { 'Retry-After': '0' } }) : Response.json({ data: [{ media_type: 'image/png', b64_json: 'dGVzdA==' }] });
+    assert.equal(await generateIllustration('Future society', 'Adults', 'C2'), 'data:image/png;base64,dGVzdA==');
+    assert.equal(attempts, 2);
+    globalThis.fetch = async () => new Response('<html><title>502</title></html>');
+    await assert.rejects(generateIllustration('Future society', 'Adults', 'C2'), /incomplete picture/);
     globalThis.fetch = async () => Response.json({data:[]});
     await assert.rejects(generateIllustration('Sharing','15-17','A1'), /usable illustration/);
     globalThis.fetch = async () => Response.json({error:{message:'private provider diagnostics fake-test-key'}},{status:402});

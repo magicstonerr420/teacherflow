@@ -73,6 +73,10 @@ try {
   await generateListeningAudio(a.fingerprint, 'teacher', 'standard'); assert.equal(voiceCalls, 1);
 
   let models = [];
+  let speechAttempts = 0;
+  globalThis.fetch = async () => ++speechAttempts === 1 ? new Response('', { status: 429, headers: { 'Retry-After': '0' } }) : new Response(mp3, { headers: { 'Content-Type': 'audio/mpeg' } });
+  assert.equal((await generateSpeech(script)).model, 'microsoft/mai-voice-2');
+  assert.equal(speechAttempts, 2, 'Explicit throttling retries the same voice before giving up');
   globalThis.fetch = async (_url, options) => {
     const body = JSON.parse(options.body); models.push(body.model);
     if (models.length === 1) return new Response('Unavailable', { status: 503 });

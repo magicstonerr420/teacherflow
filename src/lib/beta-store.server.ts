@@ -212,6 +212,14 @@ export class BetaStore {
       throw e;
     }
   }
+  /** Read-only recovery after a dropped response: never reserve a slot or buy an image. */
+  imageProgress(user: string, request: any, prompt: string) {
+    const state = JSON.parse((this.db.prepare('SELECT body FROM beta_state WHERE id=1').get() as any).body) as State;
+    const run = this.teacher(state, user).runs[hash(stable(request))];
+    if (!run?.complete) throw new Error('Complete your own lesson before loading illustrations.');
+    const job = run.images[hash(prompt)];
+    return { dataUrl: job?.value as string | undefined, pending: !job?.value && (job?.until ?? 0) > Date.now() };
+  }
   async image(user: string, request: any, prompt: string, generate: () => Promise<string>) {
     const key=hash(stable(request)), imageKey=hash(prompt);
     const reservation=this.transact(s=>{

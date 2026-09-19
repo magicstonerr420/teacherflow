@@ -21,6 +21,7 @@ export const Route = createFileRoute("/api/generate-image")({
             const input = await request.json();
             const lessonRequest = lessonRequestSchema.parse(input.request);
             if (typeof input.prompt !== 'string' || input.prompt.length > 4000) throw new Error('Invalid illustration prompt.');
+            if (input.recoverOnly === true) return Response.json(limited ? betaStore().imageProgress(user, lessonRequest, input.prompt) : { pending: false });
             const generate = () => generateIllustration(input.prompt, lessonRequest.studentAge, lessonRequest.level);
             const dataUrl = limited ? await betaStore().image(user, lessonRequest, input.prompt, generate) : await generate();
             return Response.json({dataUrl});
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/api/generate-image")({
         if (process.env["TEACHERFLOW_AI_PROVIDER"] === "openrouter") {
           let input;
           try { input = await request.json(); } catch { return Response.json({ error: "Invalid image request." }, { status: 400 }); }
+          if (input?.recoverOnly === true) return Response.json({ pending: false });
           if (typeof input?.prompt !== "string" || !input.prompt.trim() || input.prompt.length > 4000 || typeof input.studentAge !== "string" || input.studentAge.length > 30 || !input.studentAge.trim() || !/^[ABC][12]$/.test(input.level)) {
             return Response.json({ error: "An illustration needs a prompt, student age and English level." }, { status: 400 });
           }
