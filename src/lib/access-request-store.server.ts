@@ -17,6 +17,11 @@ export class AccessRequestStore {
       );
       CREATE INDEX IF NOT EXISTS access_request_queue ON access_requests(status,created);
       CREATE TABLE IF NOT EXISTS access_request_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS approval_email_outbox (
+        id TEXT PRIMARY KEY, status TEXT NOT NULL DEFAULT 'queued', created INTEGER NOT NULL,
+        attempts INTEGER NOT NULL DEFAULT 0, next INTEGER NOT NULL DEFAULT 0, lease INTEGER NOT NULL DEFAULT 0,
+        first_attempt INTEGER, payload TEXT, error TEXT, provider_id TEXT
+      );
     `);
   }
   submit(input: unknown, client: string, now = Date.now()) {
@@ -48,7 +53,10 @@ export class AccessRequestStore {
   list(status: RequestStatus, offset = 0) {
     const db = this.beta.db;
     return {
-      requests: db.prepare(`SELECT ${columns} FROM access_requests WHERE status=? ORDER BY created,id LIMIT 50 OFFSET ?`).all(status, offset) as AccessRequestRow[],
+      requests: db.prepare(`SELECT ${columns},
+        (SELECT status FROM approval_email_outbox WHERE id=access_requests.id) AS emailStatus,
+        (SELECT error FROM approval_email_outbox WHERE id=access_requests.id) AS emailError
+        FROM access_requests WHERE status=? ORDER BY created,id LIMIT 50 OFFSET ?`).all(status, offset) as AccessRequestRow[],
       total: (db.prepare('SELECT COUNT(*) AS n FROM access_requests WHERE status=?').get(status) as {n: number}).n,
       pending: (db.prepare("SELECT COUNT(*) AS n FROM access_requests WHERE status='pending'").get() as {n: number}).n,
     };
@@ -69,6 +77,7 @@ export class AccessRequestStore {
         const code = randomBytes(24).toString('base64url');
         digest = hash(code);
         state.invites.push({ digest, code, email: row.email, label: row.name });
+        this.beta.db.prepare('INSERT OR IGNORE INTO approval_email_outbox(id,created) VALUES(?,?)').run(id, now);
         (state.accessHistory ??= []).push({action: 'approve-request', actor, seat: state.invites.length, at: new Date(now).toISOString()});
       }
       this.beta.db.prepare('UPDATE access_requests SET status=?,reviewed=?,revision=?,actor=?,invite_digest=? WHERE id=?')

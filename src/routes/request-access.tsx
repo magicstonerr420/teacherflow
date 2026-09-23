@@ -28,6 +28,7 @@ function RequestAccess() {
   const {user, isAuthenticated, loading} = useAuth();
   const check = useServerFn(checkRequestedAccess), cache = useQueryClient();
   const [busy, setBusy] = useState(false), [checking, setChecking] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(false);
   const [error, setError] = useState(''), [checkError, setCheckError] = useState(''), [submitted, setSubmitted] = useState('');
   const [result, setResult] = useState<{user: string; status: keyof typeof statusMessages} | null>(null);
   const lock = useRef(false), checkLock = useRef(false);
@@ -42,6 +43,7 @@ function RequestAccess() {
       const body = await response.json().catch(() => null);
       if (!response.ok || body?.ok !== true) throw Error(body?.error || 'Your request could not be saved. Please try again.');
       setSubmitted(String(data.email).trim()); setResult(null);
+      setEmailNotifications(body.emailNotifications === true);
     } catch (failure) {
       setError(failure instanceof Error && failure.name !== 'TimeoutError' ? failure.message : 'We could not confirm the result. Your details are kept; retrying will not create a duplicate request.');
     } finally { lock.current = false; setBusy(false); }
@@ -58,7 +60,7 @@ function RequestAccess() {
   }
   return <AppShell><div className="mx-auto max-w-2xl space-y-7 px-5 py-10 sm:py-14">
     <header className="space-y-4"><p className="text-sm font-semibold text-primary">Private teacher beta</p><h1 className="display-heading text-4xl">Try TeacherFlow with your class.</h1><p className="leading-relaxed text-muted-foreground">Tell us what you teach. The owner reviews each request before activating lesson generation. Approved teachers receive three lesson slots, subject to the beta's shared availability.</p><Link className="font-medium text-primary underline" to="/examples" search={{lesson: FIRST_PREVIEW_SLUG}}>Explore a complete lesson first</Link></header>
-    {submitted ? <section role="status" className="space-y-4 rounded-xl border bg-card p-6"><h2 className="text-xl font-semibold">Request received</h2><p className="break-words">We received your request for <strong>{submitted}</strong>. If that email already has a request, the original has been kept.</p><p>Sign in with the same email and check your request below. Approval does not send an automatic email.</p></section> : <form onSubmit={submit} className="space-y-5 rounded-xl border bg-card p-6" aria-label="Beta access request">
+    {submitted ? <section role="status" className="space-y-4 rounded-xl border bg-card p-6"><h2 className="text-xl font-semibold">Request received</h2><p className="break-words">We received your request for <strong>{submitted}</strong>. If that email already has a request, the original has been kept.</p><p>Sign in with the same email and check your request below. {emailNotifications ? 'New approvals also receive an email; check your spam folder if needed.' : 'Email notifications are not set up yet, so check your status here.'}</p></section> : <form onSubmit={submit} className="space-y-5 rounded-xl border bg-card p-6" aria-label="Beta access request">
       <div className="space-y-2"><label htmlFor="request-name" className="text-sm font-semibold">Your name</label><Input id="request-name" name="name" autoComplete="name" minLength={2} maxLength={100} required disabled={busy}/></div>
       <div className="space-y-2"><label htmlFor="request-email" className="text-sm font-semibold">Email</label><Input id="request-email" name="email" type="email" autoComplete="email" maxLength={254} required disabled={busy} aria-describedby="email-help"/><p id="email-help" className="text-sm text-muted-foreground">Use the same email to sign in and activate access after approval.</p></div>
       <div className="space-y-2"><label htmlFor="request-teaching" className="text-sm font-semibold">What do you teach?</label><Textarea id="request-teaching" name="teaching" minLength={5} maxLength={800} required disabled={busy} rows={4} placeholder="For example: English for ages 8–12, levels A1–A2, in a group of 15." aria-describedby="teaching-help"/><p id="teaching-help" className="text-sm text-muted-foreground">Include the subject, student ages and levels. Please leave out student names or personal details.</p></div>

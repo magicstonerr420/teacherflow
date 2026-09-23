@@ -11,14 +11,18 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:4201';
   await page.goto(origin+'/examples');
   for(const p of previews){
    const files=await page.evaluate(async slug=>{
-    const {lesson,request}=await(await fetch('/previews/v1/'+slug+'.json')).json();
+    const {lesson,request,illustration}=await(await fetch('/previews/v1/'+slug+'.json')).json();
     const ex=await import('/src/lib/exports.ts');
     const {loadPresentationTools}=await import('/src/lib/presentation-tools.ts');
     const {pictureSvg}=await import('/src/lib/young-learners.ts');
     const toBase64=blob=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.onerror=reject;reader.readAsDataURL(blob);});
     const audio=await(await fetch('/previews/v1/'+slug+'.mp3')).blob();
-    const result=await ex.buildLessonPackageZip(lesson,request,{},'data:audio/mpeg;base64,'+await toBase64(audio));
+    const picture=await(await fetch('/previews/v1/'+illustration.src)).blob();
+    const pictureBytes=await toBase64(picture);
+    const result=await ex.buildLessonPackageZip(lesson,request,{[illustration.imagePrompt]:'data:image/jpeg;base64,'+pictureBytes},'data:audio/mpeg;base64,'+await toBase64(audio));
     const {JSZip}=await loadPresentationTools();const zip=await JSZip.loadAsync(result.blob);
+    zip.file('Student_Lesson_Illustration.jpg',pictureBytes,{base64:true});
+    zip.file('Student_Picture_Discussion.txt',illustration.prompt);
     const guide=await ex.buildCompleteLessonPdf(lesson,request);
     zip.file('Complete_Teacher_Guide.pdf',new Uint8Array(await guide.arrayBuffer()));
     for(const version of ['A','B']){

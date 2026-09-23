@@ -10,6 +10,7 @@ import { providerEventLabel } from '@/lib/generation-health';
 import { CONTACT_EMAIL } from '@/config/contact';
 import { BetaTeacherControls } from './BetaTeacherControls';
 import { AccessRequestsPanel } from './AccessRequestsPanel';
+import { UsagePanel } from './UsagePanel';
 import { TeacherFeedbackPanel } from './TeacherFeedbackPanel';
 import { GenerationHealth } from './GenerationHealth';
 import { Button } from './ui/button';
@@ -24,8 +25,8 @@ type Operation = ManagementData['operations'][number];
 type Lesson = ManagementData['lessons'][number];
 type RecoveryAction = 'resolve' | 'allow_retry' | 'restore_slot';
 type Confirmation = { operation: Operation; action: RecoveryAction };
-const tabs = [ ['overview', 'Overview'], ['teachers', 'Teachers'], ['generation', 'Generation'], ['budget', 'Budget'] ] as const;
-const sections = ['overview', 'teachers', 'requests', 'activity', 'issues', 'budget', 'feedback'] as const;
+const tabs = [ ['overview', 'Overview'], ['teachers', 'Teachers'], ['generation', 'Generation'], ['budget', 'Budget'], ['usage', 'Usage'] ] as const;
+const sections = ['overview', 'teachers', 'requests', 'activity', 'issues', 'budget', 'feedback', 'usage'] as const;
 const disclosureStyle = 'cursor-pointer rounded-md font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
 const panel = 'space-y-4 rounded-xl border bg-card p-4 sm:p-5';
 const selectStyle = 'h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
@@ -248,7 +249,8 @@ export function ManagementDashboard() {
     {query.isError && <div role="alert" className="space-y-2 rounded-lg border border-destructive p-3 text-sm"><p>Could not refresh Management. {data ? 'The last loaded records are still shown. ' : ''}Please try Refresh dashboard.</p><p className="whitespace-pre-wrap break-words text-muted-foreground">{safeDiagnostic(query.error)}</p></div>}
     {message && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100">{message}</p>}
     <Tabs value={tab} onValueChange={selectSection} className="min-w-0 space-y-5">
-      <TabsList aria-label="Management sections" className="grid h-auto w-full grid-cols-2 gap-1 p-1.5 sm:grid-cols-4">{tabs.map(([value, label]) => <TabsTrigger key={value} value={value} className="min-h-10 whitespace-normal px-2 text-center text-sm">{label}</TabsTrigger>)}</TabsList>
+      <TabsList aria-label="Management sections" className="grid h-auto w-full grid-cols-2 gap-1 p-1.5 sm:grid-cols-5">{tabs.map(([value, label]) => <TabsTrigger key={value} value={value} className="min-h-10 whitespace-normal px-2 text-center text-sm">{label}</TabsTrigger>)}</TabsList>
+      <TabsContent value="usage"><div id="usage" tabIndex={-1} className="scroll-mt-24 outline-none"><UsagePanel /></div></TabsContent>
       <TabsContent value="overview"><div id="overview" tabIndex={-1} className="scroll-mt-24 space-y-5 outline-none">{data ? <>
         <p className="text-sm text-muted-foreground">Your beta at a glance. Start with anything that needs your attention.</p>
         <section className={panel}><h2 className="font-semibold">New beta applications</h2><p className="text-sm text-muted-foreground">Review requests from visitors who want to create lessons with TeacherFlow.</p><Button variant="outline" onClick={() => void navigate({to: '/beta-management', hash: 'requests'})}>Review access requests</Button></section>

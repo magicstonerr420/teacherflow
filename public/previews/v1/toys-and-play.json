@@ -1145,6 +1145,20 @@
         },
         {
           "number": 3,
+          "title": "Look and discuss",
+          "layout": "content",
+          "studentText": "Name three toys.\n\nAsk your partner for one toy politely.",
+          "interaction": "",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "Two children share a toy train beside a ball, doll, toy car, teddy bear and open toy box.",
+          "imagePrompt": "preview:toys-and-play",
+          "teacherNote": "Use this picture during the opening discussion. Accept different accurate responses. This is an illustrative scene, not evidence about real people or a substitute for the reading passage.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
           "title": "ball",
           "layout": "vocabulary",
           "studentText": "",
@@ -1165,7 +1179,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 4,
+          "number": 5,
           "title": "doll",
           "layout": "vocabulary",
           "studentText": "",
@@ -1186,7 +1200,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 5,
+          "number": 6,
           "title": "car",
           "layout": "vocabulary",
           "studentText": "",
@@ -1207,7 +1221,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 6,
+          "number": 7,
           "title": "train",
           "layout": "vocabulary",
           "studentText": "",
@@ -1228,7 +1242,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 7,
+          "number": 8,
           "title": "teddy",
           "layout": "vocabulary",
           "studentText": "",
@@ -1249,7 +1263,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 8,
+          "number": 9,
           "title": "Read and notice",
           "layout": "question",
           "studentText": "The Toy Swap",
@@ -1263,7 +1277,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 9,
+          "number": 10,
           "title": "Listen for details",
           "layout": "question",
           "studentText": "Sam’s Play Table",
@@ -1277,7 +1291,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 10,
+          "number": 11,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -1293,7 +1307,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 11,
+          "number": 12,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -1309,7 +1323,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 12,
+          "number": 13,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -1325,7 +1339,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 13,
+          "number": 14,
           "title": "The toy lending table · 1",
           "layout": "activity",
           "studentText": "Partner A: You have the ball and car. Ask for the teddy.",
@@ -1339,7 +1353,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 14,
+          "number": 15,
           "title": "The toy lending table · 2",
           "layout": "activity",
           "studentText": "Partner B: You have the doll and teddy. Ask for the car.",
@@ -1353,7 +1367,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 15,
+          "number": 16,
           "title": "The toy lending table · 3",
           "layout": "activity",
           "studentText": "Shared toy: The train belongs to the class. Ask before taking it.",
@@ -1367,7 +1381,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 16,
+          "number": 17,
           "title": "Your final response",
           "layout": "review",
           "studentText": "Ask for a toy politely.",
@@ -1727,5 +1741,12 @@
         ]
       }
     }
+  },
+  "illustration": {
+    "slug": "toys-and-play",
+    "alt": "Two children share a toy train beside a ball, doll, toy car, teddy bear and open toy box.",
+    "prompt": "Name three toys.\n\nAsk your partner for one toy politely.",
+    "src": "toys-and-play-illustration.jpg",
+    "imagePrompt": "preview:toys-and-play"
   }
 }

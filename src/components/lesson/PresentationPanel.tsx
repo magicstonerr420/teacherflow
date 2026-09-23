@@ -46,7 +46,7 @@ import {
 } from "@/lib/lesson-schema";
 
 /** Renders one slide roughly as it will look in PowerPoint. */
-export function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType<typeof themeFor>; young: boolean }) {
+export function SlidePreview({ slide, theme, young, image }: { slide: Slide; theme: ReturnType<typeof themeFor>; young: boolean; image?: {src: string; alt: string} | undefined }) {
   const lines = young
     ? [slide.studentText, ...slide.bullets].flatMap(text => text.split(/\n\s*\n/)).filter(Boolean)
     : [...lessonParagraphs(slide.studentText), ...slide.bullets.flatMap(presentationParagraphs)];
@@ -68,6 +68,7 @@ export function SlidePreview({ slide, theme, young }: { slide: Slide; theme: Ret
           </span>
         </div>
 
+        {image && <img src={image.src} alt={image.alt} width={1536} height={1024} loading="lazy" className="w-full rounded-lg object-contain" />}
         {slide.vocabulary.length ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {slide.vocabulary.map((v, i) => (

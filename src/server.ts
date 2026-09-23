@@ -1,5 +1,6 @@
 import "./lib/error-capture";
 import { startManagementWorker } from './lib/management-alerts.server';
+import { startApprovalEmailWorker } from './lib/approval-email.server';
 import { configureHostedAuth } from "./lib/hosting-env.server";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
@@ -51,6 +52,7 @@ export default {
     try {
       configureHostedAuth();
       startManagementWorker();
+      startApprovalEmailWorker();
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       if (new URL(request.url).pathname.startsWith("/share/")) {

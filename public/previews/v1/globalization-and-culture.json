@@ -831,6 +831,20 @@
         },
         {
           "number": 3,
+          "title": "Look and discuss",
+          "layout": "content",
+          "studentText": "How might online sharing affect this festival?\n\nDiscuss an opportunity and a risk for the artists.",
+          "interaction": "",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "Musicians perform at a community festival while organizers share the performance online.",
+          "imagePrompt": "preview:globalization-and-culture",
+          "teacherNote": "Use this picture during the opening discussion. Accept different accurate responses. This is an illustrative scene, not evidence about real people or a substitute for the reading passage.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
           "title": "globalization",
           "layout": "vocabulary",
           "studentText": "",
@@ -851,7 +865,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 4,
+          "number": 5,
           "title": "identity",
           "layout": "vocabulary",
           "studentText": "",
@@ -872,7 +886,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 5,
+          "number": 6,
           "title": "heritage",
           "layout": "vocabulary",
           "studentText": "",
@@ -893,7 +907,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 6,
+          "number": 7,
           "title": "diversity",
           "layout": "vocabulary",
           "studentText": "",
@@ -914,7 +928,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 7,
+          "number": 8,
           "title": "integration",
           "layout": "vocabulary",
           "studentText": "",
@@ -935,7 +949,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 8,
+          "number": 9,
           "title": "Read and notice",
           "layout": "question",
           "studentText": "Who Shapes the Festival?",
@@ -949,7 +963,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 9,
+          "number": 10,
           "title": "Listen for details",
           "layout": "question",
           "studentText": "A Curator’s Conditional Support",
@@ -963,7 +977,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 10,
+          "number": 11,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -981,7 +995,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 11,
+          "number": 12,
           "title": "Negotiate the festival agreement · 1",
           "layout": "activity",
           "studentText": "Performer group: Seek payment and review rights. Some pieces require long storytelling sequences.",
@@ -995,7 +1009,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 12,
+          "number": 13,
           "title": "Negotiate the festival agreement · 2",
           "layout": "activity",
           "studentText": "Distributor: Offer translation and promotion, but explain the need for clear schedules and manageable costs.",
@@ -1009,7 +1023,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 13,
+          "number": 14,
           "title": "Negotiate the festival agreement · 3",
           "layout": "activity",
           "studentText": "Local committee: Propose selection rules that include established traditions and new collaborations.",
@@ -1023,7 +1037,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 14,
+          "number": 15,
           "title": "Your final response",
           "layout": "review",
           "studentText": "State your choice. Give evidence. Recognize a limitation.",
@@ -1363,5 +1377,12 @@
         ]
       }
     }
+  },
+  "illustration": {
+    "slug": "globalization-and-culture",
+    "alt": "Musicians perform at a community festival while organizers share the performance online.",
+    "prompt": "How might online sharing affect this festival?\n\nDiscuss an opportunity and a risk for the artists.",
+    "src": "globalization-and-culture-illustration.jpg",
+    "imagePrompt": "preview:globalization-and-culture"
   }
 }

@@ -212,7 +212,11 @@ export const saveLesson = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    if(data.draftId)return saveCompletedDraft(lessonDraftStore(),supabase,userId,data.draftId);
+    if(data.draftId) {
+      const saved = await saveCompletedDraft(lessonDraftStore(),supabase,userId,data.draftId);
+      recordTeacherUsage(userId, 'saved');
+      return saved;
+    }
     const r = data.request;
     const { data: row, error } = await supabase
       .from("lessons")
@@ -235,6 +239,7 @@ export const saveLesson = createServerFn({ method: "POST" })
       console.error(error);
       throw new Error("We could not save this lesson. Please try again.");
     }
+    recordTeacherUsage(userId, 'saved');
     return { id: row.id as string };
   });
 
@@ -423,3 +428,4 @@ export const repairDuplicateVersionB=createServerFn({method:'POST'})
   if(limited)return betaStore().repairAlternate(user,data.request,generate);
   return generate(data.lesson);
  });
+import { recordTeacherUsage } from './usage.server';

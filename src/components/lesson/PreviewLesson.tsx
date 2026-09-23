@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Download, BookOpen, Headphones, FileText } from 'lucide-react';
 import { SectionBody } from './LessonPackageView';
@@ -18,10 +18,12 @@ import { isYoungA1 } from '@/lib/young-learners';
 import { PREVIEWS, previewBase, type Preview } from '@/lib/preview-catalog';
 import { cn } from '@/lib/utils';
 
-export type PreviewPayload = { request: LessonRequestInput; lesson: LessonPackage };
+export type PreviewPayload = { request: LessonRequestInput; lesson: LessonPackage; illustration?: {src: string; alt: string; prompt: string; imagePrompt: string} };
 
 export default function PreviewLesson({ data, preview, section = 'overview' }: { data: PreviewPayload; preview: Preview; section?: SectionKey }) {
   const { lesson, request } = data;
+  const figure = data.illustration;
+  useEffect(() => {window.dispatchEvent(new CustomEvent('teacherflow-preview', {detail: preview.slug}));}, [preview.slug]);
   const active = section;
   const navigate = useNavigate();
   const setActive = (section: SectionKey) => void navigate({ to: '/examples', search: { lesson: preview.slug, section }, replace: true, resetScroll: false });
@@ -29,7 +31,7 @@ export default function PreviewLesson({ data, preview, section = 'overview' }: {
   const asset = (suffix: string) => `${previewBase}${preview.slug}${suffix}?v=${preview.hash}`;
   const reading = lesson.reading?.status === 'ready' ? lesson.reading.value : null;
   const listening = lesson.listening?.status === 'ready' ? lesson.listening.value : null;
-  return <article data-preview={preview.slug} className="space-y-7">
+  return <article data-preview={preview.slug} data-preview-slug={preview.slug} className="space-y-7">
     <header className="space-y-4 rounded-2xl border bg-card p-5 sm:p-7">
       <p className="text-sm font-semibold text-primary">Preview {preview.step} of {PREVIEWS.length} · Ready to explore</p>
       <h1 className="display-heading text-3xl sm:text-4xl">{preview.title}</h1>
@@ -51,11 +53,12 @@ export default function PreviewLesson({ data, preview, section = 'overview' }: {
       </aside>
       <section className="min-w-0 space-y-5" aria-label={SECTIONS.find(s => s.key === active)?.label}>
         <h2 className="display-heading border-l-4 border-primary pl-3 text-2xl">{SECTIONS.find(s => s.key === active)?.label}</h2>
+        {active === 'overview' && figure && <figure className="space-y-4 overflow-hidden rounded-xl border bg-card p-4"><img src={asset('-illustration.jpg')} alt={figure.alt} width={1536} height={1024} className="w-full rounded-lg object-contain" /><figcaption className="space-y-3"><h3 className="font-semibold">Look and discuss</h3><LessonText>{figure.prompt}</LessonText><a className="inline-block text-sm text-primary underline" href={asset('-illustration.jpg')} download>Download lesson illustration</a></figcaption></figure>}
         {active === 'worksheet' ? <WorksheetHub worksheet={lesson.worksheet} request={request} answerKey={lesson.answerKey} readOnly />
         : active === 'presentation' ? <>
           <div className="flex flex-wrap gap-3"><Button asChild><a download href={asset('.pptx')}>Download student PowerPoint</a></Button><Button asChild variant="outline"><a download href={asset('-slides-guide.pdf')}>Presentation teacher guide</a></Button></div>
           <p className="text-sm text-muted-foreground">Student slides are shown below. Teaching notes are in the separate guide. For a class without technology, print the slides and use the supplied cards.</p>
-          <div className="grid gap-5 xl:grid-cols-2">{lesson.presentation.slides.map(slide => <SlidePreview key={slide.number} slide={studentPresentationSlide(slide)} theme={themeFor(bandOfRequest(request))} young={isYoungA1(request)} />)}</div>
+          <div className="grid gap-5 xl:grid-cols-2">{lesson.presentation.slides.map(slide => <SlidePreview key={slide.number} slide={studentPresentationSlide(slide)} theme={themeFor(bandOfRequest(request))} young={isYoungA1(request)} image={figure && slide.imagePrompt === figure.imagePrompt ? {src: asset('-illustration.jpg'), alt: figure.alt} : undefined} />)}</div>
         </> : active === 'reading' && reading ? <>
           <div className="space-y-5 rounded-xl border bg-card p-5 sm:p-7"><BookOpen className="text-primary"/><h3 className="display-heading text-xl">{reading.title}</h3><p className="text-sm text-muted-foreground">{reading.instructions}</p><div className="text-base"><LessonText>{reading.text}</LessonText></div></div>
           <QuestionList questions={reading.questions.map(q=>({question:q.question,choices:q.choices}))} />

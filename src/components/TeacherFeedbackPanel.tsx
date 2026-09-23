@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { listTeacherFeedback } from '@/lib/teacher-tools.functions';
-import { editingLabels } from '@/lib/teacher-tools';
+import { editingLabels, timeSavedLabels, wouldPayLabels } from '@/lib/teacher-tools';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from './ui/button';
 
@@ -20,6 +20,8 @@ export function TeacherFeedbackPanel() {
         <h3 className="break-words font-semibold">{entry.topic} · {entry.level}</h3>
         <p className="break-all text-muted-foreground">{entry.teacher} · {new Date(entry.updatedAt).toLocaleString()}</p>
         <p>Used in class: <strong>{entry.usedInClass==='yes'?'Yes':'Not yet'}</strong> · Editing needed: <strong>{editingLabels[entry.editing]}</strong></p>
+        <p>Preparation time saved: <strong>{entry.timeSaved ? timeSavedLabels[entry.timeSaved] : 'Not answered'}</strong></p>
+        <p>Would pay to keep using TeacherFlow: <strong>{entry.wouldPay ? wouldPayLabels[entry.wouldPay] : 'Not answered'}</strong></p>
         <p className="whitespace-pre-wrap break-words">{entry.comment||'No additional comment.'}</p>
       </article>)}
       {(offset>0||feedback.data.more) && <div className="flex items-center gap-3"><Button variant="outline" disabled={offset===0} onClick={()=>setOffset(v=>Math.max(0,v-50))}>Previous feedback</Button><span className="text-sm">Page {offset/50+1}</span><Button variant="outline" disabled={!feedback.data.more} onClick={()=>setOffset(v=>v+50)}>More feedback</Button></div>}

@@ -1157,6 +1157,20 @@
         },
         {
           "number": 3,
+          "title": "Look and discuss",
+          "layout": "content",
+          "studentText": "Point to the sun.\n\nName two things the child wears.",
+          "interaction": "",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "A child in a blue shirt, yellow sun hat and brown shoes on a sunny day; the same child watches rain safely indoors.",
+          "imagePrompt": "preview:weather-and-clothes",
+          "teacherNote": "Use this picture during the opening discussion. Accept different accurate responses. This is an illustrative scene, not evidence about real people or a substitute for the reading passage.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
           "title": "sun",
           "layout": "vocabulary",
           "studentText": "",
@@ -1177,7 +1191,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 4,
+          "number": 5,
           "title": "rain",
           "layout": "vocabulary",
           "studentText": "",
@@ -1198,7 +1212,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 5,
+          "number": 6,
           "title": "shirt",
           "layout": "vocabulary",
           "studentText": "",
@@ -1219,7 +1233,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 6,
+          "number": 7,
           "title": "shoes",
           "layout": "vocabulary",
           "studentText": "",
@@ -1240,7 +1254,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 7,
+          "number": 8,
           "title": "hat",
           "layout": "vocabulary",
           "studentText": "",
@@ -1261,7 +1275,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 8,
+          "number": 9,
           "title": "Read and notice",
           "layout": "question",
           "studentText": "Mia Gets Ready",
@@ -1275,7 +1289,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 9,
+          "number": 10,
           "title": "Listen for details",
           "layout": "question",
           "studentText": "A Walk with Leo",
@@ -1289,7 +1303,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 10,
+          "number": 11,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -1305,7 +1319,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 11,
+          "number": 12,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -1321,7 +1335,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 12,
+          "number": 13,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -1337,7 +1351,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 13,
+          "number": 14,
           "title": "Pack for a walk · 1",
           "layout": "activity",
           "studentText": "A sunny walk: choose a picture that shades your head.",
@@ -1351,7 +1365,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 14,
+          "number": 15,
           "title": "Pack for a walk · 2",
           "layout": "activity",
           "studentText": "Getting dressed: choose a picture for your feet.",
@@ -1365,7 +1379,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 15,
+          "number": 16,
           "title": "Pack for a walk · 3",
           "layout": "activity",
           "studentText": "Rain starts: decide where to wait safely.",
@@ -1379,7 +1393,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 16,
+          "number": 17,
           "title": "Your final response",
           "layout": "review",
           "studentText": "Name two things you wear.",
@@ -1739,5 +1753,12 @@
         ]
       }
     }
+  },
+  "illustration": {
+    "slug": "weather-and-clothes",
+    "alt": "A child in a blue shirt, yellow sun hat and brown shoes on a sunny day; the same child watches rain safely indoors.",
+    "prompt": "Point to the sun.\n\nName two things the child wears.",
+    "src": "weather-and-clothes-illustration.jpg",
+    "imagePrompt": "preview:weather-and-clothes"
   }
 }

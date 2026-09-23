@@ -60,7 +60,11 @@ export class TeacherToolsStore {
   saveFeedback(user: string, input: unknown, context: {topic:string;level:string;teacher:string}) {
     this.user(user);
     const data = feedbackSchema.parse(input);
-    const entry = {...data, topic:context.topic.slice(0,300), level:context.level.slice(0,30), teacher:context.teacher.slice(0,254)};
+    const previous = this.feedback(user, data.lessonId);
+    const entry = {...data,
+      timeSaved: data.timeSaved === undefined ? previous?.timeSaved ?? null : data.timeSaved,
+      wouldPay: data.wouldPay === undefined ? previous?.wouldPay ?? null : data.wouldPay,
+      topic:context.topic.slice(0,300), level:context.level.slice(0,30), teacher:context.teacher.slice(0,254)};
     this.db.prepare('INSERT INTO tf_feedback VALUES (?,?,?,?) ON CONFLICT(user_id,lesson_id) DO UPDATE SET body=excluded.body,updated_at=excluded.updated_at')
       .run(user, data.lessonId, JSON.stringify(entry), new Date().toISOString());
   }

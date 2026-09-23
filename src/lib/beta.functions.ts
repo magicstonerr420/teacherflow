@@ -4,10 +4,12 @@ import { getRequest } from '@tanstack/react-start/server';
 import { betaEnabled, betaStore } from './beta-store.server';
 import { betaIdentity, isOwner } from './beta-auth.server';
 import { generationRequiresInvitation } from './generation-access.server';
+import { recordTeacherUsage } from './usage.server';
 
 export const betaStatus = createServerFn({method:'GET'}).handler(async()=>{
   if(!betaEnabled()) return {enabled:false,owner:false,claimed:false,remaining:0,completed:0,lessons:[]};
   const user=await betaIdentity(getRequest());
+  recordTeacherUsage(user.id, 'active');
   return {enabled:true,...betaStore().status(user.id,user.email,user.name),owner:isOwner(user.id),...(isOwner(user.id)?{claimed:true, budget:betaBudgetStatus()}:{})};
 });
 export const claimBeta = createServerFn({method:'POST'})

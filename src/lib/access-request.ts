@@ -10,4 +10,4 @@ export const accessRequestSchema = z.object({
 export type AccessRequestInput = z.infer<typeof accessRequestSchema>;
 export const requestStatuses = ['pending', 'approved', 'declined'] as const;
 export type RequestStatus = typeof requestStatuses[number];
-export type AccessRequestRow = { id: string; name: string; email: string; teaching: string; status: RequestStatus; created: number; reviewed: number | null; revision: string };
+export type AccessRequestRow = { id: string; name: string; email: string; teaching: string; status: RequestStatus; created: number; reviewed: number | null; revision: string; emailStatus?: string | null; emailError?: string | null };

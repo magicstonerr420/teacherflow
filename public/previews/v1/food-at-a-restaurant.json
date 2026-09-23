@@ -831,6 +831,20 @@
         },
         {
           "number": 3,
+          "title": "Look and discuss",
+          "layout": "content",
+          "studentText": "What food and drink can you see?\n\nAsk for them politely.",
+          "interaction": "",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "An adult customer and server at a cafe, with chicken and rice, water and a bill on the table.",
+          "imagePrompt": "preview:food-at-a-restaurant",
+          "teacherNote": "Use this picture during the opening discussion. Accept different accurate responses. This is an illustrative scene, not evidence about real people or a substitute for the reading passage.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
           "title": "menu",
           "layout": "vocabulary",
           "studentText": "",
@@ -851,7 +865,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 4,
+          "number": 5,
           "title": "order",
           "layout": "vocabulary",
           "studentText": "",
@@ -872,7 +886,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 5,
+          "number": 6,
           "title": "water",
           "layout": "vocabulary",
           "studentText": "",
@@ -893,7 +907,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 6,
+          "number": 7,
           "title": "chicken",
           "layout": "vocabulary",
           "studentText": "",
@@ -914,7 +928,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 7,
+          "number": 8,
           "title": "bill",
           "layout": "vocabulary",
           "studentText": "",
@@ -935,7 +949,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 8,
+          "number": 9,
           "title": "Read and notice",
           "layout": "question",
           "studentText": "Lunch at Cedar Café",
@@ -949,7 +963,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 9,
+          "number": 10,
           "title": "Listen for details",
           "layout": "question",
           "studentText": "A Changed Order",
@@ -963,7 +977,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 10,
+          "number": 11,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -981,7 +995,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 11,
+          "number": 12,
           "title": "Cedar Café role-play · 1",
           "layout": "activity",
           "studentText": "Menu: Chicken with rice $12; vegetable soup $6; bean sandwich $7; water $2; orange juice $3. Prices include all charges for this fictional activity.",
@@ -995,7 +1009,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 12,
+          "number": 13,
           "title": "Cedar Café role-play · 2",
           "layout": "activity",
           "studentText": "Customer: You have $15. Order food and a drink. Ask for the bill and check it.",
@@ -1009,7 +1023,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 13,
+          "number": 14,
           "title": "Cedar Café role-play · 3",
           "layout": "activity",
           "studentText": "Server: Soup is unavailable. Offer another dish. Repeat the order and calculate the total.",
@@ -1023,7 +1037,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 14,
+          "number": 15,
           "title": "Your final response",
           "layout": "review",
           "studentText": "Order food and a drink. Ask for the bill.",
@@ -1363,5 +1377,12 @@
         ]
       }
     }
+  },
+  "illustration": {
+    "slug": "food-at-a-restaurant",
+    "alt": "An adult customer and server at a cafe, with chicken and rice, water and a bill on the table.",
+    "prompt": "What food and drink can you see?\n\nAsk for them politely.",
+    "src": "food-at-a-restaurant-illustration.jpg",
+    "imagePrompt": "preview:food-at-a-restaurant"
   }
 }

@@ -21,6 +21,7 @@ import { Route as RequestAccessRouteImport } from './routes/request-access'
 import { Route as ApiAccessRequestRouteImport } from './routes/api/access-request'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 import { Route as ApiGenerationEventsRouteImport } from './routes/api/generation-events'
+import { Route as ApiUsageRouteImport } from './routes/api/usage'
 import { Route as LessonsIndexRouteImport } from './routes/lessons.index'
 import { Route as LessonsIdRouteImport } from './routes/lessons.$id'
 import { Route as ShareTokenRouteImport } from './routes/share.$token'
@@ -85,6 +86,11 @@ const ApiGenerationEventsRoute = ApiGenerationEventsRouteImport.update({
   path: '/api/generation-events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUsageRoute = ApiUsageRouteImport.update({
+  id: '/api/usage',
+  path: '/api/usage',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LessonsIndexRoute = LessonsIndexRouteImport.update({
   id: '/lessons/',
   path: '/lessons/',
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/api/access-request': typeof ApiAccessRequestRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
+  '/api/usage': typeof ApiUsageRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/share/$token': typeof ShareTokenRoute
   '/lessons/': typeof LessonsIndexRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/api/access-request': typeof ApiAccessRequestRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
+  '/api/usage': typeof ApiUsageRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/share/$token': typeof ShareTokenRoute
   '/lessons': typeof LessonsIndexRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/api/access-request': typeof ApiAccessRequestRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
+  '/api/usage': typeof ApiUsageRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/share/$token': typeof ShareTokenRoute
   '/lessons/': typeof LessonsIndexRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/api/access-request'
     | '/api/generate-image'
     | '/api/generation-events'
+    | '/api/usage'
     | '/lessons/$id'
     | '/share/$token'
     | '/lessons/'
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
     | '/api/access-request'
     | '/api/generate-image'
     | '/api/generation-events'
+    | '/api/usage'
     | '/lessons/$id'
     | '/share/$token'
     | '/lessons'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/api/access-request'
     | '/api/generate-image'
     | '/api/generation-events'
+    | '/api/usage'
     | '/lessons/$id'
     | '/share/$token'
     | '/lessons/'
@@ -220,6 +232,7 @@ export interface RootRouteChildren {
   ApiAccessRequestRoute: typeof ApiAccessRequestRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
   ApiGenerationEventsRoute: typeof ApiGenerationEventsRoute
+  ApiUsageRoute: typeof ApiUsageRoute
   LessonsIdRoute: typeof LessonsIdRoute
   ShareTokenRoute: typeof ShareTokenRoute
   LessonsIndexRoute: typeof LessonsIndexRoute
@@ -311,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerationEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/usage': {
+      id: '/api/usage'
+      path: '/api/usage'
+      fullPath: '/api/usage'
+      preLoaderRoute: typeof ApiUsageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lessons/': {
       id: '/lessons/'
       path: '/lessons'
@@ -348,6 +368,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAccessRequestRoute: ApiAccessRequestRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
   ApiGenerationEventsRoute: ApiGenerationEventsRoute,
+  ApiUsageRoute: ApiUsageRoute,
   LessonsIdRoute: LessonsIdRoute,
   ShareTokenRoute: ShareTokenRoute,
   LessonsIndexRoute: LessonsIndexRoute,

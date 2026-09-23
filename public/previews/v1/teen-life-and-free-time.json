@@ -831,6 +831,20 @@
         },
         {
           "number": 3,
+          "title": "Look and discuss",
+          "layout": "content",
+          "studentText": "Compare the two clubs.\n\nWhich would you choose, and why?",
+          "interaction": "",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "Teenagers drawing together in an art room and jogging together outdoors.",
+          "imagePrompt": "preview:teen-life-and-free-time",
+          "teacherNote": "Use this picture during the opening discussion. Accept different accurate responses. This is an illustrative scene, not evidence about real people or a substitute for the reading passage.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
           "title": "hobby",
           "layout": "vocabulary",
           "studentText": "",
@@ -851,7 +865,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 4,
+          "number": 5,
           "title": "relax",
           "layout": "vocabulary",
           "studentText": "",
@@ -872,7 +886,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 5,
+          "number": 6,
           "title": "practice",
           "layout": "vocabulary",
           "studentText": "",
@@ -893,7 +907,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 6,
+          "number": 7,
           "title": "prefer",
           "layout": "vocabulary",
           "studentText": "",
@@ -914,7 +928,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 7,
+          "number": 8,
           "title": "challenge",
           "layout": "vocabulary",
           "studentText": "",
@@ -935,7 +949,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 8,
+          "number": 9,
           "title": "Read and notice",
           "layout": "question",
           "studentText": "Two Ways to Spend Friday",
@@ -949,7 +963,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 9,
+          "number": 10,
           "title": "Listen for details",
           "layout": "question",
           "studentText": "Choosing a New Hobby",
@@ -963,7 +977,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 10,
+          "number": 11,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -981,7 +995,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 11,
+          "number": 12,
           "title": "Design our Friday club · 1",
           "layout": "activity",
           "studentText": "Choice 1: Art. Shared supplies; quiet room; individual or paired work.",
@@ -995,7 +1009,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 12,
+          "number": 13,
           "title": "Design our Friday club · 2",
           "layout": "activity",
           "studentText": "Choice 2: Running. Small groups; personal pace; covered space if it rains.",
@@ -1009,7 +1023,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 13,
+          "number": 14,
           "title": "Design our Friday club · 3",
           "layout": "activity",
           "studentText": "Decision: Choose a club trial for your group. Give two reasons and one reason another group might choose differently.",
@@ -1023,7 +1037,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 14,
+          "number": 15,
           "title": "Your final response",
           "layout": "review",
           "studentText": "State your choice. Give evidence. Recognize a limitation.",
@@ -1363,5 +1377,12 @@
         ]
       }
     }
+  },
+  "illustration": {
+    "slug": "teen-life-and-free-time",
+    "alt": "Teenagers drawing together in an art room and jogging together outdoors.",
+    "prompt": "Compare the two clubs.\n\nWhich would you choose, and why?",
+    "src": "teen-life-and-free-time-illustration.jpg",
+    "imagePrompt": "preview:teen-life-and-free-time"
   }
 }

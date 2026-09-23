@@ -831,6 +831,20 @@
         },
         {
           "number": 3,
+          "title": "Look and discuss",
+          "layout": "content",
+          "studentText": "What barriers to participation might exist beyond this scene?\n\nEvaluate two ways to improve access without assuming anyone’s circumstances.",
+          "interaction": "",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "People arrive at an adult-learning center by bus and on foot; a parent accompanies a child and an adviser discusses a course.",
+          "imagePrompt": "preview:inequality-and-social-mobility",
+          "teacherNote": "Use this picture during the opening discussion. Accept different accurate responses. This is an illustrative scene, not evidence about real people or a substitute for the reading passage.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
           "title": "inequality",
           "layout": "vocabulary",
           "studentText": "",
@@ -851,7 +865,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 4,
+          "number": 5,
           "title": "mobility",
           "layout": "vocabulary",
           "studentText": "",
@@ -872,7 +886,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 5,
+          "number": 6,
           "title": "systemic",
           "layout": "vocabulary",
           "studentText": "",
@@ -893,7 +907,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 6,
+          "number": 7,
           "title": "opportunity",
           "layout": "vocabulary",
           "studentText": "",
@@ -914,7 +928,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 7,
+          "number": 8,
           "title": "policy",
           "layout": "vocabulary",
           "studentText": "",
@@ -935,7 +949,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 8,
+          "number": 9,
           "title": "Read and notice",
           "layout": "question",
           "studentText": "Equal Eligibility, Unequal Access",
@@ -949,7 +963,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 9,
+          "number": 10,
           "title": "Listen for details",
           "layout": "question",
           "studentText": "The Evaluation Adviser’s Caution",
@@ -963,7 +977,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 10,
+          "number": 11,
           "title": "Useful language",
           "layout": "expressions",
           "studentText": "",
@@ -981,7 +995,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 11,
+          "number": 12,
           "title": "A policy hearing with a written dissent · 1",
           "layout": "activity",
           "studentText": "Council group: Recommend a limited package using the fictional case only. State whose access improves and who may remain excluded.",
@@ -995,7 +1009,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 12,
+          "number": 13,
           "title": "A policy hearing with a written dissent · 2",
           "layout": "activity",
           "studentText": "Review group: Test the causal assumptions and administrative trade-offs. Do not treat a plausible mechanism as a measured effect.",
@@ -1009,7 +1023,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 13,
+          "number": 14,
           "title": "A policy hearing with a written dissent · 3",
           "layout": "activity",
           "studentText": "Final task: Write a joint recommendation and a short dissent that accurately represents the strongest unresolved objection.",
@@ -1023,7 +1037,7 @@
           "purpose": "Build toward the stated learning objective."
         },
         {
-          "number": 14,
+          "number": 15,
           "title": "Your final response",
           "layout": "review",
           "studentText": "State your choice. Give evidence. Recognize a limitation.",
@@ -1363,5 +1377,12 @@
         ]
       }
     }
+  },
+  "illustration": {
+    "slug": "inequality-and-social-mobility",
+    "alt": "People arrive at an adult-learning center by bus and on foot; a parent accompanies a child and an adviser discusses a course.",
+    "prompt": "What barriers to participation might exist beyond this scene?\n\nEvaluate two ways to improve access without assuming anyone’s circumstances.",
+    "src": "inequality-and-social-mobility-illustration.jpg",
+    "imagePrompt": "preview:inequality-and-social-mobility"
   }
 }

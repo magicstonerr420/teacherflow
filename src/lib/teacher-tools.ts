@@ -13,10 +13,22 @@ export const savedClassSchema = z.object({
 });
 export type ClassSettings = z.infer<typeof classSettingsSchema>;
 export type SavedClass = { id: string; name: string; settings: ClassSettings };
+export const timeSavedLabels = {
+  took_longer: 'It took longer than my usual preparation',
+  none: 'No time saved',
+  under_15: '1–14 minutes',
+  minutes_15_29: '15–29 minutes',
+  minutes_30_59: '30–59 minutes',
+  hour_plus: 'An hour or more',
+  not_sure: 'Not sure yet',
+} as const;
+export const wouldPayLabels = {yes: 'Yes', maybe: 'Maybe, depending on the price', no: 'No', not_sure: 'Not sure yet'} as const;
 export const feedbackSchema = z.object({
   lessonId: z.string().uuid(),
   usedInClass: z.enum(['yes', 'not_yet']),
   editing: z.enum(['none', 'a_little', 'a_lot']),
+  timeSaved: z.enum(['took_longer', 'none', 'under_15', 'minutes_15_29', 'minutes_30_59', 'hour_plus', 'not_sure']).nullable().optional(),
+  wouldPay: z.enum(['yes', 'maybe', 'no', 'not_sure']).nullable().optional(),
   comment: z.string().trim().max(2000).default(''),
 });
 export type LessonFeedback = z.infer<typeof feedbackSchema>;

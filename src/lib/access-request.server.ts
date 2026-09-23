@@ -3,6 +3,7 @@ import { AccessRequestStore, RequestLimitError } from './access-request-store.se
 import { accessRequestSchema } from './access-request.ts';
 import { betaAdministrator } from './beta-admin.server.ts';
 import { betaIdentity } from './beta-auth.server.ts';
+import { approvalEmailConfiguration } from './approval-email.server.ts';
 
 const headers = {'Cache-Control': 'no-store'};
 export async function submitAccessRequest(request: Request) {
@@ -30,7 +31,7 @@ export async function submitAccessRequest(request: Request) {
   try {
     const client = request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() || 'unknown';
     new AccessRequestStore(betaStore()).submit(input, client);
-    return Response.json({ok: true}, {headers});
+    return Response.json({ok: true, emailNotifications: approvalEmailConfiguration().configured}, {headers});
   } catch (error) {
     if (error instanceof RequestLimitError) return Response.json({error: error.message}, {status: 429, headers: {...headers, 'Retry-After': '3600'}});
     return Response.json({error: 'Your request could not be saved. Please try again.'}, {status: 503, headers});
