@@ -6,7 +6,8 @@ import { americanEnglishContent } from './american-english';
 import { loadPresentationTools } from './presentation-tools';
 import { lessonImagePrompts, vocabularyImagePrompt } from "./image-plan";
 import { isYoungA1, picturePng, pictureSvg, youngPresentationIssues } from "./young-learners";
-import { youngSlidePages, youngSlideRows, wrapSlideText } from "./young-slides";
+import { youngSlidePages, wrapSlideText, YOUNG_LINE_STEP, YOUNG_PARAGRAPH_GAP } from "./young-slides";
+import { lessonParagraphs } from './lesson-text';
 import { capitalizeHeading, presentationParagraphs } from "./presentation-text";
 import { colorShapeResources } from './color-shape-resources';
 import { assertStudentPresentation, studentPresentationSlide } from './presentation-audience';
@@ -393,26 +394,31 @@ function addYoungStandardSlide(
     fill: { color: t.panel },
     line: { color: t.panel },
   });
-  const rows = youngSlideRows(slide.studentText);
-  rows.forEach((row) =>
+  let offset = 0;
+  slide.studentText.split(/\n\s*\n/).filter(Boolean).forEach((paragraph) => {
+    const rows = paragraph.split('\n').filter(Boolean);
+    const height = rows.length * YOUNG_LINE_STEP;
     s.addText(
-      splitHighlights(row.text, slide.highlightWords).map((p) => ({
+      splitHighlights(rows.join(' '), slide.highlightWords).map((p) => ({
         text: p.text,
         options: { bold: p.highlight, color: p.highlight ? t.highlight : t.ink },
       })),
       {
         x: 0.85,
-        y: 1.55 + row.offset,
+        y: 1.55 + offset,
         w: width - 0.6,
-        h: 0.32,
+        h: height,
         fontSize: 18,
         fontFace: t.bodyFont,
         margin: 0,
         breakLine: false,
         valign: "top",
+        align: 'justify',
+        lineSpacingMultiple: 1.0,
       },
-    ),
-  );
+    );
+    offset += height + YOUNG_PARAGRAPH_GAP;
+  });
   if (image) s.addImage({ data: image, ...containImage(image, 5.85, 1.35, 3.6, 2.85) });
   if (slide.interaction) {
     const lines = wrapSlideText(slide.interaction, 8.5, 12);
@@ -426,7 +432,7 @@ function addYoungStandardSlide(
         fill: { color: t.accentSoft },
         line: { color: t.accent },
       });
-      s.addText(lines.join("\n"), {
+      s.addText(slide.interaction, {
         x: 0.75,
         y: 4.52,
         w: 8.5,
@@ -436,6 +442,7 @@ function addYoungStandardSlide(
         bold: true,
         color: t.title,
         margin: 0,
+        align: 'justify',
       });
     }
   }
@@ -461,7 +468,11 @@ function addStandardSlide(
   const bodyH = bodyBottom - bodyTop;
   const bodyW = image ? (W - 1.1) * 0.56 : W - 1.1;
 
-  const lines = [slide.studentText, ...slide.bullets].flatMap(presentationParagraphs);
+  const paragraphs = [
+    ...lessonParagraphs(slide.studentText).map(text => ({ text, bullet: false })),
+    ...slide.bullets.flatMap(presentationParagraphs).map(text => ({ text, bullet: true })),
+  ];
+  const lines = paragraphs.map(paragraph => paragraph.text);
 
   s.addShape("rect", {
     x: 0.55,
@@ -474,7 +485,6 @@ function addStandardSlide(
 
   const chars = lines.join(" ").length;
   const size = bodySizeFor(t, chars, lines.length);
-  const useBullets = lines.length > 1;
 
   const runs = lines.flatMap((line, i) => {
     const parts = splitHighlights(line, slide.highlightWords);
@@ -483,7 +493,7 @@ function addStandardSlide(
       options: {
         color: p.highlight ? t.highlight : t.ink,
         bold: p.highlight,
-        ...(j === 0 && useBullets ? { bullet: true } : {}),
+        ...(j === 0 && paragraphs[i]!.bullet ? { bullet: true } : {}),
         ...(j === parts.length - 1 && i < lines.length - 1 ? { breakLine: true } : {}),
       },
     }));
@@ -501,6 +511,7 @@ function addStandardSlide(
     fit: "shrink",
     lineSpacingMultiple: 1.15,
     paraSpaceAfter: 12,
+    align: 'justify',
     margin: 0,
   });
 
@@ -537,6 +548,7 @@ function addStandardSlide(
       fontFace: t.bodyFont,
       valign: "middle",
       fit: "shrink",
+      align: 'justify',
     });
   }
 
@@ -602,6 +614,7 @@ function addVocabularySlides(
       fontFace: t.bodyFont,
       valign: "top",
       fit: "shrink",
+      align: 'justify',
     });
     if (v.example) {
       s.addText(`"${v.example}"`, {
@@ -614,6 +627,7 @@ function addVocabularySlides(
         color: t.muted,
         fontFace: t.bodyFont,
         fit: "shrink",
+        align: 'justify',
       });
     }
 
@@ -650,6 +664,7 @@ function addVocabularySlides(
         fontFace: t.bodyFont,
         valign: "middle",
         fit: "shrink",
+        align: 'justify',
       });
     }
 

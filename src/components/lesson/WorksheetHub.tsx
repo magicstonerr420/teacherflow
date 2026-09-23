@@ -1,3 +1,4 @@
+import { LessonText } from '@/components/lesson/LessonText';
 import {PdfPreview} from './PdfPreview';
 import { pictureUrl, worksheetPictureKey, worksheetItemPrompt, worksheetPictureIssues } from '@/lib/young-learners';
 import { prepareShapeWorksheet } from '@/lib/worksheet-shapes';
@@ -236,7 +237,7 @@ function StudentWorksheet({
         ) : null}
       </header>
 
-      {doc.instructions ? <p className="mt-5 text-sm italic">{doc.instructions}</p> : null}
+      {doc.instructions ? <p className="mt-5 text-sm italic"><LessonText>{doc.instructions}</LessonText></p> : null}
 
       <div className="mt-6 space-y-8">
         {doc.sections.map((section, i) => (
@@ -244,11 +245,11 @@ function StudentWorksheet({
             <h2 className={cn("font-bold tracking-wide uppercase", style.section)}>
               {section.label} — {section.title}
             </h2>
-            <p className="mt-1 text-sm italic">{section.instructions}</p>
+            <p className="mt-1 text-sm italic"><LessonText>{section.instructions}</LessonText></p>
 
             {section.passage ? (
               <div className="mt-3 rounded-md border border-foreground/25 p-4 whitespace-pre-line">
-                {section.passage}
+                <LessonText>{section.passage}</LessonText>
                 <ReadingReference text={section.passage} />
               </div>
             ) : null}
@@ -267,14 +268,14 @@ function StudentWorksheet({
                   <div className="min-w-0 flex-1">
                     <p className="whitespace-pre-line">
                       <PictureClue item={item} />
-                      {worksheetItemPrompt(item)}
+                      <LessonText>{worksheetItemPrompt(item)}</LessonText>
                     </p>
                     {item.choices.length ? (
                       <ul className="mt-2 space-y-1 pl-1">
                         {item.choices.map((choice, k) => (
                           <li key={k} className="flex gap-2">
                             <span className="font-medium">{String.fromCharCode(97 + k)})</span>
-                            <span>{choice}</span>
+                            <span><LessonText>{choice}</LessonText></span>
                           </li>
                         ))}
                       </ul>
@@ -333,10 +334,10 @@ function TeacherWorksheet({
             </Badge>
           ) : null}
         </div>
-        {t.overview ? <p className="mt-3 text-sm">{t.overview}</p> : null}
+        {t.overview ? <p className="mt-3 text-sm"><LessonText>{t.overview}</LessonText></p> : null}
         {request.groupWorkEnabled && t.groupWorkGuidance ? (
           <p className="mt-2 text-sm">
-            <strong>Group work ({request.studentsPerGroup} per group):</strong> {t.groupWorkGuidance}
+            <strong>Group work ({request.studentsPerGroup} per group):</strong> <LessonText>{t.groupWorkGuidance}</LessonText>
           </p>
         ) : null}
       </header>
@@ -356,9 +357,9 @@ function TeacherWorksheet({
                     Questions
                   </p>
                   {studentSection.instructions ? (
-                    <p className="mt-1 text-sm italic">{studentSection.instructions}</p>
+                    <p className="mt-1 text-sm italic"><LessonText>{studentSection.instructions}</LessonText></p>
                   ) : null}
-                  {studentSection.passage ? <div className="mt-3 whitespace-pre-line rounded-md border p-3">{studentSection.passage}<ReadingReference text={studentSection.passage} /></div> : null}
+                  {studentSection.passage ? <div className="mt-3 whitespace-pre-line rounded-md border p-3"><LessonText>{studentSection.passage}</LessonText><ReadingReference text={studentSection.passage} /></div> : null}
                   {studentSection.wordBank.length ? (
                     <p className="mt-1 text-sm">Word bank: {studentSection.wordBank.join(", ")}</p>
                   ) : null}
@@ -368,7 +369,7 @@ function TeacherWorksheet({
                         <span className="w-6 shrink-0 font-medium">{item.number || j + 1}.</span>
                         <span className="min-w-0 flex-1">
                           <PictureClue item={item} />
-                          {worksheetItemPrompt(item)}
+                          <LessonText>{worksheetItemPrompt(item)}</LessonText>
                           {item.choices.length ? ` (${item.choices.join(" / ")})` : ""}
                         </span>
                       </li>
@@ -383,7 +384,7 @@ function TeacherWorksheet({
                   <p className="text-xs font-bold tracking-wide uppercase text-muted-foreground">
                     Knowledge and explanation
                   </p>
-                  <p className="mt-1 whitespace-pre-line">{section.explanation}</p>
+                  <p className="mt-1 whitespace-pre-line"><LessonText>{section.explanation}</LessonText></p>
                 </div>
               ) : null}
               <TeacherBlock title="Expected answers (open items)" items={section.expectedResponses} />
@@ -392,7 +393,7 @@ function TeacherWorksheet({
               {section.teacherNotes ? (
                 <div className="mt-3 rounded-md bg-muted p-3">
                   <p className="text-xs font-bold tracking-wide uppercase">Teaching notes</p>
-                  <p className="mt-1 whitespace-pre-line">{section.teacherNotes}</p>
+                  <p className="mt-1 whitespace-pre-line"><LessonText>{section.teacherNotes}</LessonText></p>
                 </div>
               ) : null}
             </section>
@@ -459,7 +460,7 @@ function AnswerKeySheet({
                     <span className="w-6 shrink-0 font-medium">
                       {studentSection?.items[j]?.number ?? j + 1}.
                     </span>
-                    <span className="min-w-0 flex-1">{answer}</span>
+                    <span className="min-w-0 flex-1"><LessonText>{answer}</LessonText></span>
                   </li>
                 ))}
               </ol>
@@ -469,7 +470,7 @@ function AnswerKeySheet({
                 </p>
               ) : null}
               {section.teacherNotes ? (
-                <p className="mt-1 text-sm text-muted-foreground">{section.teacherNotes}</p>
+                <p className="mt-1 text-sm text-muted-foreground"><LessonText>{section.teacherNotes}</LessonText></p>
               ) : null}
             </section>
           );
@@ -495,7 +496,7 @@ function TeacherBlock({
       <p className="text-xs font-bold tracking-wide uppercase text-muted-foreground">{title}</p>
       <List className={cn("mt-1 space-y-1 pl-5", ordered ? "list-decimal" : "list-disc")}>
         {items.map((item, i) => (
-          <li key={i}>{item}</li>
+          <li key={i}><LessonText>{item}</LessonText></li>
         ))}
       </List>
     </div>

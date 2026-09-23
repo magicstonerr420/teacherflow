@@ -13,6 +13,7 @@ import {
 } from "@/lib/lesson-schema";
 import { buildPresentationBlob, presentationFileName, flashcardsFor } from "@/lib/pptx";
 import { colorShapeResources } from './color-shape-resources';
+import { lessonParagraphs } from './lesson-text';
 
 /* --------------------------- text safety --------------------------------- */
 
@@ -64,6 +65,7 @@ const PAGE_W = 210;
 const PAGE_H = 297;
 const BODY_W = PAGE_W - MARGIN * 2;
 const BOTTOM = PAGE_H - 18;
+const PARAGRAPH_GAP = 4;
 
 type Doc = Awaited<ReturnType<typeof createDoc>>;
 
@@ -95,25 +97,42 @@ async function createDoc(title: string, subtitle: string) {
     textHeight(value: string, size = 10.5, indent = 0, bold = false) {
       doc.setFont('helvetica', bold ? 'bold' : 'normal');
       doc.setFontSize(size);
-      return doc.splitTextToSize(pdfSafe(value), BODY_W - indent).length * (size * 0.45 + 1.2) + 1;
+      const paragraphs = lessonParagraphs(pdfSafe(value));
+      return paragraphs.reduce((height, paragraph) => height + doc.splitTextToSize(paragraph, BODY_W - indent).length * (size * 0.45 + 1.2), 0)
+        + Math.max(0, paragraphs.length - 1) * PARAGRAPH_GAP + 2;
     },
     text(
       value: string,
-      opts: { size?: number; bold?: boolean; color?: [number, number, number]; indent?: number; gap?: number } = {},
+      opts: { size?: number; bold?: boolean; color?: [number, number, number]; indent?: number; gap?: number; align?: 'left' | 'justify' } = {},
     ) {
       const size = opts.size ?? 10.5;
       const indent = opts.indent ?? 0;
       doc.setFont("helvetica", opts.bold ? "bold" : "normal");
       doc.setFontSize(size);
       doc.setTextColor(...(opts.color ?? ([30, 30, 30] as [number, number, number])));
-      const lines = doc.splitTextToSize(pdfSafe(value), BODY_W - indent) as string[];
+      const paragraphs = lessonParagraphs(pdfSafe(value));
       const lineHeight = size * 0.45;
-      for (const line of lines) {
-        api.ensure(lineHeight + 2);
-        doc.text(line, MARGIN + indent, y);
-        y += lineHeight + 1.2;
+      const step = lineHeight + 1.2;
+      for (const [index, paragraph] of paragraphs.entries()) {
+        if (index) y += PARAGRAPH_GAP;
+        const lines = doc.splitTextToSize(paragraph, BODY_W - indent) as string[];
+        api.ensure(Math.min(2, lines.length) * step + 2);
+        for (let start = 0; start < lines.length;) {
+          api.ensure(lineHeight + 2);
+          const count = Math.max(1, Math.floor((BOTTOM - y - lineHeight - 2) / step) + 1);
+          const chunk = lines.slice(start, start + count);
+          const continues = start + chunk.length < lines.length;
+          // jsPDF leaves the last line unstretched. An empty final line makes
+          // the last visible line justify when its paragraph continues on page 2.
+          doc.text(continues ? [...chunk, ''] : chunk, MARGIN + indent, y, {
+            align: opts.align ?? (opts.bold ? 'left' : 'justify'), maxWidth: BODY_W - indent,
+            lineHeightFactor: step * 72 / 25.4 / size,
+          });
+          y += chunk.length * step;
+          start += chunk.length;
+        }
       }
-      y += opts.gap ?? 1;
+      if (paragraphs.length) y += opts.gap ?? 2;
     },
     heading(value: string) {
       api.ensure(28);
@@ -163,7 +182,7 @@ async function createDoc(title: string, subtitle: string) {
 
   // Document header
   api.text(title, { size: 18, bold: true, color: [11, 79, 108] });
-  api.text(subtitle, { size: 10, color: [110, 120, 130], gap: 3 });
+  api.text(subtitle, { size: 10, color: [110, 120, 130], gap: 3, align: 'left' });
   return api;
 }
 
@@ -300,8 +319,12 @@ async function writeStudent(d: Doc, studentDoc: StudentDoc, request: LessonReque
       + (section.passage ? 1 + d.textHeight(section.passage, 10.5, 3) : 0)
       + (reference ? reference.rows * 48 + 12 : 0)
       + (section.wordBank?.length ? 2 + d.textHeight('Word bank', 11.5, 0, true) + d.textHeight(section.wordBank.join('   |   '), 10.5, 3) : 0);
-    // Keep the section heading with its first question, and every clue with its choices.
-    d.ensure(Math.min(BOTTOM - MARGIN, headingHeight + (section.items[0] ? itemHeight(section.items[0]) : 0) + 3));
+    // Keep short sections together. A multi-page reading must start below its
+    // heading, instead of pushing all content past an almost-empty first page.
+    const together = headingHeight + (section.items[0] ? itemHeight(section.items[0]) : 0) + 3;
+    const opening = 6 + d.textHeight(`${section.label} — ${section.title}`, 14, 0, true)
+      + (section.instructions ? d.textHeight(section.instructions) : 0) + 18;
+    d.ensure(section.passage && together > BOTTOM - MARGIN ? opening : Math.min(BOTTOM - MARGIN, together));
     d.heading(`${section.label} — ${section.title}`);
     if (section.instructions) d.text(section.instructions, { size: 10.5 });
     if (section.passage) {

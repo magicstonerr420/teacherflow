@@ -1,3 +1,4 @@
+import { LessonText } from '@/components/lesson/LessonText';
 import { betaStatus } from '@/lib/beta.functions';
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
@@ -104,14 +105,14 @@ export function ListeningPanel({ lesson, request, onChange }: {
     {ready && <>
       <div className="space-y-4 rounded-xl border p-5">
         <h3 className="text-xl font-semibold">{ready.value.title}</h3>
-        <p>{ready.value.instructions}</p>
-        <ol className="list-decimal space-y-4 pl-6">{ready.value.questions.map((q, i) => <li key={i}>{q.question}{q.choices.length > 0 && <p className="mt-2 text-sm">{q.choices.join(' / ')}</p>}</li>)}</ol>
+        <p><LessonText>{ready.value.instructions}</LessonText></p>
+        <ol className="list-decimal space-y-4 pl-6">{ready.value.questions.map((q, i) => <li key={i}><LessonText>{q.question}</LessonText>{q.choices.length > 0 && <p className="mt-2 text-sm"><LessonText>{q.choices.join(' / ')}</LessonText></p>}</li>)}</ol>
       </div>
       <details className="rounded-xl border p-5">
         <summary className="cursor-pointer font-semibold">Teacher transcript and answers</summary>
-        <p className="mt-4 whitespace-pre-wrap leading-relaxed">{ready.value.script}</p>
-        <p className="my-4">{ready.value.teacherGuidance}</p>
-        <ol className="list-decimal space-y-3 pl-6">{ready.value.questions.map((q, i) => <li key={i}><strong>{q.answer}</strong> — {q.explanation}</li>)}</ol>
+        <p className="mt-4 whitespace-pre-wrap leading-relaxed"><LessonText>{ready.value.script}</LessonText></p>
+        <p className="my-4"><LessonText>{ready.value.teacherGuidance}</LessonText></p>
+        <ol className="list-decimal space-y-3 pl-6">{ready.value.questions.map((q, i) => <li key={i}><strong><LessonText>{q.answer}</LessonText></strong><LessonText className="mt-2">{q.explanation}</LessonText></li>)}</ol>
       </details>
     </>}
   </div>;

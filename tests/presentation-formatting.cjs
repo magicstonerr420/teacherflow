@@ -1,6 +1,7 @@
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'C:/Users/javie/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const fs = require('node:fs/promises');
 const assert = require('node:assert/strict');
+const origin=process.env.TEST_ORIGIN || 'http://127.0.0.1:3000';
 (async()=>{
   const browser=await chromium.launch({headless:true,channel:'msedge'});
   try {
@@ -9,7 +10,7 @@ const assert = require('node:assert/strict');
     let aiRequests=0;
     await page.route('**/api/generate-image',r=>{aiRequests++;return r.abort();});
     await page.route('**/formatting-test',r=>r.fulfill({contentType:'text/html',body:'<html><body><script type="module">import RefreshRuntime from "/@react-refresh";RefreshRuntime.injectIntoGlobalHook(window);window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>type=>type;window.__vite_plugin_react_preamble_installed__=true;</script></body></html>'}));
-    await page.goto('http://127.0.0.1:3000/formatting-test');
+    await page.goto(origin+'/formatting-test');
     const fixture=JSON.parse(await fs.readFile('tests/young-data.json','utf8'));
     const result=await page.evaluate(async fixture=>{
       const {buildPresentationBlob}=await import('/src/lib/pptx.ts');
@@ -57,6 +58,7 @@ const assert = require('node:assert/strict');
       assert.ok(vocab.shapes.some(s=>s.text==='Ball'));
       assert.ok(intro.shapes.some(s=>s.text==='Practice with your partner.'));
       assert.doesNotMatch(deck.slides.map(s=>s.xml).join(''),/Practise|practised/);
+      assert.match(intro.xml,/algn="just"/);
       if(deck.age==='5-7'){
         const lines=intro.shapes.filter(s=>s.x===0.85&&s.y>=1.55&&s.y<4.2);
         assert.deepEqual(lines.map(s=>s.text),['Today we ask for a toy.','Look.','Listen.','Say the toy.']);

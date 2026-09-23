@@ -1,3 +1,4 @@
+import { LessonText } from '@/components/lesson/LessonText';
 import { trackClientGeneration } from '@/lib/generation-monitor';
 import { isYoungA1, pictureUrl } from "@/lib/young-learners";
 import { americanEnglishContent } from "@/lib/american-english";
@@ -6,6 +7,7 @@ import { loadPresentationTools } from "@/lib/presentation-tools";
 import { capitalizeHeading, presentationParagraphs } from "@/lib/presentation-text";
 import { colorShapeResources } from '@/lib/color-shape-resources';
 import { studentPresentationSlide } from '@/lib/presentation-audience';
+import { lessonParagraphs } from '@/lib/lesson-text';
 import { toast } from 'sonner';
 import { generationErrorMessage } from '@/lib/generation-errors';
 import {
@@ -47,7 +49,7 @@ import {
 function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType<typeof themeFor>; young: boolean }) {
   const lines = young
     ? [slide.studentText, ...slide.bullets].flatMap(text => text.split(/\n\s*\n/)).filter(Boolean)
-    : [slide.studentText, ...slide.bullets].flatMap(presentationParagraphs);
+    : [...lessonParagraphs(slide.studentText), ...slide.bullets.flatMap(presentationParagraphs)];
 
   return (
     <div
@@ -79,11 +81,11 @@ function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType
                 </p>
                 {!v.imagePrompt && pictureUrl(v.word) && <img src={pictureUrl(v.word)!} alt={v.word} className="my-3 h-32 w-32 object-contain" />}
                 <p className="mt-1 text-sm" style={{ color: `#${theme.ink}` }}>
-                  {v.definition}
+                  <LessonText>{v.definition}</LessonText>
                 </p>
                 {v.example ? (
                   <p className="mt-1 text-sm italic" style={{ color: `#${theme.muted}` }}>
-                    “{v.example}”
+                    <LessonText>{`“${v.example}”`}</LessonText>
                   </p>
                 ) : null}
               </div>
@@ -97,8 +99,8 @@ function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType
             style={{ backgroundColor: `#${theme.panel}`, color: `#${theme.ink}` }}
           >
             {lines.map((line, i) => (
-              <p key={i} className="whitespace-pre-line">
-                {splitHighlights(line, slide.highlightWords).map((part, j) =>
+              <p key={i} className="lesson-slide-copy">
+                {splitHighlights(line.replace(/\n/g, ' '), slide.highlightWords).map((part, j) =>
                   part.highlight ? (
                     <strong key={j} style={{ color: `#${theme.highlight}` }}>
                       {part.text}
@@ -121,7 +123,7 @@ function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType
               color: `#${theme.title}`,
             }}
           >
-            {slide.interaction}
+            <LessonText>{slide.interaction}</LessonText>
           </div>
         ) : null}
 
@@ -135,25 +137,25 @@ function TeacherSlideGuidance({ slides }: { slides: Slide[] }) {
     <summary className="cursor-pointer font-semibold">Teacher guidance — excluded from PowerPoint</summary>
     {slides.map((slide,index)=><section key={index} className="mt-5">
       <h3 className="font-semibold">{slide.number}. {slide.title}</h3>
-      {slide.interaction && <p className="mt-2 text-sm"><strong>Original task / facilitation:</strong> {slide.interaction}</p>}
+      {slide.interaction && <p className="mt-2 text-sm"><strong>Original task / facilitation:</strong> <LessonText>{slide.interaction}</LessonText></p>}
       <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Visual
             </dt>
-            <dd className="text-muted-foreground">{slide.visualSuggestion || "—"}</dd>
+            <dd className="text-muted-foreground"><LessonText>{slide.visualSuggestion || "—"}</LessonText></dd>
           </div>
           <div>
             <dt className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Teacher note
             </dt>
-            <dd className="text-muted-foreground">{slide.teacherNote || "—"}</dd>
+            <dd className="text-muted-foreground"><LessonText>{slide.teacherNote || "—"}</LessonText></dd>
           </div>
           <div>
             <dt className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Purpose
             </dt>
-            <dd className="text-muted-foreground">{slide.purpose || "—"}</dd>
+            <dd className="text-muted-foreground"><LessonText>{slide.purpose || "—"}</LessonText></dd>
           </div>
       </dl>
     </section>)}

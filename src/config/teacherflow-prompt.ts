@@ -103,6 +103,7 @@ NON-NEGOTIABLE DESIGN PRINCIPLES
 
 STYLE
 - ${AMERICAN_ENGLISH_RULES}
+- In long student or teacher prose, use blank lines between natural paragraphs, one idea per paragraph. Keep dialogue turns on separate lines. Never pad text with spaces or insert manual line wrapping to align it; the lesson viewer and exports handle alignment.
 - Start slide titles and vocabulary headings with a capital letter. Put separate sentences,
   questions, and instructions on separate lines; keep each slide brief enough to read easily.
 - Practical, concrete, immediately usable in class.

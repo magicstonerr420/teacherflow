@@ -1,3 +1,4 @@
+import { LessonText } from '@/components/lesson/LessonText';
 import { BookOpen, Printer } from "lucide-react";
 import { useState } from "react";
 
@@ -119,9 +120,9 @@ export function StudentLessonView({ share }: { share: PublicStudentShare | null 
                   <ol className="space-y-5">
                     {section.items.map((item, itemIndex) => (
                       <li key={itemIndex} className="break-inside-avoid space-y-2">
-                        <p className="whitespace-pre-wrap text-sm leading-7">
-                          <span className="mr-2 font-semibold">{item.number}.</span>
-                          {worksheetItemPrompt(item)}
+                        <p className="flex gap-2 text-sm leading-7">
+                          <span className="shrink-0 font-semibold">{item.number}.</span>
+                          <LessonText className="flex-1">{worksheetItemPrompt(item)}</LessonText>
                         </p>
                         {pictureUrl(worksheetPictureKey(item)) && (
                           <img
@@ -218,10 +219,10 @@ export function StudentLessonView({ share }: { share: PublicStudentShare | null 
               Suggested time: {share.homework.estimatedTime}
             </p>
           )}
-          <ol className="list-inside list-decimal space-y-3 text-sm leading-7">
+          <ol className="list-outside list-decimal space-y-3 pl-5 text-sm leading-7">
             {share.homework.tasks.map((task, index) => (
               <li key={index} className="whitespace-pre-wrap">
-                {task}
+                <LessonText>{task}</LessonText>
               </li>
             ))}
           </ol>
@@ -237,14 +238,14 @@ export function StudentLessonView({ share }: { share: PublicStudentShare | null 
 }
 
 function Text({ children }: { children: string }) {
-  return children ? <p className="whitespace-pre-wrap text-sm leading-7">{children}</p> : null;
+  return children ? <LessonText className="text-sm">{children}</LessonText> : null;
 }
 
 function Choices({ values }: { values: string[] }) {
   return values.length ? (
     <ul className="ml-5 list-disc space-y-1 text-sm leading-6">
       {values.map((choice, index) => (
-        <li key={index}>{choice}</li>
+        <li key={index}><LessonText>{choice}</LessonText></li>
       ))}
     </ul>
   ) : null;
@@ -257,9 +258,9 @@ function Questions({ questions }: { questions: { question: string; choices: stri
       <ol className="space-y-5">
         {questions.map((question, index) => (
           <li key={index} className="break-inside-avoid space-y-2">
-            <p className="whitespace-pre-wrap text-sm leading-7">
-              <strong>{index + 1}. </strong>
-              {question.question}
+            <p className="flex gap-2 text-sm leading-7">
+              <strong className="shrink-0">{index + 1}.</strong>
+              <LessonText className="flex-1">{question.question}</LessonText>
             </p>
             <Choices values={question.choices} />
             <div aria-label="Space for your answer" className="h-8 border-b border-dotted" />

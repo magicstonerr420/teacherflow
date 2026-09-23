@@ -152,6 +152,31 @@
   letter-spacing: -0.02em;
 }
 
+.lesson-copy {
+  display: block;
+  min-width: 0;
+  text-align: justify;
+  text-align-last: start;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.lesson-paragraph {
+  display: block;
+  white-space: normal;
+  orphans: 2;
+  widows: 2;
+}
+.lesson-paragraph + .lesson-paragraph {
+  margin-block-start: 0.9em;
+}
+.lesson-slide-copy {
+  text-align: justify;
+  text-align-last: start;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
 @media print {
   .no-print {
     display: none !important;
@@ -208,5 +233,4 @@
     widows: 2;
   }
 }
-
 

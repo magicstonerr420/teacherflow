@@ -1,3 +1,4 @@
+import { LessonText } from '@/components/lesson/LessonText';
 import {alternateWorksheetIssue} from '@/lib/worksheet-versions';
 import {PdfPreview} from './PdfPreview';
 import { useServerFn } from "@tanstack/react-start";
@@ -396,7 +397,7 @@ function Bullets({ items }: { items: string[] }) {
   return (
     <ul className="list-disc space-y-1.5 pl-5 text-sm leading-relaxed">
       {items.map((item, i) => (
-        <li key={i}>{item}</li>
+        <li key={i}><LessonText>{item}</LessonText></li>
       ))}
     </ul>
   );
@@ -406,7 +407,7 @@ function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <dt className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</dt>
-      <dd className="mt-1 text-sm leading-relaxed">{value}</dd>
+      <dd className="mt-1 text-sm leading-relaxed"><LessonText>{value}</LessonText></dd>
     </div>
   );
 }
@@ -529,10 +530,10 @@ function SectionBody({
           </Panel>
           <div className="grid gap-5 md:grid-cols-2">
             <Panel title="Example">
-              <p className="text-sm whitespace-pre-line">{a.example}</p>
+              <p className="text-sm whitespace-pre-line"><LessonText>{a.example}</LessonText></p>
             </Panel>
             <Panel title="Variation">
-              <p className="text-sm whitespace-pre-line">{a.variation}</p>
+              <p className="text-sm whitespace-pre-line"><LessonText>{a.variation}</LessonText></p>
             </Panel>
           </div>
         </div>
@@ -543,10 +544,10 @@ function SectionBody({
       return (
         <Panel>
           <h3 className="text-base font-semibold">{h.title}</h3>
-          <p className="mt-2 text-sm text-muted-foreground">{h.instructions}</p>
+          <p className="mt-2 text-sm text-muted-foreground"><LessonText>{h.instructions}</LessonText></p>
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm">
             {h.tasks.map((t, i) => (
-              <li key={i}>{t}</li>
+              <li key={i}><LessonText>{t}</LessonText></li>
             ))}
           </ol>
           <p className="mt-4 text-sm text-muted-foreground">Estimated time: {h.estimatedTime}</p>
@@ -563,10 +564,10 @@ function SectionBody({
           </div>
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm">
             {e.questions.map((q, i) => (
-              <li key={i}>{q}</li>
+              <li key={i}><LessonText>{q}</LessonText></li>
             ))}
           </ol>
-          <p className="mt-4 text-sm text-muted-foreground">Success looks like: {e.successIndicator}</p>
+          <p className="mt-4 text-sm text-muted-foreground">Success looks like: <LessonText>{e.successIndicator}</LessonText></p>
         </Panel>
       );
     }
@@ -577,7 +578,7 @@ function SectionBody({
       return (
         <div className="space-y-5">
           <Panel>
-            <p className="text-sm leading-relaxed">{s.summary}</p>
+            <p className="text-sm leading-relaxed"><LessonText>{s.summary}</LessonText></p>
           </Panel>
           <Panel title="Sentence frames">
             <Bullets items={s.sentenceFrames} />
@@ -608,7 +609,7 @@ function SectionBody({
       return (
         <div className="space-y-5">
           <Panel>
-            <p className="text-sm leading-relaxed">{c.summary}</p>
+            <p className="text-sm leading-relaxed"><LessonText>{c.summary}</LessonText></p>
           </Panel>
           <Panel title="Extension tasks">
             <Bullets items={c.tasks} />
@@ -626,8 +627,8 @@ function SectionBody({
             <div className="space-y-3">
               {lesson.teacherNotes.problems.map((p, i) => (
                 <div key={i} className="rounded-lg bg-muted p-3 text-sm">
-                  <p className="font-medium">{p.problem}</p>
-                  <p className="mt-1 text-muted-foreground">{p.solution}</p>
+                  <p className="font-medium"><LessonText>{p.problem}</LessonText></p>
+                  <p className="mt-1 text-muted-foreground"><LessonText>{p.solution}</LessonText></p>
                 </div>
               ))}
             </div>
@@ -651,7 +652,7 @@ function SectionBody({
                     <StatusBadge status={c.status} />
                     <h3 className="text-sm font-semibold">{c.criterion}</h3>
                   </div>
-                  <p className="text-muted-foreground mt-1 text-sm">{c.comment}</p>
+                  <p className="text-muted-foreground mt-1 text-sm"><LessonText>{c.comment}</LessonText></p>
                 </div>
               ))}
             </div>
@@ -662,11 +663,11 @@ function SectionBody({
                 <StatusBadge status={c.status} />
                 <h3 className="text-sm font-semibold">{c.criterion}</h3>
               </div>
-              <p className="text-muted-foreground mt-2 text-sm">{c.comment}</p>
+              <p className="text-muted-foreground mt-2 text-sm"><LessonText>{c.comment}</LessonText></p>
             </Panel>
           ))}
           <Panel title="Overall">
-            <p className="text-sm leading-relaxed">{lesson.qualityCheck.overallNotes}</p>
+            <p className="text-sm leading-relaxed"><LessonText>{lesson.qualityCheck.overallNotes}</LessonText></p>
           </Panel>
         </div>
       );
@@ -691,13 +692,13 @@ function QuestionSet({
   return (
     <Panel>
       <h3 className="text-base font-semibold">{set.title}</h3>
-      <p className="mt-2 text-sm text-muted-foreground">{set.instructions}</p>
+      <p className="mt-2 text-sm text-muted-foreground"><LessonText>{set.instructions}</LessonText></p>
       <ol className="mt-4 list-decimal space-y-4 pl-5 text-sm">
         {set.questions.map((q, i) => (
           <li key={i}>
-            <p className="whitespace-pre-line">{q.prompt}</p>
+            <p className="whitespace-pre-line"><LessonText>{q.prompt}</LessonText></p>
             <p className="mt-1 text-xs text-muted-foreground">{q.type}</p>
-            <p className="mt-1 rounded-md bg-muted px-2 py-1 text-sm">Answer: {q.answer}</p>
+            <p className="mt-1 rounded-md bg-muted px-2 py-1 text-sm">Answer: <LessonText>{q.answer}</LessonText></p>
           </li>
         ))}
       </ol>
