@@ -11,6 +11,7 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:4201';
   await page.route('**/audience-test',route=>route.fulfill({contentType:'text/html',body:'<html><body><script type="module">import R from "/@react-refresh";R.injectIntoGlobalHook(window);window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>type=>type;window.__vite_plugin_react_preamble_installed__=true;</script></body></html>'}));
   await page.goto(origin+'/audience-test');
   const fixture=JSON.parse(await fs.readFile('tests/young-data.json','utf8'));
+  fixture.reportedInteractions=JSON.parse(await fs.readFile('tests/fixtures/daily-actions-teacher-interactions.json','utf8'));
   const result=await page.evaluate(async fixture=>{
    const {buildPresentationBlob}=await import('/src/lib/pptx.ts');
    const {buildPresentationTeacherGuidePdf,buildLessonPackageZip}=await import('/src/lib/exports.ts');
@@ -18,6 +19,7 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:4201';
    const {picturePng}=await import('/src/lib/young-learners.ts');
    const base={number:1,title:'Our goal',layout:'content',studentText:'I can listen and do the action.',bullets:[],vocabulary:[],highlightWords:['listen'],interaction:'Ask: Can you do one action when you hear it?',teacherNote:'HIDDEN-TEACHER-ANSWER: jump.',purpose:'HIDDEN-TEACHER-PURPOSE',visualSuggestion:'HIDDEN-TEACHER-VISUAL',imagePrompt:''};
    const slides=[base,{...base,number:2,title:'Listen and do',studentText:'Listen. Do the action.',interaction:'Students act out each command with the teacher.'},{...base,number:3,title:'Say it together',studentText:'Say the word.',interaction:'Choral drill. Then one student leads one command.'},{...base,number:4,title:'Pair practice',studentText:'Work with a partner.',interaction:'Student A says a word. Student B does the action. Then switch.'},{...base,number:5,title:'Vocabulary',layout:'vocabulary',studentText:'',vocabulary:[{word:'ball',definition:'A round toy.',example:'I have a ball.',imagePrompt:'test-ball'}],interaction:'Ask students to repeat the word.'},{...base,number:6,title:'Your action',studentText:'Point to the picture.',interaction:'Tell the students to look carefully and check their answers. '.repeat(20)}];
+   for(const interaction of fixture.reportedInteractions) slides.push({...base,number:slides.length+1,title:'Daily Actions',studentText:'Listen. Say the word. Do the action.',interaction});
    const lesson={...fixture.lesson,presentation:{slides},lessonPlan:{...fixture.lesson.lessonPlan,stages:[]},activity:{...fixture.lesson.activity,materials:[]},overview:{...fixture.lesson.overview,materialsNeeded:[]}};
    lesson.teacherNotes={problems:[],tips:[]};
    const original=JSON.stringify(lesson),picture=await picturePng('ball');
@@ -47,6 +49,7 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:4201';
    assert.match(deck.text,/Can you do one action when you hear it\?/);
    assert.match(deck.text,/Student A says a word/);
    assert.match(deck.text,/I have a ball/);
+   assert.doesNotMatch(deck.text,/Teacher (?:points|models|jumps|says|gives)|Whole-class check|One gives a single command|The other performs|Then they switch|Repeat three times/);
    await fs.writeFile(`.local-runtime/student-presentation-review/${deck.age}.pptx`,Buffer.from(deck.blob,'base64'));
   }
   assert.doesNotMatch(result.packageXml,/HIDDEN-TEACHER|Choral drill|Students act out|Ask students|Tell the students/);

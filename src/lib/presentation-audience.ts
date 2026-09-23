@@ -5,19 +5,29 @@ import { presentationParagraphs } from './presentation-text.ts';
 // Keep their original text in the teacher guide; never rewrite the saved lesson.
 const teacherLabel = /^(?:teacher(?:'s)?\s+(?:notes?|instructions?|guidance)|teaching\s+(?:notes?|guidance)|answer\s*key|(?:correct|expected|suggested|model)\s+(?:answers?|responses?)|answers?|purpose|visual\s+suggestion)\s*:/i;
 const teacherDirection = /^(?:(?:then|next|finally)\s*[,;:]?\s*)?(?:choral\s+drill\b|(?:ask|tell|have|invite|encourage|remind|help|guide|allow|let|get)\s+(?:the\s+)?(?:students?|learners?|pupils?|children|class)\b|(?:monitor|elicit|assess|model|demonstrate|pre-?teach)\b|(?:students|learners|pupils|children)\s+(?!A\b|B\b)|(?:one|each|a|the)\s+student\s+(?:leads?|reads?|answers?|says?|responds?|acts?|performs?)\b)/i;
+const teacherNarration = /^(?:(?:then|next|finally)\s*[,;:]?\s*)?(?:(?:(?:the|a|your)\s+)?teacher\b|whole[- ]class\s+(?:check|drill|assessment)\b)/i;
 
 /** Keep direct learner prompts; omit identifiable facilitation/answer guidance. */
 export function studentInteraction(text: string): string {
   const lines = presentationParagraphs(text).flatMap(sentence => sentence.split(/;\s*/));
-  return lines.map(line => line.trim()).filter(Boolean).flatMap(line => {
-    if (teacherLabel.test(line) || teacherDirection.test(line)) return [];
+  const prompts: string[] = [];
+  for (const value of lines) {
+    const line = value.trim();
+    if (!line) continue;
+    // A teacher paragraph is one instruction, even when it spans sentences.
+    // Keeping its tail leaks fragments like "One gives a command. The other
+    // performs it", or an answer explanation after an "Answer key:" label.
+    if (teacherLabel.test(line) || teacherDirection.test(line) || teacherNarration.test(line)) break;
     // "Ask: Can you jump?" is a useful learner question with a presenter prefix.
     if (/^ask\s*:/i.test(line)) {
       const question = line.replace(/^ask\s*:\s*/i, '').trim();
-      return /^(?:can|could|do|does|did|is|are|was|were|have|has|will|would|should|what|which|who|where|when|why|how)\b/i.test(question) && question.endsWith('?') ? [question] : [];
+      if (!/^(?:can|could|do|does|did|is|are|was|were|have|has|will|would|should|what|which|who|where|when|why|how)\b/i.test(question) || !question.endsWith('?')) break;
+      prompts.push(question);
+    } else {
+      prompts.push(line);
     }
-    return [line];
-  }).join(' ');
+  }
+  return prompts.join(' ');
 }
 
 /** A separate projection prevents notes from leaking through pagination or exports. */

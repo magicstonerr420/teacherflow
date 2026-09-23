@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { studentInteraction, studentPresentationSlide, assertStudentPresentation } from '../src/lib/presentation-audience.ts';
 import { youngSlidePages } from '../src/lib/young-slides.ts';
+import { readFileSync } from 'node:fs';
 
 const slide={number:2,title:'Our goal',layout:'goal',studentText:'I can listen and do the action.',bullets:[],vocabulary:[],highlightWords:[],interaction:'Ask: Can you do one action when you hear it?',teacherNote:'Teacher-only answer: jump.',purpose:'Check comprehension.',visualSuggestion:'Teacher-only staging.',imagePrompt:''};
 test('presenter prefix becomes a direct learner question',()=>{
@@ -15,6 +16,15 @@ test('facilitation and answer guidance stay out of student tasks',()=>{
 });
 test('learner commands, role assignments and model language remain intact',()=>{
   for(const text of ['Show me: sit, stand, stop.','Student A says a word. Student B does the action. Then switch.','Which sentence is correct — A or B?','Yes, I have. / No, I haven’t.']) assert.equal(studentInteraction(text),text);
+});
+test('all teacher interaction blocks from the reported Daily Actions export are excluded',()=>{
+  const interactions=JSON.parse(readFileSync(new URL('./fixtures/daily-actions-teacher-interactions.json',import.meta.url),'utf8'));
+  for(const text of interactions) assert.equal(studentInteraction(text),'',text);
+});
+test('teacher paragraphs do not leave narration or answer explanations behind',()=>{
+  assert.equal(studentInteraction('Listen and point. Teacher models the answer. Repeat three times.'),'Listen and point.');
+  assert.equal(studentInteraction('Choose A or B. Answer key: B. It uses the past tense.'),'Choose A or B.');
+  assert.equal(studentInteraction('The teacher gives a command. One gives an answer.'),'');
 });
 test('student projection is nonmutating and is applied before young-slide pagination',()=>{
   const source={...slide,interaction:'Ask students to look at each picture. '.repeat(25)};
