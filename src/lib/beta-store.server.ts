@@ -341,6 +341,17 @@ export class BetaStore {
       history:s.accessHistory??[],
     };
   }
+  /** Read-only recovery for the authenticated owner of these runs, including revoked accounts. */
+  draftProgress(user:string) {
+    if(!user)throw Error('Sign in to open your unfinished lessons.');
+    const s=JSON.parse((this.db.prepare('SELECT body FROM beta_state WHERE id=1').get() as any).body) as State;
+    return Object.values(s.teachers[user]?.runs??{}).map(run=>({
+      request:run.request,
+      complete:run.complete,
+      parts:Object.fromEntries(phases.filter(part=>run.parts[part]?.value!==undefined).map(part=>[part,run.parts[part]!.value])),
+      activeUntil:Math.max(0,...Object.values(run.parts).map(job=>job.value===undefined?(job.until??0):0))||null,
+    }));
+  }
   managementRecovery(actor:string, input:{operation:string;user:string;lesson:string;action:'allow_retry'|'restore_slot';part:string;target:string}) {
     return this.transact(s=>{
       if (!actor) throw Error('Owner sign-in is required.');

@@ -9,6 +9,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { betaStore } from "./beta-store.server";
 import { generationAccess } from "./generation-access.server";
+import { betaEnabled } from './beta-store.server';
+import { betaUser } from './beta-auth.server';
+import { lessonDraftStore } from './lesson-drafts-store.server';
+import { saveCompletedDraft } from './lesson-drafts-save.server';
+import { z } from 'zod';
 import { generateReading } from "./reading.server";
 import { needsReading, integrateReadingPatch, withoutReadingSections, READING_HANDOFF } from "./reading";
 import { generateListening } from './listening.server';
@@ -114,11 +119,15 @@ export const generateLessonStage = createServerFn({ method: "POST" })
     const stage = (input as { stage: StageName }).stage;
     if (!Object.prototype.hasOwnProperty.call(STAGE_SCHEMAS, stage)) throw new Error("Unknown lesson step. Refresh the builder to load the current version.");
     const prior = ((input as { prior?: Partial<LessonPackage> }).prior ?? {}) as Partial<LessonPackage>;
-    return { request: parsed, stage, prior };
+    const draftId=z.string().uuid().optional().parse((input as {draftId?:unknown}).draftId);
+    return { request: parsed, stage, prior, draftId };
   })
   .handler(async ({ data }) => {
-    const { request, stage } = data;
+    const { stage } = data;
     const { user, limited } = await generationAccess(getRequest());
+    const draftUser=data.draftId?(betaEnabled()?user:await betaUser(getRequest())):user;
+    // A resumed draft is immutable. Neither the supplied request nor prior can replace its checkpoints.
+    const request=data.draftId?lessonDraftStore().get(draftUser,data.draftId).request:data.request;
     const generate = async (prior: Partial<LessonPackage>) => {
     const schemas = STAGE_SCHEMAS;
     if (ageBand(request.studentAge) !== "Kids" && stage === "studentB") return { worksheet: { studentB: { title: "", instructions: "", sections: [] } } };
@@ -188,6 +197,8 @@ export const generateLessonStage = createServerFn({ method: "POST" })
       friendly(error);
     }
     };
+    if(data.draftId)return lessonDraftStore().stage(draftUser,data.draftId,stage,async(savedRequest,prior)=>
+      limited?betaStore().stage(user,savedRequest,stage,generate):generate(prior));
     if (limited) return betaStore().stage(user, request, stage, generate);
     return generate(data.prior);
   });
@@ -195,11 +206,12 @@ export const generateLessonStage = createServerFn({ method: "POST" })
 export const saveLesson = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => {
-    const i = input as { request: unknown; content: LessonPackage };
-    return { request: lessonRequestSchema.parse(i.request), content: i.content };
+    const i = input as { request: unknown; content: LessonPackage; draftId?:unknown };
+    return { request: lessonRequestSchema.parse(i.request), content: i.content, draftId:z.string().uuid().optional().parse(i.draftId) };
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    if(data.draftId)return saveCompletedDraft(lessonDraftStore(),supabase,userId,data.draftId);
     const r = data.request;
     const { data: row, error } = await supabase
       .from("lessons")

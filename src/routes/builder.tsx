@@ -1,9 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from "@tanstack/react-start";
 import { AlertCircle, ListPlus, Save, Sparkles, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { trackClientGeneration } from '@/lib/generation-monitor';
+import { generationErrorMessage } from '@/lib/generation-errors';
 
 import { AppShell } from "@/components/AppShell";
 import { QuickStartTip } from '@/components/QuickStartTip';
@@ -28,6 +30,8 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { generateLessonStage, saveLesson, updateLesson } from "@/lib/lesson.functions";
+import { ensureLessonDraft, getLessonDraft } from '@/lib/lesson-drafts.functions';
+import { readBuilderSettings, writeBuilderSettings } from '@/lib/builder-settings';
 import {
   AGE_OPTIONS,
   DURATION_OPTIONS,
@@ -47,8 +51,10 @@ import { cn } from "@/lib/utils";
 import { mergeLessonPatch } from "@/lib/generation-plan";
 
 export const Route = createFileRoute("/builder")({
-  validateSearch: (search: Record<string, unknown>) =>
-    search["example"] === true || search["example"] === "true" ? { example: true } : {},
+  validateSearch: (search: Record<string, unknown>): { example?: boolean; draft?: string } => ({
+    ...(search['example'] === true || search['example'] === 'true' ? { example: true } : {}),
+    ...(typeof search['draft'] === 'string' && /^[a-f0-9-]{36}$/i.test(search['draft']) ? { draft: search['draft'] } : {}),
+  }),
 
   head: () => ({
     meta: [
@@ -113,11 +119,19 @@ const EXAMPLE: LessonRequestInput = {
 
 
 
+type DraftSnapshot = Awaited<ReturnType<typeof getLessonDraft>>;
+
 function Builder() {
+  const { isAuthenticated, loading, user } = useAuth();
+  if (loading) return <AppShell><p role="status" className="mx-auto max-w-3xl px-5 py-12">Opening your workspace…</p></AppShell>;
+  return <BuilderWorkspace key={user?.id ?? 'guest'} userId={user?.id ?? null} isAuthenticated={isAuthenticated} />;
+}
+
+function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; isAuthenticated: boolean }) {
   const [betaAllowed,setBetaAllowed]=useState(false);
-  const { example } = Route.useSearch();
+  const { example, draft: draftId } = Route.useSearch();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
 
   const [form, setForm] = useState<LessonRequestInput>(example ? EXAMPLE : EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -129,11 +143,91 @@ function Builder() {
   const [failedPart, setFailedPart] = useState("");
   const [saving, setSaving] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<DraftSnapshot | null>(null);
+  const draftRef = useRef<DraftSnapshot | null>(null);
+  const [preparing, setPreparing] = useState(false);
+  const [openingDraft, setOpeningDraft] = useState(!!draftId);
+  const [draftError, setDraftError] = useState('');
+  const [saveFailure, setSaveFailure] = useState('');
+  const [settingsReady, setSettingsReady] = useState(false);
+  const [settingsStored, setSettingsStored] = useState(false);
+  const alive = useRef(true), running = useRef(false);
+  const workspaceVersion = useRef(0);
   const checkpoint = useRef<{ request: string; completed: number; lesson: Partial<LessonPackage> } | null>(null);
 
   const runStage = useServerFn(generateLessonStage);
   const persist = useServerFn(saveLesson);
   const persistUpdate = useServerFn(updateLesson);
+  const ensureDraft = useServerFn(ensureLessonDraft);
+  const fetchDraft = useServerFn(getLessonDraft);
+
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+
+  useEffect(() => {
+    if (userId && !example && !draftId) {
+      try { setForm(readBuilderSettings(window.localStorage, userId, EMPTY)); } catch {}
+    }
+    setSettingsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!userId || !settingsReady) return;
+    // Small input data only; keep it synchronous so closing a tab loses no debounce timer.
+    try { setSettingsStored(writeBuilderSettings(window.localStorage, userId, form)); }
+    catch { setSettingsStored(false); }
+  }, [form, userId, settingsReady]);
+
+  function acceptDraft(value: DraftSnapshot, restoreForm = true) {
+    draftRef.current = value; setDraft(value);
+    if (value.status === 'saved' && value.savedLessonId) {
+      // Later teacher edits live in the library, not in the generation checkpoint.
+      void navigate({ to: '/lessons/$id', params: { id: value.savedLessonId }, replace: true });
+      return;
+    }
+    if (restoreForm) setForm(value.request);
+    setCompleted(value.completedStages.length);
+    checkpoint.current = { request: JSON.stringify(value.request), completed: value.completedStages.length, lesson: value.content };
+    if (value.status === 'complete' || value.status === 'saved') {
+      setLesson(value.content as LessonPackage); setGeneratedFor(value.request); setSavedId(value.savedLessonId);
+    } else { setLesson(null); setGeneratedFor(null); setSavedId(null); }
+  }
+
+  useEffect(() => {
+    if (!draftId || draftRef.current?.id === draftId) { setOpeningDraft(false); return; }
+    if (!isAuthenticated) { setOpeningDraft(false); return; }
+    let active = true;
+    // Searching for a different draft reuses this React route. Ignore results from the old workspace.
+    workspaceVersion.current++; running.current = false;
+    setPhase(null); setPreparing(false); setLesson(null); setGeneratedFor(null); setSavedId(null);
+    setFailure(null); setSaveFailure(''); setSaving(false); checkpoint.current = null;
+    draftRef.current = null; setDraft(null);
+    setOpeningDraft(true); setDraftError('');
+    fetchDraft({ data: { id: draftId } }).then(value => {
+      if (!active) return;
+      acceptDraft(value);
+      if (value.status === 'complete') void saveCompleted(value.request, value.content as LessonPackage, value.id);
+    }).catch(error => { if (active) setDraftError(generationErrorMessage(error, 'lesson')); })
+      .finally(() => { if (active) setOpeningDraft(false); });
+    return () => { active = false; };
+  }, [draftId, isAuthenticated, fetchDraft]);
+
+  useEffect(() => {
+    if (!draft || draft.status !== 'generating' || phase || preparing) return;
+    let active = true, pending = false;
+    const timer = setInterval(async () => {
+      if (pending) return;
+      pending = true;
+      try {
+        const value = await fetchDraft({ data: { id: draft.id } });
+        if (active) {
+          acceptDraft(value, false); setDraftError('');
+          if (value.status === 'complete') void saveCompleted(value.request, value.content as LessonPackage, value.id);
+        }
+      } catch { if (active) setDraftError('Could not check the latest progress. Your saved draft is retained. Reopen it from My lessons when your connection returns.'); }
+      finally { pending = false; }
+    }, 3000);
+    return () => { active = false; clearInterval(timer); };
+  }, [draft?.id, draft?.status, phase, preparing, fetchDraft]);
 
   useEffect(() => {
     if (example) setForm(EXAMPLE);
@@ -148,25 +242,46 @@ function Builder() {
     });
   };
 
-  async function build(request: LessonRequestInput) {
+  async function build(request: LessonRequestInput, resumeId?: string) {
+    if (running.current) return;
+    const version = ++workspaceVersion.current;
+    const current = () => alive.current && workspaceVersion.current === version;
+    running.current = true; setPreparing(true); setSaveFailure(''); setDraftError('');
     setFailure(null);
     setFailedPart("");
     setLesson(null);
     setSavedId(null);
     const requestKey = JSON.stringify(request);
-    const previous = checkpoint.current?.request === requestKey ? checkpoint.current : null;
-    const start = previous?.completed ?? 0;
-    setCompleted(start);
-    let assembled: Partial<LessonPackage> = previous?.lesson ?? {};
+    let previous = checkpoint.current?.request === requestKey ? checkpoint.current : null;
+    let durable: DraftSnapshot | null = null;
     let activePart = "Lesson setup";
     try {
+      if (isAuthenticated) {
+        activePart = 'Saving your draft';
+        durable = resumeId ? await fetchDraft({ data: { id: resumeId } }) : await ensureDraft({ data: { request } });
+        if (!current()) return;
+        acceptDraft(durable); request = durable.request;
+        if (durable.status === 'saved') return;
+        previous = { request: JSON.stringify(request), completed: durable.completedStages.length, lesson: durable.content };
+        void navigate({ to: '/builder', search: { draft: durable.id }, replace: true });
+        if (durable.status === 'generating') return;
+        if (durable.status === 'complete') {
+          if (!durable.savedLessonId) await saveCompleted(request, durable.content as LessonPackage, durable.id);
+          return;
+        }
+      }
+      const start = previous?.completed ?? 0;
+      setCompleted(start); setPreparing(false);
+      let assembled: Partial<LessonPackage> = previous?.lesson ?? {};
       for (let i = start; i < PHASES.length; i++) {
+        if (!current()) return;
         const stage = PHASES[i]!.key;
         activePart = PHASES[i]!.labels[0];
         setPhase(stage);
         const result = (await trackClientGeneration(request,stage,()=>runStage({
-          data: { request, stage, prior: assembled },
+          data: { request, stage, prior: assembled, ...(durable ? { draftId: durable.id } : {}) },
         }))) as Partial<LessonPackage>;
+        if (!current()) return;
         assembled = mergeLessonPatch(assembled, result);
         checkpoint.current = { request: requestKey, completed: i + 1, lesson: assembled };
         setCompleted(i + 1);
@@ -174,16 +289,45 @@ function Builder() {
       setLesson(assembled as LessonPackage);
       setGeneratedFor(request);
       checkpoint.current = null;
+      if (durable) {
+        const complete = { ...durable, content: assembled, completedStages: PHASES.map(p => p.key), nextStage: null, status: 'complete' as const, activeUntil: null };
+        draftRef.current = complete; setDraft(complete);
+        setPhase(null);
+        await saveCompleted(request, assembled as LessonPackage, durable.id);
+      }
     } catch (error) {
+      if (!current()) return;
+      if (durable) {
+        try { const retained = await fetchDraft({ data: { id: durable.id } }); if (current()) acceptDraft(retained, false); } catch {}
+      }
+      if (!current()) return;
       setFailedPart(activePart);
-      setFailure(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong while building the class. Please try again.",
-      );
+      setFailure(generationErrorMessage(error, 'lesson'));
     } finally {
-      setPhase(null);
+      if (current()) { running.current = false; setPhase(null); setPreparing(false); }
     }
+  }
+
+  async function saveCompleted(request: LessonRequestInput, content: LessonPackage, id?: string): Promise<string | null> {
+    const version = workspaceVersion.current;
+    const active = () => alive.current && workspaceVersion.current === version;
+    setSaving(true); setSaveFailure('');
+    try {
+      const result = await persist({ data: { request, content, ...(id ? { draftId: id } : {}) } });
+      if (!active()) return result.id;
+      setSavedId(result.id);
+      const current = draftRef.current;
+      if (current && current.id === id) {
+        const saved = { ...current, status: 'saved' as const, savedLessonId: result.id };
+        draftRef.current = saved; setDraft(saved);
+      }
+      void queryClient.invalidateQueries({ queryKey: ['lessons', userId] });
+      void queryClient.invalidateQueries({ queryKey: ['lesson-drafts', userId] });
+      return result.id;
+    } catch (error) {
+      if (active()) setSaveFailure(generationErrorMessage(error, 'lesson'));
+      return null;
+    } finally { if (active()) setSaving(false); }
   }
 
   function submit(e: React.FormEvent) {
@@ -210,35 +354,36 @@ function Builder() {
       navigate({ to: "/auth", search: { redirect: "/builder" } });
       return;
     }
-    setSaving(true);
-    try {
-      const { id } = await persist({ data: { request: generatedFor, content: lesson } });
-      setSavedId(id);
-      toast.success("Lesson saved to My lessons.");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "We could not save this lesson.");
-    } finally {
-      setSaving(false);
-    }
+    const id = await saveCompleted(generatedFor, lesson, draftRef.current?.id);
+    if (id) toast.success('Lesson saved to My lessons.');
   }
 
-  if (phase) {
+  if (preparing || phase) {
     return (
       <AppShell>
-        <GenerationProgress completed={completed} current={phase} />
+        {preparing ? <p role="status" className="mx-auto max-w-xl px-5 py-24">Saving your draft before generation…</p> : <>
+          <GenerationProgress completed={completed} current={phase} durable={!!draft} />
+          {!!draft && <p className="mx-auto max-w-xl px-5 pb-10 text-sm text-muted-foreground">Your draft is saved in <Link to="/lessons" className="underline">My lessons → Unfinished</Link>. If you leave, reopen it and continue from the saved progress.</p>}
+        </>}
       </AppShell>
     );
   }
 
+  if (openingDraft) return <AppShell><p role="status" className="mx-auto max-w-3xl px-5 py-12">Opening your saved draft…</p></AppShell>;
+
   if (lesson && generatedFor) {
     return (
       <AppShell>
+        {saveFailure && <Alert variant="destructive" className="mx-auto mt-6 max-w-4xl"><AlertTitle>Your lesson is generated; saving needs another try</AlertTitle><AlertDescription><p>{saveFailure}</p><p>Your completed draft is retained in My lessons → Unfinished.</p><Button className="mt-3" variant="outline" disabled={saving} onClick={() => void onSave()}>Retry saving lesson</Button></AlertDescription></Alert>}
         <LessonPackageView
           lesson={lesson}
           request={generatedFor}
           onPersist={async (next) => {
-            setLesson(next);
-            if (savedId) await persistUpdate({ data: { id: savedId, content: next } });
+            const version = workspaceVersion.current;
+            const id = savedId ?? (isAuthenticated ? await saveCompleted(generatedFor, lesson, draftRef.current?.id) : null);
+            if (isAuthenticated && !id) throw new Error('Could not save these edits yet. Retry saving your lesson first.');
+            if (id) await persistUpdate({ data: { id, content: next } });
+            if (alive.current && workspaceVersion.current === version) setLesson(next);
           }}
           actions={
             <>
@@ -246,7 +391,7 @@ function Builder() {
                 <Save className="size-4" />
                 {savedId ? "Saved" : saving ? "Saving…" : "Save lesson"}
               </Button>
-              <Button variant="ghost" onClick={() => setLesson(null)}>
+              <Button variant="ghost" disabled={saving} onClick={() => { workspaceVersion.current++; setLesson(null); setSavedId(null); setDraft(null); draftRef.current = null; checkpoint.current = null; void navigate({ to: '/builder', search: {}, replace: true }); }}>
                 Edit inputs
               </Button>
               {savedId && <LessonFeedback lessonId={savedId} />}
@@ -270,6 +415,20 @@ function Builder() {
         <p className="mt-2 text-muted-foreground">
           Tell us the essentials. We will make sensible choices for anything you leave blank.
         </p>
+        {settingsStored && <p className="mt-2 text-xs text-muted-foreground">Class settings saved on this device. Once you start building, lesson progress is saved to your account.</p>}
+        {draftId && !isAuthenticated && <p role="status" className="mt-4">Sign in to reopen your private draft. <Link to="/auth" search={{ redirect: `/builder?draft=${draftId}` }} className="underline">Sign in</Link></p>}
+        {draftError && <Alert variant="destructive" className="mt-6"><AlertTitle>Could not open the latest draft progress</AlertTitle><AlertDescription><p>{draftError}</p><Link to="/lessons" className="underline">Return to My lessons</Link></AlertDescription></Alert>}
+        {draft && !['saved', 'complete'].includes(draft.status) && <section aria-label="Saved lesson progress" className="mt-6 space-y-3 rounded-xl border bg-card p-5">
+          <h2 className="font-semibold">Continue your unfinished lesson</h2>
+          <p>{draft.request.topic} · {draft.request.level} · Ages {draft.request.studentAge}</p>
+          <p>{draft.completedStages.length} of {PHASES.length} parts saved.</p>
+          {draft.status === 'generating' ? <p role="status">Waiting for the current part to finish or become available to retry. Progress updates automatically; no extra generation request has been started.</p> : <>
+            <p className="text-sm text-muted-foreground">Continue with the original settings. Saved parts are reused, and this uses the same lesson slot.</p>
+            {draft.error && <p className="text-sm text-destructive">{draft.error}</p>}
+            <Button onClick={() => void build(draft.request, draft.id)}>Continue unfinished lesson</Button>
+          </>}
+          <p className="text-xs text-muted-foreground">Changing the class settings and building again creates a different lesson.</p>
+        </section>}
 
         {failure ? (
           <Alert variant="destructive" className="mt-6">
@@ -277,8 +436,8 @@ function Builder() {
             <AlertTitle>Could not complete: {failedPart}</AlertTitle>
             <AlertDescription className="space-y-3">
               <p>{failure}</p>
-              <p>{completed} of {PHASES.length} parts completed. With unchanged inputs, retry continues from the failed part. Keep this page open to retain progress.</p>
-              <Button size="sm" variant="outline" onClick={() => void build(form)}>
+              <p>{completed} of {PHASES.length} parts completed. {draft ? 'Your saved progress is in My lessons → Unfinished. Retry uses the original settings and the same lesson slot.' : 'With unchanged inputs, retry continues from the failed part. Keep this page open to retain progress.'}</p>
+              <Button size="sm" variant="outline" disabled={draft?.status === 'generating'} onClick={() => void build(draft?.request ?? form, draft?.id)}>
                 Retry failed part
               </Button>
               <ReportProblem context={{topic: form.topic, studentAge: form.studentAge, level: form.level, section: failedPart || 'Lesson generation'}} />
@@ -314,7 +473,7 @@ function Builder() {
                 />
               </Field>
               <Field label="Student age" required error={errors["studentAge"]}>
-                <Select value={form.studentAge} onValueChange={(v) => set("studentAge", v)}>
+                <Select value={form.studentAge} onValueChange={(v) => { if (v) set("studentAge", v); }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose an age range" />
                   </SelectTrigger>
@@ -328,7 +487,7 @@ function Builder() {
                 </Select>
               </Field>
               <Field label="English level" required error={errors["level"]}>
-                <Select value={form.level} onValueChange={(v) => set("level", v)}>
+                <Select value={form.level} onValueChange={(v) => { if (v) set("level", v); }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a CEFR level" />
                   </SelectTrigger>
@@ -344,7 +503,7 @@ function Builder() {
               <Field label="Class duration" required error={errors["durationMinutes"]}>
                 <Select
                   value={String(form.durationMinutes)}
-                  onValueChange={(v) => set("durationMinutes", Number(v))}
+                  onValueChange={(v) => { if (v) set("durationMinutes", Number(v)); }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={`${form.durationMinutes} minutes`} />
@@ -506,7 +665,7 @@ function Builder() {
               <Field label="Technology available">
                 <Select
                   value={form.technologyAvailable ?? ""}
-                  onValueChange={(v) => set("technologyAvailable", v)}
+                  onValueChange={(v) => { if (v) set("technologyAvailable", v); }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="What can you use in class?" />
@@ -521,7 +680,7 @@ function Builder() {
                 </Select>
               </Field>
               <Field label="Preferred teaching style">
-                <Select value={form.teachingStyle ?? ""} onValueChange={(v) => set("teachingStyle", v)}>
+                <Select value={form.teachingStyle ?? ""} onValueChange={(v) => { if (v) set("teachingStyle", v); }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a style" />
                   </SelectTrigger>
@@ -537,7 +696,7 @@ function Builder() {
               <Field label="Homework requirement">
                 <Select
                   value={form.homeworkRequirement ?? ""}
-                  onValueChange={(v) => set("homeworkRequirement", v)}
+                  onValueChange={(v) => { if (v) set("homeworkRequirement", v); }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Do you need homework?" />

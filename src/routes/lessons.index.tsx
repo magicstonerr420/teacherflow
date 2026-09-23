@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { UnfinishedLessons } from '@/components/UnfinishedLessons';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/lessons/")({
 
 function LessonsPage() {
   const { isAuthenticated, loading, user } = useAuth();
+  const [view,setView] = useState('all');
   const [filters,setFilters] = useState({search:'',level:'',skill:'',favoritesOnly:false});
   const navigate = useNavigate();
   const fetchLessons = useServerFn(listLessons);
@@ -89,12 +91,16 @@ function LessonsPage() {
           </Button>
         </div>
 
-        <Tabs className="mt-6" value={filters.favoritesOnly?'favorites':'all'} onValueChange={value=>setFilters(f=>({...f,favoritesOnly:value==='favorites'}))}>
-          <TabsList aria-label="Lesson library views">
+        <Tabs className="mt-6" value={view} onValueChange={value=>{setView(value);setFilters(f=>({...f,favoritesOnly:value==='favorites'}));}}>
+          <TabsList aria-label="Lesson library views" className="flex h-auto w-fit max-w-full flex-wrap">
             <TabsTrigger value="all">All lessons</TabsTrigger>
             <TabsTrigger value="favorites" disabled={favorites.isPending||favorites.isError}><Star className="mr-2 size-4"/>Favorites</TabsTrigger>
+            <TabsTrigger value="unfinished">Unfinished</TabsTrigger>
           </TabsList>
-          <TabsContent value={filters.favoritesOnly?'favorites':'all'}>
+          <TabsContent value="unfinished">
+            <UnfinishedLessons userId={user?.id} />
+          </TabsContent>
+          <TabsContent value={view==='unfinished'?'all':view}>
         {error ? (
           <p className="mt-8 text-sm text-destructive">We could not load your lessons. Please refresh.</p>
         ) : null}
@@ -111,7 +117,7 @@ function LessonsPage() {
             <FileText className="mx-auto size-6 text-muted-foreground" />
             <p className="mt-4 font-medium">No saved lessons yet</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Build a class and save it — it will appear here.
+              Build a class — completed lessons are saved here automatically.
             </p>
           </div>
         ) : null}
