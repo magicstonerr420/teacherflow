@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path';
 import { recordProvider, recordProviderEvent } from './management-store.server.ts';
 import { inProviderQueue, ProviderQueueError, type ProviderQueue, type ProviderKind } from './provider-queue.server.ts';
 import { retryAfter } from './provider-retry.server.ts';
+import { imagePriceApproval, BACKUP_IMAGE_MODEL } from './image-models.server.ts';
 
 // Invoked only after server-side invitation/ownership checks. Owner calls have no scope.
 const context = new AsyncLocalStorage<string>();
@@ -46,12 +47,13 @@ export class BetaBudget {
       SUM(CASE WHEN state='uncertain' THEN 1 ELSE 0 END) AS uncertain
       FROM budget_calls GROUP BY scope,kind,model ORDER BY confirmedUsd DESC`).all() as {user:string;kind:string;model:string;requests:number;confirmedUsd:number;reservedUsd:number;uncertain:number}[];
   }
-  reserve(scope: string, requestKey: string, kind: string, model: string, usd: number) {
+  reserve(scope: string, requestKey: string, kind: string, model: string, usd: number, legacyKeys: string[] = []) {
     const amount = micros(usd);
     if (!Number.isSafeInteger(amount) || amount <= 0) throw new BetaBudgetError('The cost of this request could not be checked. Contact the organizer.');
     this.db.exec('BEGIN IMMEDIATE');
     try {
-      if (this.db.prepare("SELECT id FROM budget_calls WHERE request_key=? AND state IN ('held','uncertain')").get(requestKey))
+      const keys = [...new Set([requestKey, ...legacyKeys])];
+      if (this.db.prepare(`SELECT id FROM budget_calls WHERE request_key IN (${keys.map(() => '?').join(',')}) AND state IN ('held','uncertain')`).get(...keys))
         throw new BetaBudgetError('This request is running or its previous charge is still uncertain. Your work is saved. Contact the organizer before retrying it.');
       const status = this.status();
       if (status.paused || amount > Math.round(status.remainingUsd * 1e6))
@@ -116,16 +118,18 @@ async function quote(path: string, body: any): Promise<{ kind: string; reserve: 
     return { kind: 'text', reserve: (input * rate.prompt + body.max_tokens * rate.completion) / 1e6 * 1.1 };
   }
   if (path.endsWith('/images')) {
-    if (model !== 'google/gemini-3.1-flash-image-preview' || body.n !== 1 || body.resolution !== '1K' || body.input_references)
+    const approval = imagePriceApproval(model);
+    if (!approval || body.n !== 1 || body.resolution !== '1K' || body.input_references
+      || (model === BACKUP_IMAGE_MODEL && body.aspect_ratio !== '4:3'))
       throw new BetaBudgetError('This image configuration has not been approved for the beta budget. Contact the organizer.');
     const data = await catalog(`https://openrouter.ai/api/v1/images/models/${model}/endpoints`);
-    const endpoint = data.endpoints?.find((e: any) => e.provider_tag === 'google-ai-studio');
+    const endpoint = data.endpoints?.find((e: any) => e.provider_tag === approval.provider);
     const lines = endpoint?.pricing;
-    if (!Array.isArray(lines) || lines.length !== 1 || lines[0].billable !== 'output_image' || lines[0].unit !== 'token' || !(Number(lines[0].cost_usd) > 0 && Number(lines[0].cost_usd) <= .00006))
+    if (!Array.isArray(lines) || lines.length !== 1 || lines[0].billable !== 'output_image' || lines[0].unit !== 'token' || !(Number(lines[0].cost_usd) > 0 && Number(lines[0].cost_usd) <= approval.maxTokenUsd))
       throw new BetaBudgetError('Image pricing changed. Contact the organizer before generating more pictures.');
-    body.provider = { only: ['google-ai-studio'], allow_fallbacks: false };
+    body.provider = { only: [approval.provider], allow_fallbacks: false };
     // Reserve the model's full documented 32,768 output-token limit, even for one 1K image.
-    return { kind: 'image', reserve: (32768 * .00006 + Buffer.byteLength(body.prompt, 'utf8') * .000001) * 1.1 };
+    return { kind: 'image', reserve: (32768 * approval.maxTokenUsd + Buffer.byteLength(body.prompt, 'utf8') * .000001) * 1.1 };
   }
   if (path.endsWith('/audio/speech')) {
     const allowed: Record<string, { tag: string; rate: number }> = {
@@ -168,7 +172,9 @@ async function budgetFetchUnlocked(url:string,options:RequestInit,queue:Provider
   const budget = new BetaBudget();
   let id: string | undefined;
   try {
-    id = budget.reserve(scope, hash(`${scope}:${url}:${operationContext.getStore()??payload}`), estimate.kind, body.model, estimate.reserve);
+    // Deploying a logical identity must also honor uncertain requests from the older payload identity.
+    id = budget.reserve(scope, hash(`${scope}:${url}:${operationContext.getStore()??payload}`), estimate.kind, body.model, estimate.reserve,
+      operationContext.getStore() ? [hash(`${scope}:${url}:${payload}`)] : []);
     let response: Response;
     const started=Date.now();
     try { response = await fetch(url, { ...options, body: payload }); rememberCooldown(response); recordProvider(body.model,estimate.kind,response.status,Date.now()-started); }

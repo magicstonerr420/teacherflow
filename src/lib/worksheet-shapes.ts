@@ -1,4 +1,4 @@
-import { colorShapeResources } from './color-shape-resources';
+import { colorShapeResources } from './color-shape-resources.ts';
 import type { LessonRequestInput, Worksheet } from './lesson-schema';
 
 /** A and B, every age: preserve the tested attribute while replacing generic swatches. */

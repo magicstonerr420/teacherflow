@@ -53,7 +53,11 @@ export default {
       startManagementWorker();
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      if (response.headers.get("content-type")?.includes("text/html")) {
+      if (new URL(request.url).pathname.startsWith("/share/")) {
+        response.headers.set("Cache-Control", "private, no-store");
+        response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+        response.headers.set("Referrer-Policy", "no-referrer");
+      } else if (response.headers.get("content-type")?.includes("text/html")) {
         response.headers.set("Cache-Control", "no-cache");
       }
       return await normalizeCatastrophicSsrResponse(response);

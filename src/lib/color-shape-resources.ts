@@ -1,4 +1,4 @@
-import { beginnerPictures, teachingColors, teachingShapes } from './beginner-pictures';
+import { beginnerPictures, teachingColors, teachingShapes } from './beginner-pictures.ts';
 import type { LessonRequestInput, Slide } from './lesson-schema';
 
 type Request = { requiredVocabulary?: string | null | undefined };

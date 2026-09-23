@@ -20,6 +20,7 @@ import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-imag
 import { Route as ApiGenerationEventsRouteImport } from './routes/api/generation-events'
 import { Route as LessonsIndexRouteImport } from './routes/lessons.index'
 import { Route as LessonsIdRouteImport } from './routes/lessons.$id'
+import { Route as ShareTokenRouteImport } from './routes/share.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +77,11 @@ const LessonsIdRoute = LessonsIdRouteImport.update({
   path: '/lessons/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShareTokenRoute = ShareTokenRouteImport.update({
+  id: '/share/$token',
+  path: '/share/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
+  '/share/$token': typeof ShareTokenRoute
   '/lessons/': typeof LessonsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
+  '/share/$token': typeof ShareTokenRoute
   '/lessons': typeof LessonsIndexRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
+  '/share/$token': typeof ShareTokenRoute
   '/lessons/': typeof LessonsIndexRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/api/generate-image'
     | '/api/generation-events'
     | '/lessons/$id'
+    | '/share/$token'
     | '/lessons/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/api/generate-image'
     | '/api/generation-events'
     | '/lessons/$id'
+    | '/share/$token'
     | '/lessons'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/api/generate-image'
     | '/api/generation-events'
     | '/lessons/$id'
+    | '/share/$token'
     | '/lessons/'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
   ApiGenerationEventsRoute: typeof ApiGenerationEventsRoute
   LessonsIdRoute: typeof LessonsIdRoute
+  ShareTokenRoute: typeof ShareTokenRoute
   LessonsIndexRoute: typeof LessonsIndexRoute
 }
 
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LessonsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/share/$token': {
+      id: '/share/$token'
+      path: '/share/$token'
+      fullPath: '/share/$token'
+      preLoaderRoute: typeof ShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGenerateImageRoute: ApiGenerateImageRoute,
   ApiGenerationEventsRoute: ApiGenerationEventsRoute,
   LessonsIdRoute: LessonsIdRoute,
+  ShareTokenRoute: ShareTokenRoute,
   LessonsIndexRoute: LessonsIndexRoute,
 }
 export const routeTree = rootRouteImport

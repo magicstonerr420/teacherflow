@@ -13,6 +13,7 @@ import { betaEnabled } from './beta-store.server';
 import { betaUser } from './beta-auth.server';
 import { lessonDraftStore } from './lesson-drafts-store.server';
 import { saveCompletedDraft } from './lesson-drafts-save.server';
+import { studentShareStore } from './student-share-store.server';
 import { z } from 'zod';
 import { generateReading } from "./reading.server";
 import { needsReading, integrateReadingPatch, withoutReadingSections, READING_HANDOFF } from "./reading";
@@ -270,14 +271,9 @@ export const getLesson = createServerFn({ method: "POST" })
 
 export const deleteLesson = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { id: string }) => input)
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("lessons").delete().eq("id", data.id);
-    if (error) {
-      console.error(error);
-      throw new Error("We could not delete this lesson.");
-    }
-    return { ok: true };
+    return studentShareStore().deleteLesson(context.supabase, context.userId, data.id);
   });
 
 /* ------------------ Phase 4: edit, regenerate, duplicate ------------------ */

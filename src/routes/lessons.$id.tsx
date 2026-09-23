@@ -6,7 +6,8 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
-import { LessonFeedback } from '@/components/LessonFeedback';
+import { LessonFeedback } from "@/components/LessonFeedback";
+import { StudentShareDialog } from "@/components/StudentShareDialog";
 import { LessonPackageView } from "@/components/lesson/LessonPackageView";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,7 +20,10 @@ export const Route = createFileRoute("/lessons/$id")({
   head: () => ({
     meta: [
       { title: "Saved lesson — TeacherFlow" },
-      { name: "description", content: "Open, review and print a saved TeacherFlow lesson package." },
+      {
+        name: "description",
+        content: "Open, review and print a saved TeacherFlow lesson package.",
+      },
       { property: "og:title", content: "Saved lesson — TeacherFlow" },
       { property: "og:description", content: "A complete, classroom-ready lesson package." },
     ],
@@ -66,7 +70,6 @@ function LessonDetail() {
     onError: () => toast.error("We could not duplicate this lesson. Please try again."),
   });
 
-
   if (isPending || !isAuthenticated) {
     return (
       <AppShell>
@@ -110,6 +113,7 @@ function LessonDetail() {
         actions={
           <>
             <LessonFeedback key={id} lessonId={id} />
+            <StudentShareDialog lessonId={id} userId={user?.id} />
             <Button
               variant="outline"
               onClick={() => duplicate.mutate()}
@@ -126,6 +130,5 @@ function LessonDetail() {
         }
       />
     </AppShell>
-
   );
 }

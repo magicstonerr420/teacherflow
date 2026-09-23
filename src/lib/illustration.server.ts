@@ -1,9 +1,12 @@
-import { budgetFetch, BetaBudgetError } from './beta-budget.server.ts';
+import { budgetFetch, BetaBudgetError, withProviderOperation } from './beta-budget.server.ts';
 import { modelSetting } from "./model-settings.server.ts";
 import { ProviderRateLimitError, retryRateLimited } from './provider-retry.server.ts';
 import { validateImageBase64 } from './media-validation.server.ts';
 import { ProviderQueueError } from './provider-queue.server.ts';
 import { recordProviderEvent } from './management-store.server.ts';
+import { withImageModelFallback } from './image-fallback.server.ts';
+import { ProviderRejectedError } from './provider-fallback.server.ts';
+import { BACKUP_IMAGE_MODEL, PRIMARY_IMAGE_MODEL } from './image-models.server.ts';
 
 export class IllustrationBillingError extends Error {
   readonly code = 'image_billing';
@@ -32,8 +35,20 @@ export function illustrationBrief(prompt: string, age: string, level: string) {
 export async function generateIllustration(prompt: string, age: string, level: string) {
   const key = process.env["OPENROUTER_API_KEY"]?.trim();
   if (!key) throw new Error("The OpenRouter image key is not configured.");
-  const model = modelSetting("OPENROUTER_IMAGE_MODEL", "google/gemini-3.1-flash-image-preview");
+  const primary = modelSetting("OPENROUTER_IMAGE_MODEL", PRIMARY_IMAGE_MODEL);
+  const brief = illustrationBrief(prompt, age, level);
   const signal = AbortSignal.timeout(180_000);
+  return withProviderOperation(JSON.stringify({ kind: 'illustration', prompt, age, level }), () =>
+    withImageModelFallback(primary, signal, model => generateImage(model, brief, key, signal), {
+      onFallback: (from, to, reason) => recordProviderEvent({
+        model: to, kind: 'image', event: 'fallback', ms: 0,
+        detail: `Approved image alternate after ${reason}; previous model ${from}.`,
+      }),
+    }),
+  );
+}
+
+async function generateImage(model: string, brief: string, key: string, signal: AbortSignal) {
   let response: Response;
   try { response = await retryRateLimited(() => budgetFetch("https://openrouter.ai/api/v1/images", {
     method: "POST",
@@ -41,9 +56,10 @@ export async function generateIllustration(prompt: string, age: string, level: s
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model,
-      prompt: illustrationBrief(prompt, age, level),
+      prompt: brief,
       aspect_ratio: "4:3",
-      ...(model === "google/gemini-3.1-flash-image-preview" ? { resolution: "1K" } : {}),
+      ...([PRIMARY_IMAGE_MODEL, BACKUP_IMAGE_MODEL].includes(model) ? { resolution: "1K" } : {}),
+      ...(model === BACKUP_IMAGE_MODEL ? { provider: { only: ['google-vertex/global'], allow_fallbacks: false } } : {}),
       n: 1,
     }),
   }), { signal, onRetry: async (_attempt, ms) => { recordProviderEvent({ model, kind: 'image', event: 'retry', ms, detail: 'Explicit image rate-limit rejection.' }); } }); }
@@ -52,6 +68,7 @@ export async function generateIllustration(prompt: string, age: string, level: s
     throw new Error('The image service connection was interrupted. Your completed pictures have been kept. The previous request may still be running; contact the organizer before requesting another picture.');
   }
   if (response.status === 402) throw new IllustrationBillingError();
+  if (response.status === 404) throw new ProviderRejectedError('The image model is unavailable. Your completed pictures have been kept; retry only this picture.', 404);
   if (!response.ok) throw new Error(response.status >= 500 || response.status === 408
     ? 'The image service could not confirm this picture. Your completed pictures have been kept. Contact the organizer before retrying this picture.'
     : 'OpenRouter could not generate this illustration. Your completed pictures have been kept; retry only this picture.');
