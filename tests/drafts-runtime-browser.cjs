@@ -18,7 +18,7 @@ const assert = require('node:assert/strict');
   assert.ok(project, 'Browser Supabase project exists');
   const port = process.env.DRAFTS_RUNTIME_PORT || '3012', origin = `http://127.0.0.1:${port}`;
   let server, serverLog = '', browser;
-  const errors = [], blocked = [], checks = [], rpc = [];
+  const errors = [], blocked = [], checks = [], rpc = [], stageUploads = [];
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   const readJson = async (file, fallback = []) => { try { return JSON.parse(await fs.readFile(path.join(directory, file), 'utf8')); } catch { return fallback; } };
   const calls = async () => { try { return (await fs.readFile(path.join(directory, 'provider.jsonl'), 'utf8')).trim().split('\n').filter(Boolean).map(line => JSON.parse(line)); } catch { return []; } };
@@ -43,6 +43,10 @@ const assert = require('node:assert/strict');
     const context = await browser.newContext({ viewport: { width: 1365, height: 1000 } });
     context.on('page', page => {
       page.on('pageerror', error => errors.push(error.message));
+      page.on('request', request => {
+        const body = request.postData() || '';
+        if (request.url().includes('/_serverFn/') && body.includes('"stage"') && body.includes('"draftId"')) stageUploads.push(body);
+      });
       page.on('response', async response => { if (response.url().includes('/_serverFn/')) rpc.push({ status: response.status(), url: response.url().split('?')[0], body: await response.text().catch(() => '') }); });
     });
     await context.route('**/*', route => {
@@ -224,6 +228,8 @@ const assert = require('node:assert/strict');
     checks.push('owner draft reload opens latest saved edits without beta allowance or repeat generation');
     await owner.close(); await context.close();
     assert.deepEqual(errors, []);
+    assert.ok(stageUploads.length > 0, 'Real compiled draft-stage requests were observed');
+    assert.ok(stageUploads.every(body => !body.includes('"prior"')), 'Saved draft stages do not re-upload previously generated lesson parts');
     assert.ok(blocked.every(url => url.startsWith('https://fonts.googleapis.com/')), 'No unmocked external app services');
     console.log(JSON.stringify({ passed: true, checks, realProviderCalls: 0, fixtureProviderCalls: (await calls()).length, directory }));
   } catch (error) {

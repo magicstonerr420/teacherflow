@@ -18,6 +18,7 @@ import { listFavorites, setLessonFavorite } from '@/lib/teacher-tools.functions'
 import { filterLibrary } from '@/lib/teacher-tools';
 import { useAuth } from "@/hooks/useAuth";
 import { deleteLesson, duplicateLesson, listLessons } from "@/lib/lesson.functions";
+import { ACCOUNT_READ_STALE_MS, readRequest } from '@/lib/read-request';
 
 
 export const Route = createFileRoute("/lessons/")({
@@ -48,10 +49,12 @@ function LessonLibrary({ userId }: { userId: string }) {
   const [filters,setFilters] = useState({search:'',level:'',skill:'',favoritesOnly:false});
   const fetchLessons = useServerFn(listLessons);
 
-  const { data, isPending, error } = useQuery({
+  const { data, isPending, error, refetch, isFetching } = useQuery({
     queryKey: ["lessons",userId],
-    queryFn: () => fetchLessons(),
+    queryFn: ({signal}) => readRequest(requestSignal=>fetchLessons({signal:requestSignal}),{signal}),
     enabled: !!userId,
+    staleTime: ACCOUNT_READ_STALE_MS,
+    retry: false,
   });
 
   const queryClient = useQueryClient();
@@ -59,7 +62,7 @@ function LessonLibrary({ userId }: { userId: string }) {
   const removeLesson = useServerFn(deleteLesson);
   const fetchFavorites = useServerFn(listFavorites);
   const toggleFavorite = useServerFn(setLessonFavorite);
-  const favorites = useQuery({queryKey:['favorites',userId],queryFn:()=>fetchFavorites(),enabled:!!userId});
+  const favorites = useQuery({queryKey:['favorites',userId],queryFn:({signal})=>readRequest(requestSignal=>fetchFavorites({signal:requestSignal}),{signal}),enabled:!!userId,staleTime:ACCOUNT_READ_STALE_MS,retry:false});
   const favorite = useMutation({
     mutationFn:(lessonId:string)=>toggleFavorite({data:{lessonId,active:!favorites.data?.includes(lessonId)}}),
     onSuccess:()=>queryClient.invalidateQueries({queryKey:['favorites',userId]}),
@@ -79,8 +82,9 @@ function LessonLibrary({ userId }: { userId: string }) {
 
   const remove = useMutation({
     mutationFn: (id: string) => removeLesson({ data: { id } }),
-    onSuccess: () => {
+    onSuccess: (_result, id) => {
       toast.success("Lesson deleted.");
+      queryClient.removeQueries({ queryKey: ['lesson', userId, id], exact: true });
       void queryClient.invalidateQueries({ queryKey: ["lessons", userId] });
       void queryClient.invalidateQueries({ queryKey: ["class-library", userId] });
     },
@@ -112,7 +116,10 @@ function LessonLibrary({ userId }: { userId: string }) {
           </TabsContent>
           <TabsContent value={view==='favorites'?'favorites':'all'}>
         {error ? (
-          <p className="mt-8 text-sm text-destructive">We could not load your lessons. Please refresh.</p>
+          <div role="alert" className="mt-8 space-y-3">
+            <p className="text-sm text-destructive">We could not load your lessons. Your saved work is kept.</p>
+            <Button variant="outline" size="sm" disabled={isFetching} onClick={()=>void refetch()}>Retry lessons</Button>
+          </div>
         ) : null}
 
         {isPending ? (

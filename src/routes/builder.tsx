@@ -14,7 +14,7 @@ import { LessonFeedback } from '@/components/LessonFeedback';
 import { ReportProblem } from '@/components/ReportProblem';
 import { BetaAccess } from "@/components/BetaAccess";
 import { GenerationProgress, PHASES, type PhaseKey } from "@/components/lesson/GenerationProgress";
-import { LessonPackageView } from "@/components/lesson/LessonPackageView";
+import { LessonPackageLoader as LessonPackageView } from "@/components/lesson/LessonPackageLoader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +32,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { generateLessonStage, saveLesson, updateLesson } from "@/lib/lesson.functions";
 import { ensureLessonDraft, getLessonDraft } from '@/lib/lesson-drafts.functions';
 import { readBuilderSettings, writeBuilderSettings } from '@/lib/builder-settings';
+import { readRequest } from '@/lib/read-request';
 import {
   AGE_OPTIONS,
   DURATION_OPTIONS,
@@ -148,6 +149,8 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
   const [preparing, setPreparing] = useState(false);
   const [openingDraft, setOpeningDraft] = useState(!!draftId);
   const [draftError, setDraftError] = useState('');
+  const [draftReadAttempt, setDraftReadAttempt] = useState(0);
+  const lastDraftReadAttempt = useRef(0);
   const [saveFailure, setSaveFailure] = useState('');
   const [settingsReady, setSettingsReady] = useState(false);
   const [settingsStored, setSettingsStored] = useState(false);
@@ -193,7 +196,9 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
   }
 
   useEffect(() => {
-    if (!draftId || draftRef.current?.id === draftId) { setOpeningDraft(false); return; }
+    const retrying = lastDraftReadAttempt.current !== draftReadAttempt;
+    lastDraftReadAttempt.current = draftReadAttempt;
+    if (!draftId || (draftRef.current?.id === draftId && !retrying)) { setOpeningDraft(false); return; }
     if (!isAuthenticated) { setOpeningDraft(false); return; }
     let active = true;
     // Searching for a different draft reuses this React route. Ignore results from the old workspace.
@@ -202,23 +207,25 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
     setFailure(null); setSaveFailure(''); setSaving(false); checkpoint.current = null;
     draftRef.current = null; setDraft(null);
     setOpeningDraft(true); setDraftError('');
-    fetchDraft({ data: { id: draftId } }).then(value => {
+    const controller = new AbortController();
+    readRequest(signal => fetchDraft({ data: { id: draftId }, signal }), { signal: controller.signal }).then(value => {
       if (!active) return;
       acceptDraft(value);
       if (value.status === 'complete') void saveCompleted(value.request, value.content as LessonPackage, value.id);
     }).catch(error => { if (active) setDraftError(generationErrorMessage(error, 'lesson')); })
       .finally(() => { if (active) setOpeningDraft(false); });
-    return () => { active = false; };
-  }, [draftId, isAuthenticated, fetchDraft]);
+    return () => { active = false; controller.abort(); };
+  }, [draftId, isAuthenticated, fetchDraft, draftReadAttempt]);
 
   useEffect(() => {
     if (!draft || draft.status !== 'generating' || phase || preparing) return;
     let active = true, pending = false;
+    const controller = new AbortController();
     const timer = setInterval(async () => {
       if (pending) return;
       pending = true;
       try {
-        const value = await fetchDraft({ data: { id: draft.id } });
+        const value = await readRequest(signal => fetchDraft({ data: { id: draft.id }, signal }), { signal: controller.signal });
         if (active) {
           acceptDraft(value, false); setDraftError('');
           if (value.status === 'complete') void saveCompleted(value.request, value.content as LessonPackage, value.id);
@@ -226,7 +233,7 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
       } catch { if (active) setDraftError('Could not check the latest progress. Your saved draft is retained. Reopen it from My lessons when your connection returns.'); }
       finally { pending = false; }
     }, 3000);
-    return () => { active = false; clearInterval(timer); };
+    return () => { active = false; controller.abort(); clearInterval(timer); };
   }, [draft?.id, draft?.status, phase, preparing, fetchDraft]);
 
   useEffect(() => {
@@ -279,7 +286,8 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
         activePart = PHASES[i]!.labels[0];
         setPhase(stage);
         const result = (await trackClientGeneration(request,stage,()=>runStage({
-          data: { request, stage, prior: assembled, ...(durable ? { draftId: durable.id } : {}) },
+          // The server already retains earlier parts of durable drafts.
+          data: { request, stage, ...(durable ? { draftId: durable.id } : { prior: assembled }) },
         }))) as Partial<LessonPackage>;
         if (!current()) return;
         assembled = mergeLessonPatch(assembled, result);
@@ -298,12 +306,15 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
     } catch (error) {
       if (!current()) return;
       if (durable) {
-        try { const retained = await fetchDraft({ data: { id: durable.id } }); if (current()) acceptDraft(retained, false); } catch {}
+        const retainedId = durable.id;
+        try { const retained = await readRequest(signal => fetchDraft({ data: { id: retainedId }, signal })); if (current()) acceptDraft(retained, false); } catch {}
       }
       if (!current()) return;
       setFailedPart(activePart);
       setFailure(generationErrorMessage(error, 'lesson'));
     } finally {
+      void queryClient.invalidateQueries({ queryKey: ['beta-access-status', userId] });
+      void queryClient.invalidateQueries({ queryKey: ['lesson-drafts', userId] });
       if (current()) { running.current = false; setPhase(null); setPreparing(false); }
     }
   }
@@ -314,6 +325,9 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
     setSaving(true); setSaveFailure('');
     try {
       const result = await persist({ data: { request, content, ...(id ? { draftId: id } : {}) } });
+      void queryClient.invalidateQueries({ queryKey: ['lessons', userId] });
+      void queryClient.invalidateQueries({ queryKey: ['lesson-drafts', userId] });
+      void queryClient.invalidateQueries({ queryKey: ['beta-access-status', userId] });
       if (!active()) return result.id;
       setSavedId(result.id);
       const current = draftRef.current;
@@ -321,8 +335,6 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
         const saved = { ...current, status: 'saved' as const, savedLessonId: result.id };
         draftRef.current = saved; setDraft(saved);
       }
-      void queryClient.invalidateQueries({ queryKey: ['lessons', userId] });
-      void queryClient.invalidateQueries({ queryKey: ['lesson-drafts', userId] });
       return result.id;
     } catch (error) {
       if (active()) setSaveFailure(generationErrorMessage(error, 'lesson'));
@@ -376,13 +388,18 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
       <AppShell>
         {saveFailure && <Alert variant="destructive" className="mx-auto mt-6 max-w-4xl"><AlertTitle>Your lesson is generated; saving needs another try</AlertTitle><AlertDescription><p>{saveFailure}</p><p>Your completed draft is retained in My lessons → Unfinished.</p><Button className="mt-3" variant="outline" disabled={saving} onClick={() => void onSave()}>Retry saving lesson</Button></AlertDescription></Alert>}
         <LessonPackageView
+          recoveryHref={savedId ? `/lessons/${savedId}` : draft ? `/builder?draft=${draft.id}` : undefined}
           lesson={lesson}
           request={generatedFor}
           onPersist={async (next) => {
             const version = workspaceVersion.current;
             const id = savedId ?? (isAuthenticated ? await saveCompleted(generatedFor, lesson, draftRef.current?.id) : null);
             if (isAuthenticated && !id) throw new Error('Could not save these edits yet. Retry saving your lesson first.');
-            if (id) await persistUpdate({ data: { id, content: next } });
+            if (id) {
+              await persistUpdate({ data: { id, content: next } });
+              queryClient.setQueryData<{ content: LessonPackage }>(['lesson', userId, id], previous => previous ? { ...previous, content: next } : undefined);
+              void queryClient.invalidateQueries({ queryKey: ['lessons', userId] });
+            }
             if (alive.current && workspaceVersion.current === version) setLesson(next);
           }}
           actions={
@@ -417,7 +434,7 @@ function BuilderWorkspace({ userId, isAuthenticated }: { userId: string | null; 
         </p>
         {settingsStored && <p className="mt-2 text-xs text-muted-foreground">Class settings saved on this device. Once you start building, lesson progress is saved to your account.</p>}
         {draftId && !isAuthenticated && <p role="status" className="mt-4">Sign in to reopen your private draft. <Link to="/auth" search={{ redirect: `/builder?draft=${draftId}` }} className="underline">Sign in</Link></p>}
-        {draftError && <Alert variant="destructive" className="mt-6"><AlertTitle>Could not open the latest draft progress</AlertTitle><AlertDescription><p>{draftError}</p><Link to="/lessons" className="underline">Return to My lessons</Link></AlertDescription></Alert>}
+        {draftError && <Alert variant="destructive" className="mt-6"><AlertTitle>Could not open the latest draft progress</AlertTitle><AlertDescription><p>{draftError}</p><Button className="my-3" variant="outline" onClick={() => setDraftReadAttempt(value => value + 1)}>Retry opening draft</Button><p><Link to="/lessons" className="underline">Return to My lessons</Link></p></AlertDescription></Alert>}
         {draft && !['saved', 'complete'].includes(draft.status) && <section aria-label="Saved lesson progress" className="mt-6 space-y-3 rounded-xl border bg-card p-5">
           <h2 className="font-semibold">Continue your unfinished lesson</h2>
           <p>{draft.request.topic} · {draft.request.level} · Ages {draft.request.studentAge}</p>

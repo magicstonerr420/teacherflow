@@ -38,7 +38,7 @@ const origin = process.env.TEST_ORIGIN || "http://127.0.0.1:3001";
     await page.route("**/src/lib/lesson.functions.ts*", (route) =>
       route.fulfill({
         contentType: "application/javascript",
-        body: `export async function listLessons(){return window.testUser==='teacher-a'?window.lessons:[];}export async function duplicateLesson(){return {id:'duplicate'};}export async function deleteLesson(){return {ok:true};}`,
+        body: `export async function listLessons(){window.lessonReads=(window.lessonReads||0)+1;if(window.failLessons)throw Error('Temporary library failure');return window.testUser==='teacher-a'?window.lessons:[];}export async function duplicateLesson(){return {id:'duplicate'};}export async function deleteLesson(){return {ok:true};}`,
       }),
     );
     await page.route("**/src/lib/teacher-tools.functions.ts*", (route) =>
@@ -93,6 +93,7 @@ const origin = process.env.TEST_ORIGIN || "http://127.0.0.1:3001";
     );
     await page.getByRole("tab", { name: "Classes", exact: true }).click();
     await page.getByRole("button", { name: "Open class Monday beginners", exact: true }).waitFor();
+    assert.equal(await page.evaluate(() => window.lessonReads), 1, 'Class view reuses the recent saved-lesson list');
     assert.equal(
       await page.getByRole("searchbox", { name: "Search by topic", exact: true }).count(),
       0,
@@ -118,6 +119,17 @@ const origin = process.env.TEST_ORIGIN || "http://127.0.0.1:3001";
       .waitFor();
     await page.getByRole("button", { name: "Clear filters", exact: true }).click();
     await page.getByRole("link", { name: "A day at the zoo", exact: false }).waitFor();
+    await page.evaluate(async () => {
+      window.failLessons = true;
+      await window.fixtureCache.invalidateQueries({queryKey:['lessons','teacher-a']});
+    });
+    await page.getByRole('button', {name:'Retry lessons',exact:true}).waitFor();
+    assert.equal(await page.evaluate(() => window.lessonReads), 2, 'Failed reads do not silently retry');
+    assert.equal(await page.getByRole('link',{name:'Ocean conservation',exact:false}).count(),1,'A failed refresh keeps previously loaded lessons visible');
+    await page.evaluate(() => {window.failLessons=false;});
+    await page.getByRole('button', {name:'Retry lessons',exact:true}).click();
+    await page.getByRole('button', {name:'Retry lessons',exact:true}).waitFor({state:'hidden'});
+    assert.equal(await page.evaluate(() => window.lessonReads), 3, 'Retry performs one new read');
     assert.equal(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       true,

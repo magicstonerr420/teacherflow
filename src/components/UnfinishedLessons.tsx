@@ -9,15 +9,16 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GENERATION_PHASES } from '@/lib/generation-plan';
 import { listLessonDrafts } from '@/lib/lesson-drafts.functions';
+import { readRequest } from '@/lib/read-request';
 
 /** This query is account-specific, and never displays a previous account's data. */
 export function UnfinishedLessons({ userId }: { userId: string | undefined }) {
   const fetchDrafts = useServerFn(listLessonDrafts);
   const drafts = useQuery({
     queryKey: ['lesson-drafts', userId],
-    queryFn: () => fetchDrafts(),
+    queryFn: ({signal}) => readRequest(requestSignal=>fetchDrafts({signal:requestSignal}),{signal}),
     enabled: !!userId,
-    retry: 1,
+    retry: false,
     refetchInterval: 15_000,
   });
 

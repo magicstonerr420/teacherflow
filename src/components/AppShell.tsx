@@ -4,8 +4,11 @@ import type { ReactNode } from "react";
 import { SiteNavigation } from './SiteNavigation';
 import { ReportProblem } from "./ReportProblem";
 import { CONTACT_EMAIL, INQUIRY_LINK } from "@/config/contact";
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from './ui/button';
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const auth = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -18,7 +21,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           <SiteNavigation />
         </div>
       </header>
-      <main>{children}</main>
+      <main>
+        {auth.error && <div role="alert" className="mx-auto mt-5 flex max-w-6xl flex-wrap items-center gap-3 rounded-lg border border-destructive/40 bg-card px-5 py-4">
+          <p className="flex-1 text-sm">{auth.error}</p>
+          <Button variant="outline" size="sm" onClick={auth.retry}>Retry account connection</Button>
+        </div>}
+        {children}
+      </main>
       <footer className="no-print border-t">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8">
           <div className="text-sm"><p className="font-semibold">Questions about TeacherFlow?</p>

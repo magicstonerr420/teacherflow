@@ -28,7 +28,7 @@ export function SavedClasses({form,onApply}:{form:LessonRequestInput;onApply:(se
       if(!parsed.success) throw new Error('Add a class name and choose its age, level, duration, and technology before saving.');
       return (await save({data:parsed.data})).id;
     },
-    onSuccess:async(id,action)=> {setSelected(id); if(action==='delete')setName(''); await cache.invalidateQueries({queryKey});setMessage(action==='delete'?'Saved class removed.':'Class settings saved to your account.');},
+    onSuccess:async(id,action)=> {setSelected(id); if(action==='delete')setName(''); await Promise.all([cache.invalidateQueries({queryKey}),cache.invalidateQueries({queryKey:['class-library',user?.id]})]);setMessage(action==='delete'?'Saved class removed.':'Class settings saved to your account.');},
     onError:(e)=>toast.error(e.message),
   });
   if(!user) return null;

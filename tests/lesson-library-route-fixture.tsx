@@ -17,6 +17,7 @@ export function mount() {
   const container = document.createElement("div");
   document.body.replaceChildren(container);
   const cache = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  (window as any).fixtureCache = cache;
   const root = createRootRoute({
     component: () => (
       <QueryClientProvider client={cache}>

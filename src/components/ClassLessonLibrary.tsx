@@ -32,6 +32,7 @@ import {
   type SavedClass,
 } from "@/lib/teacher-tools";
 import { saveClassSettings } from "@/lib/teacher-tools.functions";
+import { ACCOUNT_READ_STALE_MS, readRequest } from '@/lib/read-request';
 
 const selectStyle = "h-10 w-full min-w-0 rounded-md border bg-background px-3 text-sm";
 type LibraryLesson = Awaited<ReturnType<typeof listLessons>>[number];
@@ -47,11 +48,12 @@ function AccountClassLibrary({ userId }: { userId: string }) {
   const loadLessons = useServerFn(listLessons);
   const create = useServerFn(saveClassSettings);
   const libraryKey = ["class-library", userId];
-  const library = useQuery({ queryKey: libraryKey, queryFn: () => load(), retry: 1 });
+  const library = useQuery({ queryKey: libraryKey, queryFn: ({signal}) => readRequest(requestSignal=>load({signal:requestSignal}),{signal}), retry: false });
   const lessons = useQuery({
     queryKey: ["lessons", userId],
-    queryFn: () => loadLessons(),
-    retry: 1,
+    queryFn: ({signal}) => readRequest(requestSignal=>loadLessons({signal:requestSignal}),{signal}),
+    staleTime: ACCOUNT_READ_STALE_MS,
+    retry: false,
   });
   const [selectedId, setSelectedId] = useState("");
   const [creating, setCreating] = useState(false);
