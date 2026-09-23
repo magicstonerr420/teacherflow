@@ -73,7 +73,7 @@ function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/builder" search={{ example: true }}>
+              <Link to="/examples" search={{}}>
                 View Example
               </Link>
             </Button>

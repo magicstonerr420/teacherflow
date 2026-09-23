@@ -1,0 +1,1367 @@
+{
+  "request": {
+    "subject": "English",
+    "topic": "Inequality and Social Mobility",
+    "studentAge": "Adults (20-23)",
+    "level": "C2",
+    "durationMinutes": 90,
+    "mainSkill": "Writing",
+    "secondarySkill": "Critical Thinking",
+    "learningObjective": "Write a nuanced policy analysis that separates causal hypotheses from evidence, weighs distributional trade-offs and specifies what would justify revision.",
+    "numberOfStudents": "20",
+    "previousKnowledge": "Language from the previous CEFR level; no specialist topic knowledge required.",
+    "requiredVocabulary": "inequality, mobility, systemic, opportunity, policy",
+    "technologyAvailable": "Full technology (internet, devices, audio)",
+    "teachingStyle": "Debate-based",
+    "homeworkRequirement": "Yes",
+    "groupWorkEnabled": true,
+    "studentsPerGroup": 4,
+    "classroomLimitations": "All core evidence and role cards are supplied.",
+    "teacherNotes": "Use the fictional case, not classmates’ family income or personal experiences. No external research is required; optional sources must be distinguished from the supplied evidence."
+  },
+  "lesson": {
+    "overview": {
+      "topic": "Inequality and Social Mobility",
+      "age": "Adults (20-23)",
+      "level": "C2",
+      "duration": "90 minutes",
+      "mainSkill": "Writing",
+      "learningObjective": "Write a nuanced policy analysis that separates causal hypotheses from evidence, weighs distributional trade-offs and specifies what would justify revision.",
+      "successCriteria": [
+        "State a clear response that meets the task.",
+        "Use specific details from the supplied material.",
+        "Respond to another view and recognize an appropriate limitation."
+      ],
+      "prerequisiteKnowledge": [
+        "Language from the previous CEFR level; no specialist topic knowledge required."
+      ],
+      "keyLanguage": [
+        "inequality",
+        "mobility",
+        "systemic",
+        "opportunity",
+        "policy",
+        "The observed association is consistent with ___, but cannot by itself establish ___ .",
+        "The policy’s merits depend partly on how ___ is distributed and measured.",
+        "Even if ___, it would not follow that ___; an alternative explanation is ___ ."
+      ],
+      "materialsNeeded": [
+        "Student worksheets A and B with reading and listening questions; teacher answer keys.",
+        "Supplied case and situation cards; paper and pens.",
+        "Full technology (internet, devices, audio). Included recording and student slides."
+      ],
+      "anticipatedDifficulties": [
+        {
+          "difficulty": "Giving a broad claim without a relevant detail.",
+          "solution": "Ask which sentence in the case supports the claim."
+        },
+        {
+          "difficulty": "Confusing model language with the only possible answer.",
+          "solution": "Accept equivalent accurate responses and use the task rubric."
+        }
+      ],
+      "teacherPreparation": [
+        "Read the two scripts and check the teacher keys before teaching.",
+        "Print one selected worksheet version per learner; keep teacher copies separate.",
+        "Prepare the supplied role cards. No outside article or paid material is needed.",
+        "Use the fictional case, not classmates’ family income or personal experiences. No external research is required; optional sources must be distinguished from the supplied evidence."
+      ]
+    },
+    "lessonPlan": {
+      "totalMinutes": 90,
+      "stages": [
+        {
+          "time": 8,
+          "stage": "Connect and set the goal",
+          "teacherActions": "Invite an initial view on the case, then state the objective and distinguish the fictional scenario from factual research.",
+          "studentActions": "State an initial view and one question you want the case to answer.",
+          "materials": "Opening slide or printed opening card",
+          "purpose": "Activate prior knowledge without testing unfamiliar language."
+        },
+        {
+          "time": 12,
+          "stage": "Teach the five key words",
+          "teacherActions": "Model the five terms using their definitions and examples. Ask learners to explain a distinction in their own words.",
+          "studentActions": "Complete Section A and compare meanings with a partner.",
+          "materials": "Vocabulary cards; worksheet Section A",
+          "purpose": "Critical Thinking supports the main writing task."
+        },
+        {
+          "time": 15,
+          "stage": "Read for meaning",
+          "teacherActions": "Give a first reading for the main situation, followed by the four evidence questions. Clarify only vocabulary essential to meaning.",
+          "studentActions": "Read the passage, answer the questions and locate the supporting words.",
+          "materials": "Reading passage and four questions, supplied in the worksheet",
+          "purpose": "Establish a shared context and check literal understanding before interpretation."
+        },
+        {
+          "time": 12,
+          "stage": "Listen for a change or decision",
+          "teacherActions": "Play the included recording twice: once for the main situation, then again after learners read the three questions. Use the teacher transcript to resolve disputed evidence.",
+          "studentActions": "Identify the main situation, then answer the three detail questions and compare evidence.",
+          "materials": "Supplied listening script and questions",
+          "purpose": "Practice listening with information that differs from the reading."
+        },
+        {
+          "time": 16,
+          "stage": "Guided language practice",
+          "teacherActions": "Use Version A Sections B and C. Model one response, then let pairs work. Keep Version B for a later lesson, reassessment or fast finishers. For children, Sections D and E are optional additional practice.",
+          "studentActions": "Apply the sentence frames, then respond to the five application prompts.",
+          "materials": "Worksheet A; sentence frames; optional worksheet B",
+          "purpose": "Move from recognition to usable language."
+        },
+        {
+          "time": 23,
+          "stage": "A policy hearing with a written dissent",
+          "teacherActions": "Arrange groups of 4. Read the supplied role or situation cards and assign roles. Require a choice, supporting reasons and a response to another view. Monitor using the assessment criteria.",
+          "studentActions": "Complete the group task, present your decision and respond to one question.",
+          "materials": "All situation cards appear under Activities and on the student slides",
+          "purpose": "Demonstrate the objective through a purposeful exchange."
+        },
+        {
+          "time": 4,
+          "stage": "Exit check and next step",
+          "teacherActions": "Use the three exit prompts. Record which part of the objective needs another model. Explain the short homework; use the separate assessment later if needed.",
+          "studentActions": "Give an independent response and identify one point to improve.",
+          "materials": "Exit ticket and homework instructions",
+          "purpose": "Check individual progress after supported group work."
+        }
+      ]
+    },
+    "worksheet": {
+      "title": "Inequality and Social Mobility",
+      "student": {
+        "title": "Inequality and Social Mobility — Version A",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "format": "matching",
+            "instructions": "Match each definition to a word from the bank.",
+            "passage": "",
+            "wordBank": [
+              "inequality",
+              "mobility",
+              "systemic",
+              "opportunity",
+              "policy"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "An uneven distribution of resources, conditions or outcomes.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Movement between social or economic positions.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Arising from the organization of connected institutions or practices.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "A meaningful chance to pursue an outcome.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "An organized course of action adopted by an institution.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Equal Eligibility, Unequal Access",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "The following municipality, program and observations are fictional. Arden offers a training grant to residents seeking a new qualification. Anyone meeting the same published income and residency criteria may apply. Officials initially describe the policy as equal access because the eligibility rule does not distinguish between neighborhoods. Yet application and completion patterns differ across the municipality. The available case notes report the difference without supplying a representative dataset or identifying its cause.\n\nOne explanation emphasizes individual choices: eligible residents may value the course differently or prefer immediate work. Another points to institutional conditions. Classes end after the last bus to two neighborhoods, some applicants lack reliable childcare, and the application requires documents from several offices. These mechanisms could constrain participation even where motivation is strong. Their plausibility, however, is not proof that they explain every non-application or withdrawal.\n\nA proposed universal transport allowance would be simple to administer and avoid requiring participants to demonstrate exceptional need. Critics argue that some funds would go to people who already have adequate transport. A targeted package of evening transport and childcare support might direct more resources toward specific barriers, but it could introduce intrusive eligibility checks, administrative delays and errors that exclude people it is meant to help. A third proposal simplifies the application process for everyone, although simplification alone would not change the bus schedule.\n\nThe council must also decide what success means. More applications would show increased take-up, not necessarily qualification completion or lasting mobility. Higher completion among participants would be encouraging, but selection into the program could make a comparison with non-participants misleading. A credible evaluation would need a defensible comparison, attention to who remains excluded and a follow-up period suited to the outcome being claimed.\n\nA balanced recommendation can therefore support action while remaining explicit about uncertainty. The absence of decisive causal evidence need not justify inaction, but neither does a plausible systemic explanation license certainty about a particular remedy. The policy should connect each intervention to an identified barrier, make its distributional choices visible and establish conditions for revision. Equal eligibility is a starting rule; whether it yields meaningful opportunity is an empirical and normative question.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Why does the case not establish the cause of different participation rates?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Give one mechanism that could restrict participation despite motivation.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What is the main administrative trade-off of targeting?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Why are more applications insufficient evidence of lasting mobility?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Distinguish an observed disparity from an established cause.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Qualify: Non-participation shows a lack of ambition.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Identify a systemic mechanism without attributing malicious intent.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Separate an empirical claim from a normative judgment about targeting.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Explain why take-up is not equivalent to mobility.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "writing",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Formulate a qualified causal hypothesis about the bus schedule.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Identify evidence that would weaken that hypothesis.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Compare universal and targeted support on two dimensions.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Specify an outcome and suitable follow-up conceptually.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Write a conditional policy thesis that admits uncertainty.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "The Evaluation Adviser’s Caution",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Which two claims does the adviser reject as established conclusions?",
+                "choices": [
+                  "Equal eligibility proves opportunity; unequal participation proves one systemic cause",
+                  "All grants work; all transport fails",
+                  "Qualifications are useless; all residents are identical"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Why is a simple participant comparison insufficient?",
+                "choices": [
+                  "People who join may differ from those who do not",
+                  "Completion cannot be measured",
+                  "No one applied"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What trade-off requires an explicit value judgment?",
+                "choices": [
+                  "Administrative simplicity versus more targeted support",
+                  "Whether buses exist",
+                  "The name of the municipality"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "studentB": {
+        "title": "Inequality and Social Mobility — Version B",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Use the key words",
+            "format": "writing",
+            "instructions": "Write a sentence that shows each word’s meaning.",
+            "passage": "",
+            "wordBank": [
+              "inequality",
+              "mobility",
+              "systemic",
+              "opportunity",
+              "policy"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Use “inequality” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Use “mobility” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Use “systemic” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Use “opportunity” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Use “policy” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Equal Eligibility, Unequal Access",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "The following municipality, program and observations are fictional. Arden offers a training grant to residents seeking a new qualification. Anyone meeting the same published income and residency criteria may apply. Officials initially describe the policy as equal access because the eligibility rule does not distinguish between neighborhoods. Yet application and completion patterns differ across the municipality. The available case notes report the difference without supplying a representative dataset or identifying its cause.\n\nOne explanation emphasizes individual choices: eligible residents may value the course differently or prefer immediate work. Another points to institutional conditions. Classes end after the last bus to two neighborhoods, some applicants lack reliable childcare, and the application requires documents from several offices. These mechanisms could constrain participation even where motivation is strong. Their plausibility, however, is not proof that they explain every non-application or withdrawal.\n\nA proposed universal transport allowance would be simple to administer and avoid requiring participants to demonstrate exceptional need. Critics argue that some funds would go to people who already have adequate transport. A targeted package of evening transport and childcare support might direct more resources toward specific barriers, but it could introduce intrusive eligibility checks, administrative delays and errors that exclude people it is meant to help. A third proposal simplifies the application process for everyone, although simplification alone would not change the bus schedule.\n\nThe council must also decide what success means. More applications would show increased take-up, not necessarily qualification completion or lasting mobility. Higher completion among participants would be encouraging, but selection into the program could make a comparison with non-participants misleading. A credible evaluation would need a defensible comparison, attention to who remains excluded and a follow-up period suited to the outcome being claimed.\n\nA balanced recommendation can therefore support action while remaining explicit about uncertainty. The absence of decisive causal evidence need not justify inaction, but neither does a plausible systemic explanation license certainty about a particular remedy. The policy should connect each intervention to an identified barrier, make its distributional choices visible and establish conditions for revision. Equal eligibility is a starting rule; whether it yields meaningful opportunity is an empirical and normative question.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Why does the case not establish the cause of different participation rates?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Give one mechanism that could restrict participation despite motivation.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What is the main administrative trade-off of targeting?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Why are more applications insufficient evidence of lasting mobility?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Correct: Equal eligibility guarantees equal opportunity.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "State a competing explanation for higher participant completion.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Explain an exclusion error in a targeted policy.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Give a reason universal provision might be preferred despite leakage.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Describe a defensible revision rule without invented evidence.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "writing",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Steelman the case for individual choice as one explanation.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Explain why that argument does not eliminate systemic constraints.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Design one nonintrusive question for prospective participants.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "State a limit of the fictional evidence.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Defend an evaluation strategy while acknowledging an ethical constraint.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "The Evaluation Adviser’s Caution",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Which two claims does the adviser reject as established conclusions?",
+                "choices": [
+                  "Equal eligibility proves opportunity; unequal participation proves one systemic cause",
+                  "All grants work; all transport fails",
+                  "Qualifications are useless; all residents are identical"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Why is a simple participant comparison insufficient?",
+                "choices": [
+                  "People who join may differ from those who do not",
+                  "Completion cannot be measured",
+                  "No one applied"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What trade-off requires an explicit value judgment?",
+                "choices": [
+                  "Administrative simplicity versus more targeted support",
+                  "Whether buses exist",
+                  "The name of the municipality"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "teacher": {
+        "overview": "Write a nuanced policy analysis that separates causal hypotheses from evidence, weighs distributional trade-offs and specifies what would justify revision.\n\nScore each criterion 0–2: a qualified claim; accurate use of case evidence; a serious alternative explanation; an explicit trade-off; a justified revision condition. 8/10 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+        "groupWorkGuidance": "Groups of 4; give everyone a speaking or checking role and rotate. Use Version B as alternate practice, not as a second full worksheet in the same session.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "answers": [
+              "inequality",
+              "mobility",
+              "systemic",
+              "opportunity",
+              "policy"
+            ],
+            "explanation": "Check meaning before form.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Reading",
+            "title": "Equal Eligibility, Unequal Access",
+            "answers": [
+              "It provides neither a representative dataset nor a causal identification.",
+              "Classes finish after the last bus to two neighborhoods.",
+              "It may focus resources but add intrusive checks, delays and exclusion errors.",
+              "Take-up is distinct from completion and longer-term outcomes."
+            ],
+            "explanation": "Use the passage, not outside knowledge.",
+            "expectedResponses": [
+              "1. Evidence: without supplying a representative dataset or identifying its cause",
+              "2. Evidence: Classes end after the last bus to two neighborhoods",
+              "3. Evidence: it could introduce intrusive eligibility checks, administrative delays and errors",
+              "4. Evidence: More applications would show increased take-up, not necessarily qualification completion or lasting mobility."
+            ],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "answers": [
+              "A disparity describes a difference; a causal claim needs evidence about the mechanism and alternatives.",
+              "Non-participation may reflect preferences or constraints; the case does not isolate their contributions.",
+              "The class schedule and bus timetable may jointly prevent attendance.",
+              "Whether targeting reaches excluded residents is empirical; how much intrusion is acceptable is normative.",
+              "Applying does not establish completion or a sustained change in social or economic position."
+            ],
+            "explanation": "Writing practice with critical thinking support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "answers": [
+              "Late class times may reduce attendance for residents dependent on the last bus.",
+              "Affected residents may report and demonstrate a different dominant barrier; check credible attendance and transport information.",
+              "Compare reach and administrative burden, while noting exclusion and unused support.",
+              "Define completion first and a later work or income outcome; do not equate immediate take-up with mobility.",
+              "Support a limited intervention tied to identified barriers, with evaluation and revision conditions."
+            ],
+            "explanation": "Writing practice with critical thinking support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Listening",
+            "title": "The Evaluation Adviser’s Caution",
+            "answers": [
+              "Equal eligibility proves opportunity; unequal participation proves one systemic cause",
+              "People who join may differ from those who do not",
+              "Administrative simplicity versus more targeted support"
+            ],
+            "explanation": "Read or listen twice. Answers refer only to this script.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Teacher transcript:\nI would resist two tempting conclusions about Arden’s training grant. One is that equal eligibility proves equal opportunity. The other is that unequal participation proves a single systemic cause. The case supports neither conclusion on its own. It gives us plausible mechanisms that deserve investigation, not a complete causal account.\n\nMy recommendation is to simplify the application for everyone while piloting evening transport where the timetable creates an identified barrier. Childcare support should also be considered, but its design needs consultation with prospective participants. We should record who cannot use each intervention and why.\n\nEvaluation must distinguish take-up, completion and longer-term outcomes. An increase in applications would not, by itself, demonstrate social mobility. Nor would a higher completion rate among participants prove that the grant caused the difference, since people who join may differ from those who do not.\n\nThere is also a value judgment that evidence cannot make for us: how much administrative simplicity we are willing to exchange for more targeted support. That judgment should be stated openly. I would support a limited, reviewable policy with a clear comparison strategy, rather than promise a permanent solution before we understand the mechanisms. Uncertainty is a reason to design learning into the policy, not a reason to disguise assumptions as findings.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+          }
+        ]
+      },
+      "teacherB": [
+        {
+          "label": "Section A",
+          "title": "Use the key words",
+          "answers": [
+            "Inequality can persist even when a formal rule is equal.",
+            "A mobility measure needs a defined comparison and period.",
+            "A systemic barrier may persist without an explicit exclusion rule.",
+            "Opportunity depends partly on whether access is usable.",
+            "A policy can have different effects on different groups."
+          ],
+          "explanation": "Check meaning before form.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Reading",
+          "title": "Equal Eligibility, Unequal Access",
+          "answers": [
+            "It provides neither a representative dataset nor a causal identification.",
+            "Classes finish after the last bus to two neighborhoods.",
+            "It may focus resources but add intrusive checks, delays and exclusion errors.",
+            "Take-up is distinct from completion and longer-term outcomes."
+          ],
+          "explanation": "Use the passage, not outside knowledge.",
+          "expectedResponses": [
+            "1. Evidence: without supplying a representative dataset or identifying its cause",
+            "2. Evidence: Classes end after the last bus to two neighborhoods",
+            "3. Evidence: it could introduce intrusive eligibility checks, administrative delays and errors",
+            "4. Evidence: More applications would show increased take-up, not necessarily qualification completion or lasting mobility."
+          ],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section B",
+          "title": "Language in use",
+          "answers": [
+            "Identical formal eligibility may coexist with unequal practical access.",
+            "Participants may begin with different resources or readiness.",
+            "Someone who needs support may be incorrectly judged ineligible or unable to complete the process.",
+            "It may reduce administrative burden and avoid intrusive checks.",
+            "Review the pilot if intended participants remain unable to attend, while investigating why."
+          ],
+          "explanation": "Writing practice with critical thinking support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section C",
+          "title": "Apply and explain",
+          "answers": [
+            "Residents may reasonably prefer immediate work or different training, even when access is practical.",
+            "Preferences and institutional barriers can operate simultaneously.",
+            "Which scheduling or travel arrangements would make attendance possible for you?",
+            "No representative dataset or identified causal effect is supplied.",
+            "Seek a credible comparison without deliberately removing existing support; explain remaining selection limitations."
+          ],
+          "explanation": "Writing practice with critical thinking support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Listening",
+          "title": "The Evaluation Adviser’s Caution",
+          "answers": [
+            "Equal eligibility proves opportunity; unequal participation proves one systemic cause",
+            "People who join may differ from those who do not",
+            "Administrative simplicity versus more targeted support"
+          ],
+          "explanation": "Read or listen twice. Answers refer only to this script.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Teacher transcript:\nI would resist two tempting conclusions about Arden’s training grant. One is that equal eligibility proves equal opportunity. The other is that unequal participation proves a single systemic cause. The case supports neither conclusion on its own. It gives us plausible mechanisms that deserve investigation, not a complete causal account.\n\nMy recommendation is to simplify the application for everyone while piloting evening transport where the timetable creates an identified barrier. Childcare support should also be considered, but its design needs consultation with prospective participants. We should record who cannot use each intervention and why.\n\nEvaluation must distinguish take-up, completion and longer-term outcomes. An increase in applications would not, by itself, demonstrate social mobility. Nor would a higher completion rate among participants prove that the grant caused the difference, since people who join may differ from those who do not.\n\nThere is also a value judgment that evidence cannot make for us: how much administrative simplicity we are willing to exchange for more targeted support. That judgment should be stated openly. I would support a limited, reviewable policy with a clear comparison strategy, rather than promise a permanent solution before we understand the mechanisms. Uncertainty is a reason to design learning into the policy, not a reason to disguise assumptions as findings.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+        }
+      ]
+    },
+    "presentation": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "Inequality and Social Mobility",
+          "layout": "title",
+          "studentText": "Evaluate causal claims, distinguish outcomes from mechanisms, and defend a conditional policy judgment.",
+          "interaction": "What do you already know about this topic?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 2,
+          "title": "Today’s goal",
+          "layout": "goal",
+          "studentText": "Write a nuanced policy analysis that separates causal hypotheses from evidence, weighs distributional trade-offs and specifies what would justify revision.",
+          "interaction": "Explain the goal in your own words.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 3,
+          "title": "inequality",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "inequality",
+              "definition": "An uneven distribution of resources, conditions or outcomes.",
+              "example": "Inequality can persist even when a formal rule is equal.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “inequality” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
+          "title": "mobility",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "mobility",
+              "definition": "Movement between social or economic positions.",
+              "example": "A mobility measure needs a defined comparison and period.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “mobility” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 5,
+          "title": "systemic",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "systemic",
+              "definition": "Arising from the organization of connected institutions or practices.",
+              "example": "A systemic barrier may persist without an explicit exclusion rule.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “systemic” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 6,
+          "title": "opportunity",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "opportunity",
+              "definition": "A meaningful chance to pursue an outcome.",
+              "example": "Opportunity depends partly on whether access is usable.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “opportunity” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 7,
+          "title": "policy",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "policy",
+              "definition": "An organized course of action adopted by an institution.",
+              "example": "A policy can have different effects on different groups.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “policy” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 8,
+          "title": "Read and notice",
+          "layout": "question",
+          "studentText": "Equal Eligibility, Unequal Access",
+          "interaction": "Why does the case not establish the cause of different participation rates?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the full reading printed in both worksheet versions. Check the four reading questions against the separate teacher key.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 9,
+          "title": "Listen for details",
+          "layout": "question",
+          "studentText": "The Evaluation Adviser’s Caution",
+          "interaction": "Listen once for the situation, then again for details.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the supplied recording or read the exact script in the separate listening teacher copy. Do not display the transcript during the listening check.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 10,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Adapt one frame to the situation.",
+          "bullets": [
+            "The observed association is consistent with ___, but cannot by itself establish ___ .",
+            "The policy’s merits depend partly on how ___ is distributed and measured.",
+            "Even if ___, it would not follow that ___; an alternative explanation is ___ ."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 11,
+          "title": "A policy hearing with a written dissent · 1",
+          "layout": "activity",
+          "studentText": "Council group: Recommend a limited package using the fictional case only. State whose access improves and who may remain excluded.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Use the fictional case, not classmates’ family income or personal experiences. No external research is required; optional sources must be distinguished from the supplied evidence.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 12,
+          "title": "A policy hearing with a written dissent · 2",
+          "layout": "activity",
+          "studentText": "Review group: Test the causal assumptions and administrative trade-offs. Do not treat a plausible mechanism as a measured effect.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Use the fictional case, not classmates’ family income or personal experiences. No external research is required; optional sources must be distinguished from the supplied evidence.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 13,
+          "title": "A policy hearing with a written dissent · 3",
+          "layout": "activity",
+          "studentText": "Final task: Write a joint recommendation and a short dissent that accurately represents the strongest unresolved objection.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Use the fictional case, not classmates’ family income or personal experiences. No external research is required; optional sources must be distinguished from the supplied evidence.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 14,
+          "title": "Your final response",
+          "layout": "review",
+          "studentText": "State your choice. Give evidence. Recognize a limitation.",
+          "interaction": "What would make you change your response?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        }
+      ]
+    },
+    "answerKey": {
+      "sections": [
+        {
+          "title": "Section A: Meet the key words",
+          "answers": [
+            "inequality",
+            "mobility",
+            "systemic",
+            "opportunity",
+            "policy"
+          ],
+          "notes": "Check meaning before form."
+        },
+        {
+          "title": "Reading: Equal Eligibility, Unequal Access",
+          "answers": [
+            "It provides neither a representative dataset nor a causal identification.",
+            "Classes finish after the last bus to two neighborhoods.",
+            "It may focus resources but add intrusive checks, delays and exclusion errors.",
+            "Take-up is distinct from completion and longer-term outcomes."
+          ],
+          "notes": "Use the passage, not outside knowledge."
+        },
+        {
+          "title": "Section B: Language in use",
+          "answers": [
+            "A disparity describes a difference; a causal claim needs evidence about the mechanism and alternatives.",
+            "Non-participation may reflect preferences or constraints; the case does not isolate their contributions.",
+            "The class schedule and bus timetable may jointly prevent attendance.",
+            "Whether targeting reaches excluded residents is empirical; how much intrusion is acceptable is normative.",
+            "Applying does not establish completion or a sustained change in social or economic position."
+          ],
+          "notes": "Writing practice with critical thinking support."
+        },
+        {
+          "title": "Section C: Apply and explain",
+          "answers": [
+            "Late class times may reduce attendance for residents dependent on the last bus.",
+            "Affected residents may report and demonstrate a different dominant barrier; check credible attendance and transport information.",
+            "Compare reach and administrative burden, while noting exclusion and unused support.",
+            "Define completion first and a later work or income outcome; do not equate immediate take-up with mobility.",
+            "Support a limited intervention tied to identified barriers, with evaluation and revision conditions."
+          ],
+          "notes": "Writing practice with critical thinking support."
+        },
+        {
+          "title": "Listening: The Evaluation Adviser’s Caution",
+          "answers": [
+            "Equal eligibility proves opportunity; unequal participation proves one systemic cause",
+            "People who join may differ from those who do not",
+            "Administrative simplicity versus more targeted support"
+          ],
+          "notes": "Read or listen twice. Answers refer only to this script."
+        }
+      ]
+    },
+    "activity": {
+      "title": "A policy hearing with a written dissent",
+      "objective": "Write a nuanced policy analysis that separates causal hypotheses from evidence, weighs distributional trade-offs and specifies what would justify revision.",
+      "time": "23 minutes",
+      "grouping": "Groups of 4",
+      "materials": "Council group: Recommend a limited package using the fictional case only. State whose access improves and who may remain excluded.\n\nReview group: Test the causal assumptions and administrative trade-offs. Do not treat a plausible mechanism as a measured effect.\n\nFinal task: Write a joint recommendation and a short dissent that accurately represents the strongest unresolved objection.",
+      "teacherInstructions": [
+        "Use the exact situation cards below; no additional resource is needed.",
+        "Form groups of 4 and model one short response.",
+        "Allow 18 minutes for preparation and practice; use the remaining time for responses and feedback.",
+        "Score each criterion 0–2: a qualified claim; accurate use of case evidence; a serious alternative explanation; an explicit trade-off; a justified revision condition. 8/10 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+      ],
+      "studentInstructions": [
+        "Council group: Recommend a limited package using the fictional case only. State whose access improves and who may remain excluded.",
+        "Review group: Test the causal assumptions and administrative trade-offs. Do not treat a plausible mechanism as a measured effect.",
+        "Final task: Write a joint recommendation and a short dissent that accurately represents the strongest unresolved objection."
+      ],
+      "example": "We support simplified applications and a reviewable evening-transport pilot because both address specified barriers. This is a provisional judgment, not a demonstrated mobility effect. Evaluation should distinguish take-up, completion and later outcomes while documenting who remains excluded.",
+      "variation": "Exchange recommendations with another group and write one constructive challenge."
+    },
+    "homework": {
+      "title": "Continue the learning",
+      "instructions": "Use the lesson materials. No additional purchase or research is required.",
+      "tasks": [
+        "Write a 320–380-word policy analysis with a 60-word dissent.",
+        "Include a rival explanation, a distributional trade-off, an evaluation limit and a revision condition."
+      ],
+      "estimatedTime": "30 minutes"
+    },
+    "exitTicket": {
+      "title": "Show what you can do",
+      "timeMinutes": 4,
+      "questions": [
+        "Formulate a qualified causal hypothesis about the bus schedule.",
+        "Specify an outcome and suitable follow-up conceptually.",
+        "Name one point you would improve in your response."
+      ],
+      "successIndicator": "Score each criterion 0–2: a qualified claim; accurate use of case evidence; a serious alternative explanation; an explicit trade-off; a justified revision condition. 8/10 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+    },
+    "assessment": {
+      "title": "Independent check — Version A",
+      "instructions": "Score each criterion 0–2: a qualified claim; accurate use of case evidence; a serious alternative explanation; an explicit trade-off; a justified revision condition. 8/10 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "Formulate a qualified causal hypothesis about the bus schedule.",
+          "type": "Written response",
+          "answer": "Late class times may reduce attendance for residents dependent on the last bus."
+        },
+        {
+          "prompt": "Identify evidence that would weaken that hypothesis.",
+          "type": "Written response",
+          "answer": "Affected residents may report and demonstrate a different dominant barrier; check credible attendance and transport information."
+        },
+        {
+          "prompt": "Compare universal and targeted support on two dimensions.",
+          "type": "Written response",
+          "answer": "Compare reach and administrative burden, while noting exclusion and unused support."
+        },
+        {
+          "prompt": "Specify an outcome and suitable follow-up conceptually.",
+          "type": "Written response",
+          "answer": "Define completion first and a later work or income outcome; do not equate immediate take-up with mobility."
+        },
+        {
+          "prompt": "Write a conditional policy thesis that admits uncertainty.",
+          "type": "Written response",
+          "answer": "Support a limited intervention tied to identified barriers, with evaluation and revision conditions."
+        }
+      ]
+    },
+    "versionB": {
+      "title": "Independent check — Version B",
+      "instructions": "Score each criterion 0–2: a qualified claim; accurate use of case evidence; a serious alternative explanation; an explicit trade-off; a justified revision condition. 8/10 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "Steelman the case for individual choice as one explanation.",
+          "type": "Spoken or written response",
+          "answer": "Residents may reasonably prefer immediate work or different training, even when access is practical."
+        },
+        {
+          "prompt": "Explain why that argument does not eliminate systemic constraints.",
+          "type": "Spoken or written response",
+          "answer": "Preferences and institutional barriers can operate simultaneously."
+        },
+        {
+          "prompt": "Design one nonintrusive question for prospective participants.",
+          "type": "Spoken or written response",
+          "answer": "Which scheduling or travel arrangements would make attendance possible for you?"
+        },
+        {
+          "prompt": "State a limit of the fictional evidence.",
+          "type": "Spoken or written response",
+          "answer": "No representative dataset or identified causal effect is supplied."
+        },
+        {
+          "prompt": "Defend an evaluation strategy while acknowledging an ethical constraint.",
+          "type": "Spoken or written response",
+          "answer": "Seek a credible comparison without deliberately removing existing support; explain remaining selection limitations."
+        }
+      ]
+    },
+    "supportVersion": {
+      "summary": "Reduce the number of ideas to compare while keeping the same reasoning goal.",
+      "sentenceFrames": [
+        "The observed association is consistent with ___, but cannot by itself establish ___ .",
+        "The policy’s merits depend partly on how ___ is distributed and measured.",
+        "Even if ___, it would not follow that ___; an alternative explanation is ___ ."
+      ],
+      "wordBank": [
+        "inequality",
+        "mobility",
+        "systemic",
+        "opportunity",
+        "policy"
+      ],
+      "examples": [
+        "We support simplified applications and a reviewable evening-transport pilot because both address specified barriers. This is a provisional judgment, not a demonstrated mobility effect. Evaluation should distinguish take-up, completion and later outcomes while documenting who remains excluded."
+      ],
+      "steps": [
+        "State the situation in one sentence.",
+        "Select one relevant detail.",
+        "Use a frame to explain the response.",
+        "Add a limitation or another view."
+      ],
+      "guidedPractice": [
+        "Distinguish an observed disparity from an established cause. Model: A disparity describes a difference; a causal claim needs evidence about the mechanism and alternatives.",
+        "Formulate a qualified causal hypothesis about the bus schedule. Model: Late class times may reduce attendance for residents dependent on the last bus."
+      ]
+    },
+    "challengeVersion": {
+      "summary": "Extend the same objective with less scaffolding and more independent explanation.",
+      "tasks": [
+        "Explain how the same outcome pattern could arise from two different mechanisms.",
+        "Write a dissent that accepts your opponent’s factual premises but disputes the policy trade-off."
+      ],
+      "extensionQuestions": [
+        "Which assumption does your response depend on?",
+        "What evidence or constraint would change your choice?"
+      ]
+    },
+    "teacherNotes": {
+      "problems": [
+        {
+          "problem": "Pacing: the package includes more practice than one class needs.",
+          "solution": "Teach the selected Version A tasks and keep Version B, extension work and the independent assessment for follow-up."
+        },
+        {
+          "problem": "Sensitive or misleading assumptions.",
+          "solution": "Use the fictional case, not classmates’ family income or personal experiences. No external research is required; optional sources must be distinguished from the supplied evidence."
+        }
+      ],
+      "tips": [
+        "Score each criterion 0–2: a qualified claim; accurate use of case evidence; a serious alternative explanation; an explicit trade-off; a justified revision condition. 8/10 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+        "Reading and listening tell different stories. Keep their keys separate.",
+        "Student slides include tasks and language models. Facilitation notes and transcript answers belong in the separate teacher documents."
+      ]
+    },
+    "qualityCheck": {
+      "checks": [
+        {
+          "criterion": "Resource coverage",
+          "status": "pass",
+          "comment": "Both worksheet versions, answer keys, an original reading, a listening script, situation cards and student slides are supplied."
+        },
+        {
+          "criterion": "Classroom fit",
+          "status": "check",
+          "comment": "The stated level is a lesson target. Choose scaffolding and pacing for your actual learners."
+        }
+      ],
+      "overallNotes": "This is a curated preview of a complete package. Open responses have model answers, not a single required opinion. Review the supplied material against your class before teaching."
+    },
+    "reading": {
+      "status": "ready",
+      "fingerprint": "preview-inequality-and-social-mobility",
+      "value": {
+        "cefr": "C2",
+        "title": "Equal Eligibility, Unequal Access",
+        "purpose": "Write a nuanced policy analysis that separates causal hypotheses from evidence, weighs distributional trade-offs and specifies what would justify revision.",
+        "instructions": "Read for the situation, then use evidence to answer.",
+        "word_count": 358,
+        "text": "The following municipality, program and observations are fictional. Arden offers a training grant to residents seeking a new qualification. Anyone meeting the same published income and residency criteria may apply. Officials initially describe the policy as equal access because the eligibility rule does not distinguish between neighborhoods. Yet application and completion patterns differ across the municipality. The available case notes report the difference without supplying a representative dataset or identifying its cause.\n\nOne explanation emphasizes individual choices: eligible residents may value the course differently or prefer immediate work. Another points to institutional conditions. Classes end after the last bus to two neighborhoods, some applicants lack reliable childcare, and the application requires documents from several offices. These mechanisms could constrain participation even where motivation is strong. Their plausibility, however, is not proof that they explain every non-application or withdrawal.\n\nA proposed universal transport allowance would be simple to administer and avoid requiring participants to demonstrate exceptional need. Critics argue that some funds would go to people who already have adequate transport. A targeted package of evening transport and childcare support might direct more resources toward specific barriers, but it could introduce intrusive eligibility checks, administrative delays and errors that exclude people it is meant to help. A third proposal simplifies the application process for everyone, although simplification alone would not change the bus schedule.\n\nThe council must also decide what success means. More applications would show increased take-up, not necessarily qualification completion or lasting mobility. Higher completion among participants would be encouraging, but selection into the program could make a comparison with non-participants misleading. A credible evaluation would need a defensible comparison, attention to who remains excluded and a follow-up period suited to the outcome being claimed.\n\nA balanced recommendation can therefore support action while remaining explicit about uncertainty. The absence of decisive causal evidence need not justify inaction, but neither does a plausible systemic explanation license certainty about a particular remedy. The policy should connect each intervention to an identified barrier, make its distributional choices visible and establish conditions for revision. Equal eligibility is a starting rule; whether it yields meaningful opportunity is an empirical and normative question.",
+        "questions": [
+          {
+            "type": "short_answer",
+            "question": "Why does the case not establish the cause of different participation rates?",
+            "choices": [],
+            "evidence": "without supplying a representative dataset or identifying its cause",
+            "answerExplanation": "The quoted words support the response to: Why does the case not establish the cause of different participation rates?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Give one mechanism that could restrict participation despite motivation.",
+            "choices": [],
+            "evidence": "Classes end after the last bus to two neighborhoods",
+            "answerExplanation": "The quoted words support the response to: Give one mechanism that could restrict participation despite motivation."
+          },
+          {
+            "type": "short_answer",
+            "question": "What is the main administrative trade-off of targeting?",
+            "choices": [],
+            "evidence": "it could introduce intrusive eligibility checks, administrative delays and errors",
+            "answerExplanation": "The quoted words support the response to: What is the main administrative trade-off of targeting?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Why are more applications insufficient evidence of lasting mobility?",
+            "choices": [],
+            "evidence": "More applications would show increased take-up, not necessarily qualification completion or lasting mobility.",
+            "answerExplanation": "The quoted words support the response to: Why are more applications insufficient evidence of lasting mobility?"
+          }
+        ],
+        "answers": [
+          "It provides neither a representative dataset nor a causal identification.",
+          "Classes finish after the last bus to two neighborhoods.",
+          "It may focus resources but add intrusive checks, delays and exclusion errors.",
+          "Take-up is distinct from completion and longer-term outcomes."
+        ],
+        "activity": "A policy hearing with a written dissent",
+        "assessment": "Score each criterion 0–2: a qualified claim; accurate use of case evidence; a serious alternative explanation; an explicit trade-off; a justified revision condition. 8/10 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+      }
+    },
+    "listening": {
+      "status": "ready",
+      "fingerprint": "preview-inequality-and-social-mobility",
+      "value": {
+        "cefr": "C2",
+        "title": "The Evaluation Adviser’s Caution",
+        "purpose": "Write a nuanced policy analysis that separates causal hypotheses from evidence, weighs distributional trade-offs and specifies what would justify revision.",
+        "instructions": "Listen once for the situation and again for details.",
+        "script": "I would resist two tempting conclusions about Arden’s training grant. One is that equal eligibility proves equal opportunity. The other is that unequal participation proves a single systemic cause. The case supports neither conclusion on its own. It gives us plausible mechanisms that deserve investigation, not a complete causal account.\n\nMy recommendation is to simplify the application for everyone while piloting evening transport where the timetable creates an identified barrier. Childcare support should also be considered, but its design needs consultation with prospective participants. We should record who cannot use each intervention and why.\n\nEvaluation must distinguish take-up, completion and longer-term outcomes. An increase in applications would not, by itself, demonstrate social mobility. Nor would a higher completion rate among participants prove that the grant caused the difference, since people who join may differ from those who do not.\n\nThere is also a value judgment that evidence cannot make for us: how much administrative simplicity we are willing to exchange for more targeted support. That judgment should be stated openly. I would support a limited, reviewable policy with a clear comparison strategy, rather than promise a permanent solution before we understand the mechanisms. Uncertainty is a reason to design learning into the policy, not a reason to disguise assumptions as findings.",
+        "teacherGuidance": "Play the included recording once for meaning and once for details. The transcript is for teacher reference.",
+        "questions": [
+          {
+            "question": "Which two claims does the adviser reject as established conclusions?",
+            "answer": "Equal eligibility proves opportunity; unequal participation proves one systemic cause",
+            "evidence": "The case supports neither conclusion on its own.",
+            "choices": [
+              "Equal eligibility proves opportunity; unequal participation proves one systemic cause",
+              "All grants work; all transport fails",
+              "Qualifications are useless; all residents are identical"
+            ],
+            "explanation": "The script states: The case supports neither conclusion on its own."
+          },
+          {
+            "question": "Why is a simple participant comparison insufficient?",
+            "answer": "People who join may differ from those who do not",
+            "evidence": "people who join may differ from those who do not",
+            "choices": [
+              "People who join may differ from those who do not",
+              "Completion cannot be measured",
+              "No one applied"
+            ],
+            "explanation": "The script states: people who join may differ from those who do not"
+          },
+          {
+            "question": "What trade-off requires an explicit value judgment?",
+            "answer": "Administrative simplicity versus more targeted support",
+            "evidence": "how much administrative simplicity we are willing to exchange for more targeted support",
+            "choices": [
+              "Administrative simplicity versus more targeted support",
+              "Whether buses exist",
+              "The name of the municipality"
+            ],
+            "explanation": "The script states: how much administrative simplicity we are willing to exchange for more targeted support"
+          }
+        ]
+      }
+    }
+  }
+}

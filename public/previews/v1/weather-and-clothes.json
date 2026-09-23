@@ -1,0 +1,1743 @@
+{
+  "request": {
+    "subject": "English",
+    "topic": "Weather and Clothes",
+    "studentAge": "5-7",
+    "level": "A1",
+    "durationMinutes": 45,
+    "mainSkill": "Listening",
+    "secondarySkill": "Vocabulary",
+    "learningObjective": "Identify sun and rain and name a shirt, shoes and a hat; choose a sun hat for shade and shoes to cover feet.",
+    "numberOfStudents": "20",
+    "previousKnowledge": "Basic classroom routines; some familiar nouns.",
+    "requiredVocabulary": "sun, rain, shirt, shoes, hat",
+    "technologyAvailable": "Board only",
+    "teachingStyle": "Traditional / structured",
+    "homeworkRequirement": "Yes",
+    "groupWorkEnabled": true,
+    "studentsPerGroup": 2,
+    "classroomLimitations": "Use oral responses and pointing before independent writing.",
+    "teacherNotes": "Do not equate a normal shirt or sun hat with waterproof clothing. Accept different sensible clothing choices when the question is open."
+  },
+  "lesson": {
+    "overview": {
+      "topic": "Weather and Clothes",
+      "age": "5-7",
+      "level": "A1",
+      "duration": "45 minutes",
+      "mainSkill": "Listening",
+      "learningObjective": "Identify sun and rain and name a shirt, shoes and a hat; choose a sun hat for shade and shoes to cover feet.",
+      "successCriteria": [
+        "Identify at least four of the five taught words.",
+        "Complete the short task using the target language.",
+        "Take a turn and respond to a partner."
+      ],
+      "prerequisiteKnowledge": [
+        "Basic classroom routines; some familiar nouns."
+      ],
+      "keyLanguage": [
+        "sun",
+        "rain",
+        "shirt",
+        "shoes",
+        "hat",
+        "I see the ___.",
+        "I wear a ___.",
+        "I wear shoes on my feet."
+      ],
+      "materialsNeeded": [
+        "Student worksheets A and B with reading and listening questions; teacher answer keys.",
+        "Five included picture flashcards; paper and pencils.",
+        "Board and marker. Listening is delivered by the teacher."
+      ],
+      "anticipatedDifficulties": [
+        {
+          "difficulty": "Recognizing a word but not yet saying it.",
+          "solution": "Allow pointing, model the word, then invite a short response."
+        },
+        {
+          "difficulty": "Confusing model language with the only possible answer.",
+          "solution": "Accept equivalent accurate responses and use the task rubric."
+        }
+      ],
+      "teacherPreparation": [
+        "Read the two scripts and check the teacher keys before teaching.",
+        "Print one selected worksheet version per learner; keep teacher copies separate.",
+        "Print the included picture-front and word-back cards from the PowerPoint.",
+        "Do not equate a normal shirt or sun hat with waterproof clothing. Accept different sensible clothing choices when the question is open."
+      ]
+    },
+    "lessonPlan": {
+      "totalMinutes": 45,
+      "stages": [
+        {
+          "time": 4,
+          "stage": "Connect and set the goal",
+          "teacherActions": "Use the supplied picture cards to elicit familiar words. Read the goal aloud.",
+          "studentActions": "Point to a familiar picture and try its name.",
+          "materials": "Opening slide or printed opening card",
+          "purpose": "Activate prior knowledge without testing unfamiliar language."
+        },
+        {
+          "time": 6,
+          "stage": "Teach the five key words",
+          "teacherActions": "Show each supplied picture, say the word and model its example. Check meaning with pointing.",
+          "studentActions": "Listen, repeat, point and complete Section A orally.",
+          "materials": "Vocabulary cards; worksheet Section A",
+          "purpose": "Vocabulary supports the main listening task."
+        },
+        {
+          "time": 6,
+          "stage": "Read for meaning",
+          "teacherActions": "Read the short story aloud while children follow. Read each question aloud and accept pointing or short spoken answers.",
+          "studentActions": "Follow the story and give short spoken answers.",
+          "materials": "Reading passage and four questions, supplied in the worksheet",
+          "purpose": "Establish a shared context and check literal understanding before interpretation."
+        },
+        {
+          "time": 7,
+          "stage": "Listen for a change or decision",
+          "teacherActions": "Read the supplied listening script twice. First check the main situation; then read the three questions and repeat for details.",
+          "studentActions": "Listen and say or circle the answer.",
+          "materials": "Supplied listening script and questions",
+          "purpose": "Practice listening with information that differs from the reading."
+        },
+        {
+          "time": 8,
+          "stage": "Guided language practice",
+          "teacherActions": "Use Version A Sections B and C. Model one response, then let pairs work. Keep Version B for a later lesson, reassessment or fast finishers. For children, Sections D and E are optional additional practice.",
+          "studentActions": "Say answers before writing; complete the selected items with a partner.",
+          "materials": "Worksheet A; sentence frames; optional worksheet B",
+          "purpose": "Move from recognition to usable language."
+        },
+        {
+          "time": 10,
+          "stage": "Pack for a walk",
+          "teacherActions": "Arrange groups of 2. Read the supplied role or situation cards and assign roles. Model a short exchange and let learners switch roles. Monitor using the assessment criteria.",
+          "studentActions": "Take turns using the cards and the target phrases.",
+          "materials": "All situation cards appear under Activities and on the student slides",
+          "purpose": "Demonstrate the objective through a purposeful exchange."
+        },
+        {
+          "time": 4,
+          "stage": "Exit check and next step",
+          "teacherActions": "Use the three exit prompts. Record which part of the objective needs another model. Explain the short homework; use the separate assessment later if needed.",
+          "studentActions": "Give a short spoken response and show a picture where helpful.",
+          "materials": "Exit ticket and homework instructions",
+          "purpose": "Check individual progress after supported group work."
+        }
+      ]
+    },
+    "worksheet": {
+      "title": "Weather and Clothes",
+      "student": {
+        "title": "Weather and Clothes — Version A",
+        "instructions": "Start with Sections A–C, Reading and Listening. Sections D–E give extra practice. You may answer aloud.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "format": "multiple-choice",
+            "instructions": "Look at each picture. Say or circle the matching word.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "sun",
+                  "rain",
+                  "shirt",
+                  "shoes",
+                  "hat"
+                ],
+                "answerLines": 0,
+                "visual": "sun"
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "sun",
+                  "rain",
+                  "shirt",
+                  "shoes",
+                  "hat"
+                ],
+                "answerLines": 0,
+                "visual": "rain"
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "sun",
+                  "rain",
+                  "shirt",
+                  "shoes",
+                  "hat"
+                ],
+                "answerLines": 0,
+                "visual": "shirt"
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "sun",
+                  "rain",
+                  "shirt",
+                  "shoes",
+                  "hat"
+                ],
+                "answerLines": 0,
+                "visual": "shoes"
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "sun",
+                  "rain",
+                  "shirt",
+                  "shoes",
+                  "hat"
+                ],
+                "answerLines": 0,
+                "visual": "hat"
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Mia Gets Ready",
+            "format": "reading",
+            "instructions": "Follow the story. Say your answers.",
+            "passage": "Mia looks outside. She sees the sun. She puts on a blue shirt. She puts on brown shoes. She takes her yellow hat. The hat shades her head.\n\nLater, Mia sees rain. She goes inside. Her hat is not a rain hat. Mia waits with her friend. They look at the rain.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What does Mia see first?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What color is her shirt?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What shades her head?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Where does Mia go when it rains?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Complete and say",
+            "format": "short-answer",
+            "instructions": "Say the missing word. You may write it too.",
+            "passage": "",
+            "wordBank": [
+              "sun",
+              "rain",
+              "shirt",
+              "shoes",
+              "hat"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "I see the ___ in the sky. It is bright.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Water falls from clouds. I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "I wear a ___ on the top of my body.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "I wear ___ on my feet.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "I wear a ___ on my head for shade.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Use your words",
+            "format": "speaking-prompts",
+            "instructions": "Work with a partner. Take turns asking and answering.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Name something you wear on your head.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Name something you wear on your feet.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Say one weather word.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "What can shade your head in the sun?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Where can you wait to stay dry when it rains?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section D",
+            "title": "Check the picture words",
+            "format": "multiple-choice",
+            "instructions": "Look carefully. Say or circle yes or no.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "The word for this picture is “sun”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "sun"
+              },
+              {
+                "number": 2,
+                "prompt": "The word for this picture is “shoes”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "rain"
+              },
+              {
+                "number": 3,
+                "prompt": "The word for this picture is “shirt”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "shirt"
+              },
+              {
+                "number": 4,
+                "prompt": "The word for this picture is “sun”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "shoes"
+              },
+              {
+                "number": 5,
+                "prompt": "The word for this picture is “hat”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "hat"
+              }
+            ]
+          },
+          {
+            "label": "Section E",
+            "title": "One more try",
+            "format": "speaking-prompts",
+            "instructions": "Say your answer. Draw or write if you want to.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Say a sentence with shirt.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Say a sentence with rain.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Name two things you can wear.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Does a normal sun hat keep all the rain off you?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "You are going out in the sun. What can you put on your head?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "A Walk with Leo",
+            "format": "multiple-choice",
+            "instructions": "Listen. Say or circle your answers.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What color is Leo’s shirt?",
+                "choices": [
+                  "Green",
+                  "Blue",
+                  "Red"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Where does Leo put his hat?",
+                "choices": [
+                  "On his head",
+                  "On his feet",
+                  "On a chair at the start"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What do Leo and his mom do when it rains?",
+                "choices": [
+                  "Go inside",
+                  "Sit in the rain",
+                  "Run to school"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "studentB": {
+        "title": "Weather and Clothes — Version B",
+        "instructions": "Start with Sections A–C, Reading and Listening. Sections D–E give extra practice. You may answer aloud.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Use the key words",
+            "format": "writing",
+            "instructions": "Look at each picture. Complete the sentence aloud using the word bank.",
+            "passage": "",
+            "wordBank": [
+              "sun",
+              "rain",
+              "shirt",
+              "shoes",
+              "hat"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "sun"
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "rain"
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "shirt"
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "shoes"
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "hat"
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Mia Gets Ready",
+            "format": "reading",
+            "instructions": "Follow the story. Say your answers.",
+            "passage": "Mia looks outside. She sees the sun. She puts on a blue shirt. She puts on brown shoes. She takes her yellow hat. The hat shades her head.\n\nLater, Mia sees rain. She goes inside. Her hat is not a rain hat. Mia waits with her friend. They look at the rain.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What does Mia see first?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What color is her shirt?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What shades her head?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Where does Mia go when it rains?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Complete and say",
+            "format": "short-answer",
+            "instructions": "Say the missing word. You may write it too.",
+            "passage": "",
+            "wordBank": [
+              "sun",
+              "rain",
+              "shirt",
+              "shoes",
+              "hat"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "My feet need a covering. I put on ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "I need shade for my head. I take my sun ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Drops fall from a cloud. This is ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "I put my arms into my blue ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "The sky is bright. I can see the ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Use your words",
+            "format": "speaking-prompts",
+            "instructions": "Work with a partner. Take turns asking and answering.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Say a sentence with shirt.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Say a sentence with rain.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Name two things you can wear.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Does a normal sun hat keep all the rain off you?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "You are going out in the sun. What can you put on your head?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section D",
+            "title": "Check the picture words",
+            "format": "multiple-choice",
+            "instructions": "Look carefully. Say or circle yes or no.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "The word for this picture is “shirt”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "sun"
+              },
+              {
+                "number": 2,
+                "prompt": "The word for this picture is “rain”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "rain"
+              },
+              {
+                "number": 3,
+                "prompt": "The word for this picture is “hat”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "shirt"
+              },
+              {
+                "number": 4,
+                "prompt": "The word for this picture is “shoes”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "shoes"
+              },
+              {
+                "number": 5,
+                "prompt": "The word for this picture is “rain”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "hat"
+              }
+            ]
+          },
+          {
+            "label": "Section E",
+            "title": "One more try",
+            "format": "speaking-prompts",
+            "instructions": "Say your answer. Draw or write if you want to.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Name something you wear on your head.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Name something you wear on your feet.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Say one weather word.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "What can shade your head in the sun?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Where can you wait to stay dry when it rains?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "A Walk with Leo",
+            "format": "multiple-choice",
+            "instructions": "Listen. Say or circle your answers.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What color is Leo’s shirt?",
+                "choices": [
+                  "Green",
+                  "Blue",
+                  "Red"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Where does Leo put his hat?",
+                "choices": [
+                  "On his head",
+                  "On his feet",
+                  "On a chair at the start"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What do Leo and his mom do when it rains?",
+                "choices": [
+                  "Go inside",
+                  "Sit in the rain",
+                  "Run to school"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "teacher": {
+        "overview": "Identify sun and rain and name a shirt, shoes and a hat; choose a sun hat for shade and shoes to cover feet.\n\nOne point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+        "groupWorkGuidance": "Groups of 2; give everyone a speaking or checking role and rotate. Use Version B as alternate practice, not as a second full worksheet in the same session.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "answers": [
+              "sun",
+              "rain",
+              "shirt",
+              "shoes",
+              "hat"
+            ],
+            "explanation": "Check meaning before form.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Reading",
+            "title": "Mia Gets Ready",
+            "answers": [
+              "The sun.",
+              "Blue.",
+              "Her yellow hat.",
+              "Inside."
+            ],
+            "explanation": "Use the passage, not outside knowledge.",
+            "expectedResponses": [
+              "1. Evidence: She sees the sun.",
+              "2. Evidence: She puts on a blue shirt.",
+              "3. Evidence: The hat shades her head.",
+              "4. Evidence: She goes inside."
+            ],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section B",
+            "title": "Complete and say",
+            "answers": [
+              "sun",
+              "rain",
+              "shirt",
+              "shoes",
+              "hat"
+            ],
+            "explanation": "Listening practice with vocabulary support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section C",
+            "title": "Use your words",
+            "answers": [
+              "A hat.",
+              "Shoes.",
+              "Sun or rain.",
+              "A sun hat.",
+              "Inside or under a safe shelter."
+            ],
+            "explanation": "Listening practice with vocabulary support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section D",
+            "title": "Check the picture words",
+            "answers": [
+              "Yes.",
+              "No.",
+              "Yes.",
+              "No.",
+              "Yes."
+            ],
+            "explanation": "Listening practice with vocabulary support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section E",
+            "title": "One more try",
+            "answers": [
+              "I wear a shirt.",
+              "I see the rain.",
+              "A shirt and shoes; a hat is also acceptable.",
+              "No.",
+              "A sun hat."
+            ],
+            "explanation": "Listening practice with vocabulary support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Listening",
+            "title": "A Walk with Leo",
+            "answers": [
+              "Green",
+              "On his head",
+              "Go inside"
+            ],
+            "explanation": "Read or listen twice. Answers refer only to this script.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Teacher transcript:\nHello! My name is Leo. I look outside. I see the sun. It is a nice day. I want to go for a walk. First, I put on my shirt. My shirt is green. I like my green shirt. Next, I put on my shoes. My shoes are brown. I put one shoe on each foot. Now I look for my hat. Where is my hat? Here it is! My hat is yellow. I put it on my head. The hat gives my head some shade.\n\nI walk with my mom. We see a small bird. We stop and look at the bird. Then we look up. We see clouds. Now we see rain. We go inside. My yellow hat is a sun hat. It does not keep the rain away. We sit together and wait. I take off my shoes. I put my hat on a chair. After a little time, the rain stops. I look outside again. I can see the sun! I smile at my mom. We can take our walk now.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+          }
+        ]
+      },
+      "teacherB": [
+        {
+          "label": "Section A",
+          "title": "Use the key words",
+          "answers": [
+            "I see the sun.",
+            "I see rain.",
+            "I see a shirt.",
+            "I see shoes.",
+            "I see a hat."
+          ],
+          "explanation": "Check meaning before form.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Reading",
+          "title": "Mia Gets Ready",
+          "answers": [
+            "The sun.",
+            "Blue.",
+            "Her yellow hat.",
+            "Inside."
+          ],
+          "explanation": "Use the passage, not outside knowledge.",
+          "expectedResponses": [
+            "1. Evidence: She sees the sun.",
+            "2. Evidence: She puts on a blue shirt.",
+            "3. Evidence: The hat shades her head.",
+            "4. Evidence: She goes inside."
+          ],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section B",
+          "title": "Complete and say",
+          "answers": [
+            "shoes",
+            "hat",
+            "rain",
+            "shirt",
+            "sun"
+          ],
+          "explanation": "Listening practice with vocabulary support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section C",
+          "title": "Use your words",
+          "answers": [
+            "I wear a shirt.",
+            "I see the rain.",
+            "A shirt and shoes; a hat is also acceptable.",
+            "No.",
+            "A sun hat."
+          ],
+          "explanation": "Listening practice with vocabulary support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section D",
+          "title": "Check the picture words",
+          "answers": [
+            "No.",
+            "Yes.",
+            "No.",
+            "Yes.",
+            "No."
+          ],
+          "explanation": "Listening practice with vocabulary support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section E",
+          "title": "One more try",
+          "answers": [
+            "A hat.",
+            "Shoes.",
+            "Sun or rain.",
+            "A sun hat.",
+            "Inside or under a safe shelter."
+          ],
+          "explanation": "Listening practice with vocabulary support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Listening",
+          "title": "A Walk with Leo",
+          "answers": [
+            "Green",
+            "On his head",
+            "Go inside"
+          ],
+          "explanation": "Read or listen twice. Answers refer only to this script.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Teacher transcript:\nHello! My name is Leo. I look outside. I see the sun. It is a nice day. I want to go for a walk. First, I put on my shirt. My shirt is green. I like my green shirt. Next, I put on my shoes. My shoes are brown. I put one shoe on each foot. Now I look for my hat. Where is my hat? Here it is! My hat is yellow. I put it on my head. The hat gives my head some shade.\n\nI walk with my mom. We see a small bird. We stop and look at the bird. Then we look up. We see clouds. Now we see rain. We go inside. My yellow hat is a sun hat. It does not keep the rain away. We sit together and wait. I take off my shoes. I put my hat on a chair. After a little time, the rain stops. I look outside again. I can see the sun! I smile at my mom. We can take our walk now.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+        }
+      ]
+    },
+    "presentation": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "Weather and Clothes",
+          "layout": "title",
+          "studentText": "Look. Listen. Speak.",
+          "interaction": "What do you already know about this topic?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 2,
+          "title": "Today’s goal",
+          "layout": "goal",
+          "studentText": "Name the pictures. Choose clothes for a walk.",
+          "interaction": "Try one sentence.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 3,
+          "title": "sun",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "sun",
+              "definition": "The bright light in the sky.",
+              "example": "I see the sun.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “sun” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
+          "title": "rain",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "rain",
+              "definition": "Water that falls from clouds.",
+              "example": "I see the rain.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “rain” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 5,
+          "title": "shirt",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "shirt",
+              "definition": "Clothes for the top of your body.",
+              "example": "My shirt is blue.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “shirt” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 6,
+          "title": "shoes",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "shoes",
+              "definition": "Clothes for your feet.",
+              "example": "My shoes are brown.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “shoes” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 7,
+          "title": "hat",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "hat",
+              "definition": "Something you wear on your head.",
+              "example": "My hat is yellow.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “hat” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 8,
+          "title": "Read and notice",
+          "layout": "question",
+          "studentText": "Mia Gets Ready",
+          "interaction": "What does Mia see first?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the full reading printed in both worksheet versions. Check the four reading questions against the separate teacher key.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 9,
+          "title": "Listen for details",
+          "layout": "question",
+          "studentText": "A Walk with Leo",
+          "interaction": "Listen. Then answer.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the supplied recording or read the exact script in the separate listening teacher copy. Do not display the transcript during the listening check.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 10,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Say a sentence.",
+          "bullets": [
+            "I see the ___."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 11,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Say a sentence.",
+          "bullets": [
+            "I wear a ___."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 12,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Say a sentence.",
+          "bullets": [
+            "I wear shoes on my feet."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 13,
+          "title": "Pack for a walk · 1",
+          "layout": "activity",
+          "studentText": "A sunny walk: choose a picture that shades your head.",
+          "interaction": "Take turns.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Do not equate a normal shirt or sun hat with waterproof clothing. Accept different sensible clothing choices when the question is open.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 14,
+          "title": "Pack for a walk · 2",
+          "layout": "activity",
+          "studentText": "Getting dressed: choose a picture for your feet.",
+          "interaction": "Take turns.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Do not equate a normal shirt or sun hat with waterproof clothing. Accept different sensible clothing choices when the question is open.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 15,
+          "title": "Pack for a walk · 3",
+          "layout": "activity",
+          "studentText": "Rain starts: decide where to wait safely.",
+          "interaction": "Take turns.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Do not equate a normal shirt or sun hat with waterproof clothing. Accept different sensible clothing choices when the question is open.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 16,
+          "title": "Your final response",
+          "layout": "review",
+          "studentText": "Name two things you wear.",
+          "interaction": "Say it by yourself.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        }
+      ]
+    },
+    "answerKey": {
+      "sections": [
+        {
+          "title": "Section A: Meet the key words",
+          "answers": [
+            "sun",
+            "rain",
+            "shirt",
+            "shoes",
+            "hat"
+          ],
+          "notes": "Check meaning before form."
+        },
+        {
+          "title": "Reading: Mia Gets Ready",
+          "answers": [
+            "The sun.",
+            "Blue.",
+            "Her yellow hat.",
+            "Inside."
+          ],
+          "notes": "Use the passage, not outside knowledge."
+        },
+        {
+          "title": "Section B: Complete and say",
+          "answers": [
+            "sun",
+            "rain",
+            "shirt",
+            "shoes",
+            "hat"
+          ],
+          "notes": "Listening practice with vocabulary support."
+        },
+        {
+          "title": "Section C: Use your words",
+          "answers": [
+            "A hat.",
+            "Shoes.",
+            "Sun or rain.",
+            "A sun hat.",
+            "Inside or under a safe shelter."
+          ],
+          "notes": "Listening practice with vocabulary support."
+        },
+        {
+          "title": "Section D: Check the picture words",
+          "answers": [
+            "Yes.",
+            "No.",
+            "Yes.",
+            "No.",
+            "Yes."
+          ],
+          "notes": "Listening practice with vocabulary support."
+        },
+        {
+          "title": "Section E: One more try",
+          "answers": [
+            "I wear a shirt.",
+            "I see the rain.",
+            "A shirt and shoes; a hat is also acceptable.",
+            "No.",
+            "A sun hat."
+          ],
+          "notes": "Listening practice with vocabulary support."
+        },
+        {
+          "title": "Listening: A Walk with Leo",
+          "answers": [
+            "Green",
+            "On his head",
+            "Go inside"
+          ],
+          "notes": "Read or listen twice. Answers refer only to this script."
+        }
+      ]
+    },
+    "activity": {
+      "title": "Pack for a walk",
+      "objective": "Identify sun and rain and name a shirt, shoes and a hat; choose a sun hat for shade and shoes to cover feet.",
+      "time": "10 minutes",
+      "grouping": "Groups of 2",
+      "materials": "A sunny walk: choose a picture that shades your head.\n\nGetting dressed: choose a picture for your feet.\n\nRain starts: decide where to wait safely.",
+      "teacherInstructions": [
+        "Use the exact situation cards below; no additional resource is needed.",
+        "Form groups of 2 and model one short response.",
+        "Allow 5 minutes for preparation and practice; use the remaining time for responses and feedback.",
+        "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal."
+      ],
+      "studentInstructions": [
+        "A sunny walk: choose a picture that shades your head.",
+        "Getting dressed: choose a picture for your feet.",
+        "Rain starts: decide where to wait safely."
+      ],
+      "example": "It is sunny. I take my hat. I wear shoes. When it rains, I go inside.",
+      "variation": "Swap roles and repeat with a different picture."
+    },
+    "homework": {
+      "title": "Continue the learning",
+      "instructions": "Use the lesson materials. No additional purchase or research is required.",
+      "tasks": [
+        "Draw yourself ready for a sunny walk.",
+        "Point to your drawing and say hat, shirt and shoes. An adult may listen, but writing is optional."
+      ],
+      "estimatedTime": "5–10 minutes"
+    },
+    "exitTicket": {
+      "title": "Show what you can do",
+      "timeMinutes": 4,
+      "questions": [
+        "Name something you wear on your head.",
+        "What can shade your head in the sun?",
+        "Say one word you can use now."
+      ],
+      "successIndicator": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal."
+    },
+    "assessment": {
+      "title": "Independent check — Version A",
+      "instructions": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+      "questions": [
+        {
+          "prompt": "Name something you wear on your head.",
+          "type": "Oral response",
+          "answer": "A hat."
+        },
+        {
+          "prompt": "Name something you wear on your feet.",
+          "type": "Oral response",
+          "answer": "Shoes."
+        },
+        {
+          "prompt": "Say one weather word.",
+          "type": "Oral response",
+          "answer": "Sun or rain."
+        },
+        {
+          "prompt": "What can shade your head in the sun?",
+          "type": "Oral response",
+          "answer": "A sun hat."
+        },
+        {
+          "prompt": "Where can you wait to stay dry when it rains?",
+          "type": "Oral response",
+          "answer": "Inside or under a safe shelter."
+        }
+      ]
+    },
+    "versionB": {
+      "title": "Independent check — Version B",
+      "instructions": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+      "questions": [
+        {
+          "prompt": "Say a sentence with shirt.",
+          "type": "Oral response",
+          "answer": "I wear a shirt."
+        },
+        {
+          "prompt": "Say a sentence with rain.",
+          "type": "Oral response",
+          "answer": "I see the rain."
+        },
+        {
+          "prompt": "Name two things you can wear.",
+          "type": "Oral response",
+          "answer": "A shirt and shoes; a hat is also acceptable."
+        },
+        {
+          "prompt": "Does a normal sun hat keep all the rain off you?",
+          "type": "Oral response",
+          "answer": "No."
+        },
+        {
+          "prompt": "You are going out in the sun. What can you put on your head?",
+          "type": "Oral response",
+          "answer": "A sun hat."
+        }
+      ]
+    },
+    "supportVersion": {
+      "summary": "Move from pointing to a single word, then to a short phrase.",
+      "sentenceFrames": [
+        "I see the ___.",
+        "I wear a ___.",
+        "I wear shoes on my feet."
+      ],
+      "wordBank": [
+        "sun",
+        "rain",
+        "shirt",
+        "shoes",
+        "hat"
+      ],
+      "examples": [
+        "It is sunny. I take my hat. I wear shoes. When it rains, I go inside."
+      ],
+      "steps": [
+        "Point to the relevant picture.",
+        "Hear and repeat the word.",
+        "Complete one frame with a partner."
+      ],
+      "guidedPractice": [
+        "I see the ___ in the sky. It is bright. Model: sun",
+        "Name something you wear on your head. Model: A hat."
+      ]
+    },
+    "challengeVersion": {
+      "summary": "Extend the same objective with less scaffolding and more independent explanation.",
+      "tasks": [
+        "Say two clothing words in one sentence.",
+        "Explain with words or gestures why a sun hat is useful."
+      ],
+      "extensionQuestions": [
+        "Can you make a different sentence with one of today’s words?"
+      ]
+    },
+    "teacherNotes": {
+      "problems": [
+        {
+          "problem": "Pacing: the package includes more practice than one class needs.",
+          "solution": "Teach the selected Version A tasks and keep Version B, extension work and the independent assessment for follow-up."
+        },
+        {
+          "problem": "Sensitive or misleading assumptions.",
+          "solution": "Do not equate a normal shirt or sun hat with waterproof clothing. Accept different sensible clothing choices when the question is open."
+        }
+      ],
+      "tips": [
+        "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+        "Reading and listening tell different stories. Keep their keys separate.",
+        "Student slides include tasks and language models. Facilitation notes and transcript answers belong in the separate teacher documents."
+      ]
+    },
+    "qualityCheck": {
+      "checks": [
+        {
+          "criterion": "Resource coverage",
+          "status": "pass",
+          "comment": "Both worksheet versions, answer keys, an original reading, a listening script, situation cards and student slides are supplied."
+        },
+        {
+          "criterion": "Classroom fit",
+          "status": "check",
+          "comment": "The stated level is a lesson target. Choose scaffolding and pacing for your actual learners."
+        }
+      ],
+      "overallNotes": "This is a curated preview of a complete package. Open responses have model answers, not a single required opinion. Review the supplied material against your class before teaching."
+    },
+    "reading": {
+      "status": "ready",
+      "fingerprint": "preview-weather-and-clothes",
+      "value": {
+        "cefr": "A1",
+        "title": "Mia Gets Ready",
+        "purpose": "Identify sun and rain and name a shirt, shoes and a hat; choose a sun hat for shade and shoes to cover feet.",
+        "instructions": "Follow the story. Say your answers.",
+        "word_count": 52,
+        "text": "Mia looks outside. She sees the sun. She puts on a blue shirt. She puts on brown shoes. She takes her yellow hat. The hat shades her head.\n\nLater, Mia sees rain. She goes inside. Her hat is not a rain hat. Mia waits with her friend. They look at the rain.",
+        "questions": [
+          {
+            "type": "short_answer",
+            "question": "What does Mia see first?",
+            "choices": [],
+            "evidence": "She sees the sun.",
+            "answerExplanation": "The quoted words support the response to: What does Mia see first?"
+          },
+          {
+            "type": "short_answer",
+            "question": "What color is her shirt?",
+            "choices": [],
+            "evidence": "She puts on a blue shirt.",
+            "answerExplanation": "The quoted words support the response to: What color is her shirt?"
+          },
+          {
+            "type": "short_answer",
+            "question": "What shades her head?",
+            "choices": [],
+            "evidence": "The hat shades her head.",
+            "answerExplanation": "The quoted words support the response to: What shades her head?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Where does Mia go when it rains?",
+            "choices": [],
+            "evidence": "She goes inside.",
+            "answerExplanation": "The quoted words support the response to: Where does Mia go when it rains?"
+          }
+        ],
+        "answers": [
+          "The sun.",
+          "Blue.",
+          "Her yellow hat.",
+          "Inside."
+        ],
+        "activity": "Pack for a walk",
+        "assessment": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal."
+      }
+    },
+    "listening": {
+      "status": "ready",
+      "fingerprint": "preview-weather-and-clothes",
+      "value": {
+        "cefr": "A1",
+        "title": "A Walk with Leo",
+        "purpose": "Identify sun and rain and name a shirt, shoes and a hat; choose a sun hat for shade and shoes to cover feet.",
+        "instructions": "Listen. Say or circle your answers.",
+        "script": "Hello! My name is Leo. I look outside. I see the sun. It is a nice day. I want to go for a walk. First, I put on my shirt. My shirt is green. I like my green shirt. Next, I put on my shoes. My shoes are brown. I put one shoe on each foot. Now I look for my hat. Where is my hat? Here it is! My hat is yellow. I put it on my head. The hat gives my head some shade.\n\nI walk with my mom. We see a small bird. We stop and look at the bird. Then we look up. We see clouds. Now we see rain. We go inside. My yellow hat is a sun hat. It does not keep the rain away. We sit together and wait. I take off my shoes. I put my hat on a chair. After a little time, the rain stops. I look outside again. I can see the sun! I smile at my mom. We can take our walk now.",
+        "teacherGuidance": "Read the exact script aloud twice. Read questions aloud where helpful. Pause for responses.",
+        "questions": [
+          {
+            "question": "What color is Leo’s shirt?",
+            "answer": "Green",
+            "evidence": "My shirt is green.",
+            "choices": [
+              "Green",
+              "Blue",
+              "Red"
+            ],
+            "explanation": "The script states: My shirt is green."
+          },
+          {
+            "question": "Where does Leo put his hat?",
+            "answer": "On his head",
+            "evidence": "I put it on my head.",
+            "choices": [
+              "On his head",
+              "On his feet",
+              "On a chair at the start"
+            ],
+            "explanation": "The script states: I put it on my head."
+          },
+          {
+            "question": "What do Leo and his mom do when it rains?",
+            "answer": "Go inside",
+            "evidence": "We go inside.",
+            "choices": [
+              "Go inside",
+              "Sit in the rain",
+              "Run to school"
+            ],
+            "explanation": "The script states: We go inside."
+          }
+        ]
+      }
+    }
+  }
+}

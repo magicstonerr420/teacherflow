@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BetaManagementRouteImport } from './routes/beta-management'
 import { Route as BuilderRouteImport } from './routes/builder'
+import { Route as ExamplesRouteImport } from './routes/examples'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as QuickStartRouteImport } from './routes/quick-start'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
@@ -45,6 +46,11 @@ const BetaManagementRoute = BetaManagementRouteImport.update({
 const BuilderRoute = BuilderRouteImport.update({
   id: '/builder',
   path: '/builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamplesRoute = ExamplesRouteImport.update({
+  id: '/examples',
+  path: '/examples',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/beta-management': typeof BetaManagementRoute
   '/builder': typeof BuilderRoute
+  '/examples': typeof ExamplesRoute
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/beta-management': typeof BetaManagementRoute
   '/builder': typeof BuilderRoute
+  '/examples': typeof ExamplesRoute
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/beta-management': typeof BetaManagementRoute
   '/builder': typeof BuilderRoute
+  '/examples': typeof ExamplesRoute
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beta-management'
     | '/builder'
+    | '/examples'
     | '/profile'
     | '/quick-start'
     | '/api/generate-image'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beta-management'
     | '/builder'
+    | '/examples'
     | '/profile'
     | '/quick-start'
     | '/api/generate-image'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beta-management'
     | '/builder'
+    | '/examples'
     | '/profile'
     | '/quick-start'
     | '/api/generate-image'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BetaManagementRoute: typeof BetaManagementRoute
   BuilderRoute: typeof BuilderRoute
+  ExamplesRoute: typeof ExamplesRoute
   ProfileRoute: typeof ProfileRoute
   QuickStartRoute: typeof QuickStartRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/builder'
       fullPath: '/builder'
       preLoaderRoute: typeof BuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples': {
+      id: '/examples'
+      path: '/examples'
+      fullPath: '/examples'
+      preLoaderRoute: typeof ExamplesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BetaManagementRoute: BetaManagementRoute,
   BuilderRoute: BuilderRoute,
+  ExamplesRoute: ExamplesRoute,
   ProfileRoute: ProfileRoute,
   QuickStartRoute: QuickStartRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,

@@ -1,0 +1,1367 @@
+{
+  "request": {
+    "subject": "English",
+    "topic": "Globalization and Culture",
+    "studentAge": "16-18",
+    "level": "C1",
+    "durationMinutes": 75,
+    "mainSkill": "Writing",
+    "secondarySkill": "Speaking",
+    "learningObjective": "Write a balanced argument about cultural exchange, distinguishing wider access from local control and addressing a counterargument.",
+    "numberOfStudents": "20",
+    "previousKnowledge": "Language from the previous CEFR level; no specialist topic knowledge required.",
+    "requiredVocabulary": "globalization, identity, heritage, diversity, integration",
+    "technologyAvailable": "Projector / screen",
+    "teachingStyle": "Discussion-led",
+    "homeworkRequirement": "Yes",
+    "groupWorkEnabled": true,
+    "studentsPerGroup": 2,
+    "classroomLimitations": "All core evidence and role cards are supplied.",
+    "teacherNotes": "This fictional case represents no real culture. Do not assign one student the role of spokesperson for an entire nationality or community."
+  },
+  "lesson": {
+    "overview": {
+      "topic": "Globalization and Culture",
+      "age": "16-18",
+      "level": "C1",
+      "duration": "75 minutes",
+      "mainSkill": "Writing",
+      "learningObjective": "Write a balanced argument about cultural exchange, distinguishing wider access from local control and addressing a counterargument.",
+      "successCriteria": [
+        "State a clear response that meets the task.",
+        "Use specific details from the supplied material.",
+        "Respond to another view and recognize an appropriate limitation."
+      ],
+      "prerequisiteKnowledge": [
+        "Language from the previous CEFR level; no specialist topic knowledge required."
+      ],
+      "keyLanguage": [
+        "globalization",
+        "identity",
+        "heritage",
+        "diversity",
+        "integration",
+        "Although wider access may ___, it does not necessarily ___ .",
+        "The relevant distinction is between ___ and ___ .",
+        "A defensible compromise would ___, provided that ___ ."
+      ],
+      "materialsNeeded": [
+        "Student worksheets A and B with reading and listening questions; teacher answer keys.",
+        "Supplied case and situation cards; paper and pens.",
+        "Projector / screen. Included recording and student slides."
+      ],
+      "anticipatedDifficulties": [
+        {
+          "difficulty": "Giving a broad claim without a relevant detail.",
+          "solution": "Ask which sentence in the case supports the claim."
+        },
+        {
+          "difficulty": "Confusing model language with the only possible answer.",
+          "solution": "Accept equivalent accurate responses and use the task rubric."
+        }
+      ],
+      "teacherPreparation": [
+        "Read the two scripts and check the teacher keys before teaching.",
+        "Print one selected worksheet version per learner; keep teacher copies separate.",
+        "Prepare the supplied role cards. No outside article or paid material is needed.",
+        "This fictional case represents no real culture. Do not assign one student the role of spokesperson for an entire nationality or community."
+      ]
+    },
+    "lessonPlan": {
+      "totalMinutes": 75,
+      "stages": [
+        {
+          "time": 6,
+          "stage": "Connect and set the goal",
+          "teacherActions": "Invite an initial view on the case, then state the objective and distinguish the fictional scenario from factual research.",
+          "studentActions": "State an initial view and one question you want the case to answer.",
+          "materials": "Opening slide or printed opening card",
+          "purpose": "Activate prior knowledge without testing unfamiliar language."
+        },
+        {
+          "time": 10,
+          "stage": "Teach the five key words",
+          "teacherActions": "Model the five terms using their definitions and examples. Ask learners to explain a distinction in their own words.",
+          "studentActions": "Complete Section A and compare meanings with a partner.",
+          "materials": "Vocabulary cards; worksheet Section A",
+          "purpose": "Speaking supports the main writing task."
+        },
+        {
+          "time": 12,
+          "stage": "Read for meaning",
+          "teacherActions": "Give a first reading for the main situation, followed by the four evidence questions. Clarify only vocabulary essential to meaning.",
+          "studentActions": "Read the passage, answer the questions and locate the supporting words.",
+          "materials": "Reading passage and four questions, supplied in the worksheet",
+          "purpose": "Establish a shared context and check literal understanding before interpretation."
+        },
+        {
+          "time": 10,
+          "stage": "Listen for a change or decision",
+          "teacherActions": "Play the included recording twice: once for the main situation, then again after learners read the three questions. Use the teacher transcript to resolve disputed evidence.",
+          "studentActions": "Identify the main situation, then answer the three detail questions and compare evidence.",
+          "materials": "Supplied listening script and questions",
+          "purpose": "Practice listening with information that differs from the reading."
+        },
+        {
+          "time": 13,
+          "stage": "Guided language practice",
+          "teacherActions": "Use Version A Sections B and C. Model one response, then let pairs work. Keep Version B for a later lesson, reassessment or fast finishers. For children, Sections D and E are optional additional practice.",
+          "studentActions": "Apply the sentence frames, then respond to the five application prompts.",
+          "materials": "Worksheet A; sentence frames; optional worksheet B",
+          "purpose": "Move from recognition to usable language."
+        },
+        {
+          "time": 20,
+          "stage": "Negotiate the festival agreement",
+          "teacherActions": "Arrange groups of 2. Read the supplied role or situation cards and assign roles. Require a choice, supporting reasons and a response to another view. Monitor using the assessment criteria.",
+          "studentActions": "Complete the group task, present your decision and respond to one question.",
+          "materials": "All situation cards appear under Activities and on the student slides",
+          "purpose": "Demonstrate the objective through a purposeful exchange."
+        },
+        {
+          "time": 4,
+          "stage": "Exit check and next step",
+          "teacherActions": "Use the three exit prompts. Record which part of the objective needs another model. Explain the short homework; use the separate assessment later if needed.",
+          "studentActions": "Give an independent response and identify one point to improve.",
+          "materials": "Exit ticket and homework instructions",
+          "purpose": "Check individual progress after supported group work."
+        }
+      ]
+    },
+    "worksheet": {
+      "title": "Globalization and Culture",
+      "student": {
+        "title": "Globalization and Culture — Version A",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "format": "matching",
+            "instructions": "Match each definition to a word from the bank.",
+            "passage": "",
+            "wordBank": [
+              "globalization",
+              "identity",
+              "heritage",
+              "diversity",
+              "integration"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Increasing connections between places and societies.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "A sense of who a person or community is.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Traditions and practices passed between generations.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "The presence of different experiences and forms of expression.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Participation in a shared setting while negotiating differences.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Who Shapes the Festival?",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "The town and festival in this case are fictional. Luma’s annual music festival once served mainly local residents. A partnership with an international distributor would now let performers reach listeners abroad. The distributor offers translation, promotion and payment for selected recordings. For some musicians, this is an opportunity to earn money while continuing work that local ticket sales cannot support.\n\nThe offer also has conditions. The distributor wants shorter performances, familiar genre labels and a program that can be promoted consistently across different markets. These requirements are not an explicit ban on local traditions. Nevertheless, they may favor pieces that are easier for unfamiliar listeners to recognize. Musicians whose work depends on long storytelling sequences worry that selection would reward only a narrow part of their heritage.\n\nThe youth council sees another possibility. Members already combine influences from different places, and they object to treating culture as a fixed collection of old practices. They want new collaborations to count as part of local identity. Some elders agree, while asking who will have the authority to approve how a performance is described. The disagreement is therefore not simply between young innovators and older guardians.\n\nA proposed agreement would reserve some programming decisions for a local committee, publish the selection criteria and give performers a chance to correct translations. It might protect meaningful participation, but it would also add costs and delay. The distributor has not accepted these terms.\n\nThe case separates two questions that are often merged: whether cultural work travels more widely, and whether the people who create it retain influence over its presentation. Wider circulation may support diversity, yet circulation alone does not guarantee control. A convincing judgment needs to examine both opportunities and the rules that distribute decision-making power.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What concrete benefits does the distributor offer?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Why might selection narrow the representation of heritage?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Why is the conflict not simply young versus old?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "What distinction structures the final paragraph?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Qualify: Globalization destroys local culture.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Distinguish heritage from a fixed rule against change.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Write a concession about the distributor’s contribution.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Identify an unsupported inference: Short formats are requested, so long pieces are banned.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Explain integration without equating it with sameness.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "writing",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "State a qualified thesis supporting or opposing the proposal.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Use one case detail to support your thesis.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Present a serious counterargument.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Respond without dismissing that counterargument.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Conclude with a condition that would change your view.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "A Curator’s Conditional Support",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What is the curator’s position?",
+                "choices": [
+                  "Conditional support",
+                  "Complete rejection",
+                  "Unconditional approval"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What risk does visibility alone leave unresolved?",
+                "choices": [
+                  "A narrow representation without local influence",
+                  "No recordings can travel",
+                  "All musicians must stop working"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Which measure would supplement audience size?",
+                "choices": [
+                  "Who made decisions",
+                  "Only ticket prices",
+                  "The shortest performance"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "studentB": {
+        "title": "Globalization and Culture — Version B",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Use the key words",
+            "format": "writing",
+            "instructions": "Write a sentence that shows each word’s meaning.",
+            "passage": "",
+            "wordBank": [
+              "globalization",
+              "identity",
+              "heritage",
+              "diversity",
+              "integration"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Use “globalization” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Use “identity” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Use “heritage” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Use “diversity” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Use “integration” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Who Shapes the Festival?",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "The town and festival in this case are fictional. Luma’s annual music festival once served mainly local residents. A partnership with an international distributor would now let performers reach listeners abroad. The distributor offers translation, promotion and payment for selected recordings. For some musicians, this is an opportunity to earn money while continuing work that local ticket sales cannot support.\n\nThe offer also has conditions. The distributor wants shorter performances, familiar genre labels and a program that can be promoted consistently across different markets. These requirements are not an explicit ban on local traditions. Nevertheless, they may favor pieces that are easier for unfamiliar listeners to recognize. Musicians whose work depends on long storytelling sequences worry that selection would reward only a narrow part of their heritage.\n\nThe youth council sees another possibility. Members already combine influences from different places, and they object to treating culture as a fixed collection of old practices. They want new collaborations to count as part of local identity. Some elders agree, while asking who will have the authority to approve how a performance is described. The disagreement is therefore not simply between young innovators and older guardians.\n\nA proposed agreement would reserve some programming decisions for a local committee, publish the selection criteria and give performers a chance to correct translations. It might protect meaningful participation, but it would also add costs and delay. The distributor has not accepted these terms.\n\nThe case separates two questions that are often merged: whether cultural work travels more widely, and whether the people who create it retain influence over its presentation. Wider circulation may support diversity, yet circulation alone does not guarantee control. A convincing judgment needs to examine both opportunities and the rules that distribute decision-making power.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What concrete benefits does the distributor offer?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Why might selection narrow the representation of heritage?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Why is the conflict not simply young versus old?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "What distinction structures the final paragraph?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Qualify: International audiences always increase diversity.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Distinguish access from authority in one sentence.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Write a concession about shared selection costs.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Challenge: All elders reject new collaborations.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Define a fair review criterion beyond audience size.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "writing",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Argue for one local decision that should be protected.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Explain one benefit for a musician rather than the town generally.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Critique the assumption that authentic culture cannot change.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Propose a way to evaluate representation.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Write a nuanced final recommendation in two sentences.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "A Curator’s Conditional Support",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What is the curator’s position?",
+                "choices": [
+                  "Conditional support",
+                  "Complete rejection",
+                  "Unconditional approval"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What risk does visibility alone leave unresolved?",
+                "choices": [
+                  "A narrow representation without local influence",
+                  "No recordings can travel",
+                  "All musicians must stop working"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Which measure would supplement audience size?",
+                "choices": [
+                  "Who made decisions",
+                  "Only ticket prices",
+                  "The shortest performance"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "teacher": {
+        "overview": "Write a balanced argument about cultural exchange, distinguishing wider access from local control and addressing a counterargument.\n\nScore each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+        "groupWorkGuidance": "Groups of 2; give everyone a speaking or checking role and rotate. Use Version B as alternate practice, not as a second full worksheet in the same session.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "answers": [
+              "globalization",
+              "identity",
+              "heritage",
+              "diversity",
+              "integration"
+            ],
+            "explanation": "Check meaning before form.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Reading",
+            "title": "Who Shapes the Festival?",
+            "answers": [
+              "Translation, promotion and payment for selected recordings.",
+              "Market-friendly formats may favor easily recognized pieces.",
+              "Some elders support collaboration while questioning decision-making authority.",
+              "Wider circulation versus creators’ influence over presentation."
+            ],
+            "explanation": "Use the passage, not outside knowledge.",
+            "expectedResponses": [
+              "1. Evidence: The distributor offers translation, promotion and payment for selected recordings.",
+              "2. Evidence: they may favor pieces that are easier for unfamiliar listeners to recognize",
+              "3. Evidence: Some elders agree, while asking who will have the authority to approve how a performance is described.",
+              "4. Evidence: whether cultural work travels more widely, and whether the people who create it retain influence over its presentation"
+            ],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "answers": [
+              "Globalization may weaken some local practices under particular commercial conditions.",
+              "Heritage can inform new work without requiring every practice to remain unchanged.",
+              "Although the distributor offers valuable promotion, performers still need a voice in representation.",
+              "A preference for short formats may disadvantage long pieces, but a ban is not stated.",
+              "People can participate in shared institutions while retaining different traditions."
+            ],
+            "explanation": "Writing practice with speaking support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "answers": [
+              "Accept a clear position with specified conditions rather than an absolute claim.",
+              "Link translation, payment, selection rules or review rights directly to the argument.",
+              "Shared selection can delay work and increase costs.",
+              "Propose a deadline and a funded local review role.",
+              "For example, withdrawal of performer review rights would justify rejecting the agreement."
+            ],
+            "explanation": "Writing practice with speaking support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Listening",
+            "title": "A Curator’s Conditional Support",
+            "answers": [
+              "Conditional support",
+              "A narrow representation without local influence",
+              "Who made decisions"
+            ],
+            "explanation": "Read or listen twice. Answers refer only to this script.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Teacher transcript:\nI support the proposed festival partnership, but my support is conditional. Reaching listeners abroad could help musicians continue their work, and translation could make unfamiliar traditions more accessible. It would be a mistake to assume that every commercial partnership necessarily destroys local culture.\n\nHowever, access is only one part of the question. If an outside organization chooses every performance and writes every description, the community may become visible without gaining much influence. A recording can travel widely while presenting a very narrow picture of the people who made it.\n\nMy suggestion is a shared selection process. Local performers should help define the criteria, and they should be able to review translations before publication. I would also reserve space for collaborations that do not fit a familiar genre label. Cultural identity is not a museum shelf; new work can belong to it as well.\n\nThese conditions would take time and money. We should acknowledge that cost instead of pretending that participation is free. Still, a cheaper agreement that creates lasting resentment might be poor value. I would judge the partnership after one season by asking who participated, who made decisions, and whether performers felt accurately represented. Audience size would matter, but it would not be the only measure of success.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+          }
+        ]
+      },
+      "teacherB": [
+        {
+          "label": "Section A",
+          "title": "Use the key words",
+          "answers": [
+            "Globalization can widen an artist’s audience.",
+            "Identity can change without disappearing.",
+            "The festival celebrates local heritage.",
+            "A diverse program includes more than one viewpoint.",
+            "Integration need not require identical tastes."
+          ],
+          "explanation": "Check meaning before form.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Reading",
+          "title": "Who Shapes the Festival?",
+          "answers": [
+            "Translation, promotion and payment for selected recordings.",
+            "Market-friendly formats may favor easily recognized pieces.",
+            "Some elders support collaboration while questioning decision-making authority.",
+            "Wider circulation versus creators’ influence over presentation."
+          ],
+          "explanation": "Use the passage, not outside knowledge.",
+          "expectedResponses": [
+            "1. Evidence: The distributor offers translation, promotion and payment for selected recordings.",
+            "2. Evidence: they may favor pieces that are easier for unfamiliar listeners to recognize",
+            "3. Evidence: Some elders agree, while asking who will have the authority to approve how a performance is described.",
+            "4. Evidence: whether cultural work travels more widely, and whether the people who create it retain influence over its presentation"
+          ],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section B",
+          "title": "Language in use",
+          "answers": [
+            "International audiences may increase exposure, but selection can still concentrate attention on familiar styles.",
+            "Access concerns reaching an audience; authority concerns who decides how the work is presented.",
+            "Shared selection takes resources, yet it may improve legitimacy.",
+            "The case explicitly says that some elders agree with collaboration.",
+            "Performers should be able to judge whether descriptions represent their work accurately."
+          ],
+          "explanation": "Writing practice with speaking support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section C",
+          "title": "Apply and explain",
+          "answers": [
+            "Example: Approval of performance descriptions should involve the performers.",
+            "Payment could support continuing work that local ticket sales do not fund.",
+            "The youth council’s collaborations illustrate cultural change from within.",
+            "Invite participating and excluded performers to review selection and descriptions.",
+            "Balance opportunity and control; include a feasible condition and acknowledge cost."
+          ],
+          "explanation": "Writing practice with speaking support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Listening",
+          "title": "A Curator’s Conditional Support",
+          "answers": [
+            "Conditional support",
+            "A narrow representation without local influence",
+            "Who made decisions"
+          ],
+          "explanation": "Read or listen twice. Answers refer only to this script.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Teacher transcript:\nI support the proposed festival partnership, but my support is conditional. Reaching listeners abroad could help musicians continue their work, and translation could make unfamiliar traditions more accessible. It would be a mistake to assume that every commercial partnership necessarily destroys local culture.\n\nHowever, access is only one part of the question. If an outside organization chooses every performance and writes every description, the community may become visible without gaining much influence. A recording can travel widely while presenting a very narrow picture of the people who made it.\n\nMy suggestion is a shared selection process. Local performers should help define the criteria, and they should be able to review translations before publication. I would also reserve space for collaborations that do not fit a familiar genre label. Cultural identity is not a museum shelf; new work can belong to it as well.\n\nThese conditions would take time and money. We should acknowledge that cost instead of pretending that participation is free. Still, a cheaper agreement that creates lasting resentment might be poor value. I would judge the partnership after one season by asking who participated, who made decisions, and whether performers felt accurately represented. Audience size would matter, but it would not be the only measure of success.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+        }
+      ]
+    },
+    "presentation": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "Globalization and Culture",
+          "layout": "title",
+          "studentText": "Distinguish access from control and write a qualified argument about cultural exchange.",
+          "interaction": "What do you already know about this topic?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 2,
+          "title": "Today’s goal",
+          "layout": "goal",
+          "studentText": "Write a balanced argument about cultural exchange, distinguishing wider access from local control and addressing a counterargument.",
+          "interaction": "Explain the goal in your own words.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 3,
+          "title": "globalization",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "globalization",
+              "definition": "Increasing connections between places and societies.",
+              "example": "Globalization can widen an artist’s audience.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “globalization” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
+          "title": "identity",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "identity",
+              "definition": "A sense of who a person or community is.",
+              "example": "Identity can change without disappearing.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “identity” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 5,
+          "title": "heritage",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "heritage",
+              "definition": "Traditions and practices passed between generations.",
+              "example": "The festival celebrates local heritage.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “heritage” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 6,
+          "title": "diversity",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "diversity",
+              "definition": "The presence of different experiences and forms of expression.",
+              "example": "A diverse program includes more than one viewpoint.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “diversity” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 7,
+          "title": "integration",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "integration",
+              "definition": "Participation in a shared setting while negotiating differences.",
+              "example": "Integration need not require identical tastes.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “integration” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 8,
+          "title": "Read and notice",
+          "layout": "question",
+          "studentText": "Who Shapes the Festival?",
+          "interaction": "What concrete benefits does the distributor offer?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the full reading printed in both worksheet versions. Check the four reading questions against the separate teacher key.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 9,
+          "title": "Listen for details",
+          "layout": "question",
+          "studentText": "A Curator’s Conditional Support",
+          "interaction": "Listen once for the situation, then again for details.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the supplied recording or read the exact script in the separate listening teacher copy. Do not display the transcript during the listening check.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 10,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Adapt one frame to the situation.",
+          "bullets": [
+            "Although wider access may ___, it does not necessarily ___ .",
+            "The relevant distinction is between ___ and ___ .",
+            "A defensible compromise would ___, provided that ___ ."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 11,
+          "title": "Negotiate the festival agreement · 1",
+          "layout": "activity",
+          "studentText": "Performer group: Seek payment and review rights. Some pieces require long storytelling sequences.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. This fictional case represents no real culture. Do not assign one student the role of spokesperson for an entire nationality or community.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 12,
+          "title": "Negotiate the festival agreement · 2",
+          "layout": "activity",
+          "studentText": "Distributor: Offer translation and promotion, but explain the need for clear schedules and manageable costs.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. This fictional case represents no real culture. Do not assign one student the role of spokesperson for an entire nationality or community.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 13,
+          "title": "Negotiate the festival agreement · 3",
+          "layout": "activity",
+          "studentText": "Local committee: Propose selection rules that include established traditions and new collaborations.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. This fictional case represents no real culture. Do not assign one student the role of spokesperson for an entire nationality or community.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 14,
+          "title": "Your final response",
+          "layout": "review",
+          "studentText": "State your choice. Give evidence. Recognize a limitation.",
+          "interaction": "What would make you change your response?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        }
+      ]
+    },
+    "answerKey": {
+      "sections": [
+        {
+          "title": "Section A: Meet the key words",
+          "answers": [
+            "globalization",
+            "identity",
+            "heritage",
+            "diversity",
+            "integration"
+          ],
+          "notes": "Check meaning before form."
+        },
+        {
+          "title": "Reading: Who Shapes the Festival?",
+          "answers": [
+            "Translation, promotion and payment for selected recordings.",
+            "Market-friendly formats may favor easily recognized pieces.",
+            "Some elders support collaboration while questioning decision-making authority.",
+            "Wider circulation versus creators’ influence over presentation."
+          ],
+          "notes": "Use the passage, not outside knowledge."
+        },
+        {
+          "title": "Section B: Language in use",
+          "answers": [
+            "Globalization may weaken some local practices under particular commercial conditions.",
+            "Heritage can inform new work without requiring every practice to remain unchanged.",
+            "Although the distributor offers valuable promotion, performers still need a voice in representation.",
+            "A preference for short formats may disadvantage long pieces, but a ban is not stated.",
+            "People can participate in shared institutions while retaining different traditions."
+          ],
+          "notes": "Writing practice with speaking support."
+        },
+        {
+          "title": "Section C: Apply and explain",
+          "answers": [
+            "Accept a clear position with specified conditions rather than an absolute claim.",
+            "Link translation, payment, selection rules or review rights directly to the argument.",
+            "Shared selection can delay work and increase costs.",
+            "Propose a deadline and a funded local review role.",
+            "For example, withdrawal of performer review rights would justify rejecting the agreement."
+          ],
+          "notes": "Writing practice with speaking support."
+        },
+        {
+          "title": "Listening: A Curator’s Conditional Support",
+          "answers": [
+            "Conditional support",
+            "A narrow representation without local influence",
+            "Who made decisions"
+          ],
+          "notes": "Read or listen twice. Answers refer only to this script."
+        }
+      ]
+    },
+    "activity": {
+      "title": "Negotiate the festival agreement",
+      "objective": "Write a balanced argument about cultural exchange, distinguishing wider access from local control and addressing a counterargument.",
+      "time": "20 minutes",
+      "grouping": "Groups of 2",
+      "materials": "Performer group: Seek payment and review rights. Some pieces require long storytelling sequences.\n\nDistributor: Offer translation and promotion, but explain the need for clear schedules and manageable costs.\n\nLocal committee: Propose selection rules that include established traditions and new collaborations.",
+      "teacherInstructions": [
+        "Use the exact situation cards below; no additional resource is needed.",
+        "Form groups of 2 and model one short response.",
+        "Allow 15 minutes for preparation and practice; use the remaining time for responses and feedback.",
+        "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+      ],
+      "studentInstructions": [
+        "Performer group: Seek payment and review rights. Some pieces require long storytelling sequences.",
+        "Distributor: Offer translation and promotion, but explain the need for clear schedules and manageable costs.",
+        "Local committee: Propose selection rules that include established traditions and new collaborations."
+      ],
+      "example": "We support the partnership provided performers can review descriptions and local representatives share selection authority. This may slow publication, so we propose one scheduled review round rather than unlimited revisions.",
+      "variation": "Exchange recommendations with another group and write one constructive challenge."
+    },
+    "homework": {
+      "title": "Continue the learning",
+      "instructions": "Use the lesson materials. No additional purchase or research is required.",
+      "tasks": [
+        "Write a 220–260-word argument about the proposed agreement.",
+        "Use two case details, a concession, a counterargument and a conditional recommendation."
+      ],
+      "estimatedTime": "20 minutes"
+    },
+    "exitTicket": {
+      "title": "Show what you can do",
+      "timeMinutes": 4,
+      "questions": [
+        "State a qualified thesis supporting or opposing the proposal.",
+        "Respond without dismissing that counterargument.",
+        "Name one point you would improve in your response."
+      ],
+      "successIndicator": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+    },
+    "assessment": {
+      "title": "Independent check — Version A",
+      "instructions": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "State a qualified thesis supporting or opposing the proposal.",
+          "type": "Written response",
+          "answer": "Accept a clear position with specified conditions rather than an absolute claim."
+        },
+        {
+          "prompt": "Use one case detail to support your thesis.",
+          "type": "Written response",
+          "answer": "Link translation, payment, selection rules or review rights directly to the argument."
+        },
+        {
+          "prompt": "Present a serious counterargument.",
+          "type": "Written response",
+          "answer": "Shared selection can delay work and increase costs."
+        },
+        {
+          "prompt": "Respond without dismissing that counterargument.",
+          "type": "Written response",
+          "answer": "Propose a deadline and a funded local review role."
+        },
+        {
+          "prompt": "Conclude with a condition that would change your view.",
+          "type": "Written response",
+          "answer": "For example, withdrawal of performer review rights would justify rejecting the agreement."
+        }
+      ]
+    },
+    "versionB": {
+      "title": "Independent check — Version B",
+      "instructions": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "Argue for one local decision that should be protected.",
+          "type": "Spoken or written response",
+          "answer": "Example: Approval of performance descriptions should involve the performers."
+        },
+        {
+          "prompt": "Explain one benefit for a musician rather than the town generally.",
+          "type": "Spoken or written response",
+          "answer": "Payment could support continuing work that local ticket sales do not fund."
+        },
+        {
+          "prompt": "Critique the assumption that authentic culture cannot change.",
+          "type": "Spoken or written response",
+          "answer": "The youth council’s collaborations illustrate cultural change from within."
+        },
+        {
+          "prompt": "Propose a way to evaluate representation.",
+          "type": "Spoken or written response",
+          "answer": "Invite participating and excluded performers to review selection and descriptions."
+        },
+        {
+          "prompt": "Write a nuanced final recommendation in two sentences.",
+          "type": "Spoken or written response",
+          "answer": "Balance opportunity and control; include a feasible condition and acknowledge cost."
+        }
+      ]
+    },
+    "supportVersion": {
+      "summary": "Reduce the number of ideas to compare while keeping the same reasoning goal.",
+      "sentenceFrames": [
+        "Although wider access may ___, it does not necessarily ___ .",
+        "The relevant distinction is between ___ and ___ .",
+        "A defensible compromise would ___, provided that ___ ."
+      ],
+      "wordBank": [
+        "globalization",
+        "identity",
+        "heritage",
+        "diversity",
+        "integration"
+      ],
+      "examples": [
+        "We support the partnership provided performers can review descriptions and local representatives share selection authority. This may slow publication, so we propose one scheduled review round rather than unlimited revisions."
+      ],
+      "steps": [
+        "State the situation in one sentence.",
+        "Select one relevant detail.",
+        "Use a frame to explain the response.",
+        "Add a limitation or another view."
+      ],
+      "guidedPractice": [
+        "Qualify: Globalization destroys local culture. Model: Globalization may weaken some local practices under particular commercial conditions.",
+        "State a qualified thesis supporting or opposing the proposal. Model: Accept a clear position with specified conditions rather than an absolute claim."
+      ]
+    },
+    "challengeVersion": {
+      "summary": "Extend the same objective with less scaffolding and more independent explanation.",
+      "tasks": [
+        "Explain why a policy that increases visibility might still reduce meaningful diversity.",
+        "Write a counterargument that would persuade someone who shares your values."
+      ],
+      "extensionQuestions": [
+        "Which assumption does your response depend on?",
+        "What evidence or constraint would change your choice?"
+      ]
+    },
+    "teacherNotes": {
+      "problems": [
+        {
+          "problem": "Pacing: the package includes more practice than one class needs.",
+          "solution": "Teach the selected Version A tasks and keep Version B, extension work and the independent assessment for follow-up."
+        },
+        {
+          "problem": "Sensitive or misleading assumptions.",
+          "solution": "This fictional case represents no real culture. Do not assign one student the role of spokesperson for an entire nationality or community."
+        }
+      ],
+      "tips": [
+        "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+        "Reading and listening tell different stories. Keep their keys separate.",
+        "Student slides include tasks and language models. Facilitation notes and transcript answers belong in the separate teacher documents."
+      ]
+    },
+    "qualityCheck": {
+      "checks": [
+        {
+          "criterion": "Resource coverage",
+          "status": "pass",
+          "comment": "Both worksheet versions, answer keys, an original reading, a listening script, situation cards and student slides are supplied."
+        },
+        {
+          "criterion": "Classroom fit",
+          "status": "check",
+          "comment": "The stated level is a lesson target. Choose scaffolding and pacing for your actual learners."
+        }
+      ],
+      "overallNotes": "This is a curated preview of a complete package. Open responses have model answers, not a single required opinion. Review the supplied material against your class before teaching."
+    },
+    "reading": {
+      "status": "ready",
+      "fingerprint": "preview-globalization-and-culture",
+      "value": {
+        "cefr": "C1",
+        "title": "Who Shapes the Festival?",
+        "purpose": "Write a balanced argument about cultural exchange, distinguishing wider access from local control and addressing a counterargument.",
+        "instructions": "Read for the situation, then use evidence to answer.",
+        "word_count": 291,
+        "text": "The town and festival in this case are fictional. Luma’s annual music festival once served mainly local residents. A partnership with an international distributor would now let performers reach listeners abroad. The distributor offers translation, promotion and payment for selected recordings. For some musicians, this is an opportunity to earn money while continuing work that local ticket sales cannot support.\n\nThe offer also has conditions. The distributor wants shorter performances, familiar genre labels and a program that can be promoted consistently across different markets. These requirements are not an explicit ban on local traditions. Nevertheless, they may favor pieces that are easier for unfamiliar listeners to recognize. Musicians whose work depends on long storytelling sequences worry that selection would reward only a narrow part of their heritage.\n\nThe youth council sees another possibility. Members already combine influences from different places, and they object to treating culture as a fixed collection of old practices. They want new collaborations to count as part of local identity. Some elders agree, while asking who will have the authority to approve how a performance is described. The disagreement is therefore not simply between young innovators and older guardians.\n\nA proposed agreement would reserve some programming decisions for a local committee, publish the selection criteria and give performers a chance to correct translations. It might protect meaningful participation, but it would also add costs and delay. The distributor has not accepted these terms.\n\nThe case separates two questions that are often merged: whether cultural work travels more widely, and whether the people who create it retain influence over its presentation. Wider circulation may support diversity, yet circulation alone does not guarantee control. A convincing judgment needs to examine both opportunities and the rules that distribute decision-making power.",
+        "questions": [
+          {
+            "type": "short_answer",
+            "question": "What concrete benefits does the distributor offer?",
+            "choices": [],
+            "evidence": "The distributor offers translation, promotion and payment for selected recordings.",
+            "answerExplanation": "The quoted words support the response to: What concrete benefits does the distributor offer?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Why might selection narrow the representation of heritage?",
+            "choices": [],
+            "evidence": "they may favor pieces that are easier for unfamiliar listeners to recognize",
+            "answerExplanation": "The quoted words support the response to: Why might selection narrow the representation of heritage?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Why is the conflict not simply young versus old?",
+            "choices": [],
+            "evidence": "Some elders agree, while asking who will have the authority to approve how a performance is described.",
+            "answerExplanation": "The quoted words support the response to: Why is the conflict not simply young versus old?"
+          },
+          {
+            "type": "short_answer",
+            "question": "What distinction structures the final paragraph?",
+            "choices": [],
+            "evidence": "whether cultural work travels more widely, and whether the people who create it retain influence over its presentation",
+            "answerExplanation": "The quoted words support the response to: What distinction structures the final paragraph?"
+          }
+        ],
+        "answers": [
+          "Translation, promotion and payment for selected recordings.",
+          "Market-friendly formats may favor easily recognized pieces.",
+          "Some elders support collaboration while questioning decision-making authority.",
+          "Wider circulation versus creators’ influence over presentation."
+        ],
+        "activity": "Negotiate the festival agreement",
+        "assessment": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+      }
+    },
+    "listening": {
+      "status": "ready",
+      "fingerprint": "preview-globalization-and-culture",
+      "value": {
+        "cefr": "C1",
+        "title": "A Curator’s Conditional Support",
+        "purpose": "Write a balanced argument about cultural exchange, distinguishing wider access from local control and addressing a counterargument.",
+        "instructions": "Listen once for the situation and again for details.",
+        "script": "I support the proposed festival partnership, but my support is conditional. Reaching listeners abroad could help musicians continue their work, and translation could make unfamiliar traditions more accessible. It would be a mistake to assume that every commercial partnership necessarily destroys local culture.\n\nHowever, access is only one part of the question. If an outside organization chooses every performance and writes every description, the community may become visible without gaining much influence. A recording can travel widely while presenting a very narrow picture of the people who made it.\n\nMy suggestion is a shared selection process. Local performers should help define the criteria, and they should be able to review translations before publication. I would also reserve space for collaborations that do not fit a familiar genre label. Cultural identity is not a museum shelf; new work can belong to it as well.\n\nThese conditions would take time and money. We should acknowledge that cost instead of pretending that participation is free. Still, a cheaper agreement that creates lasting resentment might be poor value. I would judge the partnership after one season by asking who participated, who made decisions, and whether performers felt accurately represented. Audience size would matter, but it would not be the only measure of success.",
+        "teacherGuidance": "Play the included recording once for meaning and once for details. The transcript is for teacher reference.",
+        "questions": [
+          {
+            "question": "What is the curator’s position?",
+            "answer": "Conditional support",
+            "evidence": "I support the proposed festival partnership, but my support is conditional.",
+            "choices": [
+              "Conditional support",
+              "Complete rejection",
+              "Unconditional approval"
+            ],
+            "explanation": "The script states: I support the proposed festival partnership, but my support is conditional."
+          },
+          {
+            "question": "What risk does visibility alone leave unresolved?",
+            "answer": "A narrow representation without local influence",
+            "evidence": "the community may become visible without gaining much influence",
+            "choices": [
+              "A narrow representation without local influence",
+              "No recordings can travel",
+              "All musicians must stop working"
+            ],
+            "explanation": "The script states: the community may become visible without gaining much influence"
+          },
+          {
+            "question": "Which measure would supplement audience size?",
+            "answer": "Who made decisions",
+            "evidence": "who made decisions",
+            "choices": [
+              "Who made decisions",
+              "Only ticket prices",
+              "The shortest performance"
+            ],
+            "explanation": "The script states: who made decisions"
+          }
+        ]
+      }
+    }
+  }
+}

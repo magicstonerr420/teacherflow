@@ -1,0 +1,1367 @@
+{
+  "request": {
+    "subject": "English",
+    "topic": "Food at a Restaurant",
+    "studentAge": "Adults (20-23)",
+    "level": "A2",
+    "durationMinutes": 60,
+    "mainSkill": "Speaking",
+    "secondarySkill": "Listening",
+    "learningObjective": "Order a meal and a drink politely, respond to an unavailable item, and ask a server for the bill.",
+    "numberOfStudents": "20",
+    "previousKnowledge": "Language from the previous CEFR level; no specialist topic knowledge required.",
+    "requiredVocabulary": "menu, order, water, chicken, bill",
+    "technologyAvailable": "No technology",
+    "teachingStyle": "Role-play",
+    "homeworkRequirement": "Yes",
+    "groupWorkEnabled": true,
+    "studentsPerGroup": 2,
+    "classroomLimitations": "All core evidence and role cards are supplied.",
+    "teacherNotes": "Use imaginary preferences. Do not ask learners to reveal allergies, income or private health information. Menu prices are fictional."
+  },
+  "lesson": {
+    "overview": {
+      "topic": "Food at a Restaurant",
+      "age": "Adults (20-23)",
+      "level": "A2",
+      "duration": "60 minutes",
+      "mainSkill": "Speaking",
+      "learningObjective": "Order a meal and a drink politely, respond to an unavailable item, and ask a server for the bill.",
+      "successCriteria": [
+        "Order a food and a drink politely.",
+        "Choose an alternative when an item is unavailable.",
+        "Ask for the bill and check the correct total."
+      ],
+      "prerequisiteKnowledge": [
+        "Language from the previous CEFR level; no specialist topic knowledge required."
+      ],
+      "keyLanguage": [
+        "menu",
+        "order",
+        "water",
+        "chicken",
+        "bill",
+        "I would like ___, please.",
+        "Do you have ___?",
+        "Could I have the bill, please?"
+      ],
+      "materialsNeeded": [
+        "Student worksheets A and B with reading and listening questions; teacher answer keys.",
+        "Supplied case and situation cards; paper and pens.",
+        "Printed materials and the teacher’s voice."
+      ],
+      "anticipatedDifficulties": [
+        {
+          "difficulty": "Giving a broad claim without a relevant detail.",
+          "solution": "Ask which sentence in the case supports the claim."
+        },
+        {
+          "difficulty": "Confusing model language with the only possible answer.",
+          "solution": "Accept equivalent accurate responses and use the task rubric."
+        }
+      ],
+      "teacherPreparation": [
+        "Read the two scripts and check the teacher keys before teaching.",
+        "Print one selected worksheet version per learner; keep teacher copies separate.",
+        "Prepare the supplied role cards. No outside article or paid material is needed.",
+        "Use imaginary preferences. Do not ask learners to reveal allergies, income or private health information. Menu prices are fictional."
+      ]
+    },
+    "lessonPlan": {
+      "totalMinutes": 60,
+      "stages": [
+        {
+          "time": 5,
+          "stage": "Connect and set the goal",
+          "teacherActions": "Invite an initial view on the case, then state the objective and distinguish the fictional scenario from factual research.",
+          "studentActions": "State an initial view and one question you want the case to answer.",
+          "materials": "Opening slide or printed opening card",
+          "purpose": "Activate prior knowledge without testing unfamiliar language."
+        },
+        {
+          "time": 8,
+          "stage": "Teach the five key words",
+          "teacherActions": "Model the five terms using their definitions and examples. Ask learners to explain a distinction in their own words.",
+          "studentActions": "Complete Section A and compare meanings with a partner.",
+          "materials": "Vocabulary cards; worksheet Section A",
+          "purpose": "Listening supports the main speaking task."
+        },
+        {
+          "time": 10,
+          "stage": "Read for meaning",
+          "teacherActions": "Give a first reading for the main situation, followed by the four evidence questions. Clarify only vocabulary essential to meaning.",
+          "studentActions": "Read the passage, answer the questions and locate the supporting words.",
+          "materials": "Reading passage and four questions, supplied in the worksheet",
+          "purpose": "Establish a shared context and check literal understanding before interpretation."
+        },
+        {
+          "time": 8,
+          "stage": "Listen for a change or decision",
+          "teacherActions": "Read the supplied listening script twice. First check the main situation; then read the three questions and repeat for details.",
+          "studentActions": "Identify the main situation, then answer the three detail questions and compare evidence.",
+          "materials": "Supplied listening script and questions",
+          "purpose": "Practice listening with information that differs from the reading."
+        },
+        {
+          "time": 10,
+          "stage": "Guided language practice",
+          "teacherActions": "Use Version A Sections B and C. Model one response, then let pairs work. Keep Version B for a later lesson, reassessment or fast finishers. For children, Sections D and E are optional additional practice.",
+          "studentActions": "Apply the sentence frames, then respond to the five application prompts.",
+          "materials": "Worksheet A; sentence frames; optional worksheet B",
+          "purpose": "Move from recognition to usable language."
+        },
+        {
+          "time": 15,
+          "stage": "Cedar Café role-play",
+          "teacherActions": "Arrange pairs and assign customer/server roles. Use the supplied menu and unavailable-soup condition. Model one request, then let partners exchange roles. Assess ordering, responding and checking the bill.",
+          "studentActions": "Order a meal and drink, respond to the unavailable item, and check the bill. Swap customer and server roles.",
+          "materials": "All situation cards appear under Activities and on the student slides",
+          "purpose": "Demonstrate the objective through a purposeful exchange."
+        },
+        {
+          "time": 4,
+          "stage": "Exit check and next step",
+          "teacherActions": "Use the three exit prompts. Record which part of the objective needs another model. Explain the short homework; use the separate assessment later if needed.",
+          "studentActions": "Give an independent response and identify one point to improve.",
+          "materials": "Exit ticket and homework instructions",
+          "purpose": "Check individual progress after supported group work."
+        }
+      ]
+    },
+    "worksheet": {
+      "title": "Food at a Restaurant",
+      "student": {
+        "title": "Food at a Restaurant — Version A",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "format": "matching",
+            "instructions": "Match each definition to a word from the bank.",
+            "passage": "",
+            "wordBank": [
+              "menu",
+              "order",
+              "water",
+              "chicken",
+              "bill"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "A list of food and drinks.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Ask for food or drinks.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "A drink.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "A type of meat.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "The list of what you need to pay.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Lunch at Cedar Café",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "Cedar Café is a fictional practice restaurant. Its lunch menu is simple: chicken with rice costs $12, vegetable soup costs $6, and a bean sandwich costs $7. Still water costs $2 and orange juice costs $3. The listed prices are the full prices for this classroom role-play; there are no extra charges.\n\nRosa arrives at one o’clock. She asks for the menu. She wants soup, but the server says there is no soup today. Rosa chooses the chicken with rice instead. She orders still water because she does not want juice.\n\nAfter the meal, Rosa asks for the bill. The server brings it and Rosa checks the two items. She pays $14 and says thank you.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Which food is unavailable?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What meal does Rosa choose?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Why does she order water?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "How much does she pay?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Make this polite: Give me water.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "You want chicken with rice. Place your order.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "The soup is unavailable. Choose the bean sandwich.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Ask to see the list of dishes.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Your meal is finished. Ask to pay.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "speaking-prompts",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Customer: Order two menu items and ask their total.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Server: Soup is unavailable. Offer two alternatives.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Customer: Change your drink from juice to water.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Server: Confirm chicken and water and state the total.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Customer: End the exchange politely.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "A Changed Order",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What does David first want to eat?",
+                "choices": [
+                  "Vegetable soup",
+                  "Chicken with rice",
+                  "A bean sandwich"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What drink does he order?",
+                "choices": [
+                  "Orange juice",
+                  "Water",
+                  "Coffee"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What is the final total?",
+                "choices": [
+                  "Ten dollars",
+                  "Nine dollars",
+                  "Fourteen dollars"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "studentB": {
+        "title": "Food at a Restaurant — Version B",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Use the key words",
+            "format": "writing",
+            "instructions": "Write a sentence that shows each word’s meaning.",
+            "passage": "",
+            "wordBank": [
+              "menu",
+              "order",
+              "water",
+              "chicken",
+              "bill"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Use “menu” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Use “order” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Use “water” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Use “chicken” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Use “bill” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "Lunch at Cedar Café",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "Cedar Café is a fictional practice restaurant. Its lunch menu is simple: chicken with rice costs $12, vegetable soup costs $6, and a bean sandwich costs $7. Still water costs $2 and orange juice costs $3. The listed prices are the full prices for this classroom role-play; there are no extra charges.\n\nRosa arrives at one o’clock. She asks for the menu. She wants soup, but the server says there is no soup today. Rosa chooses the chicken with rice instead. She orders still water because she does not want juice.\n\nAfter the meal, Rosa asks for the bill. The server brings it and Rosa checks the two items. She pays $14 and says thank you.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Which food is unavailable?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What meal does Rosa choose?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Why does she order water?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "How much does she pay?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Ask whether the café has orange juice.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Order a bean sandwich and water.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "You need another minute to choose. Tell the server.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Confirm an order of chicken and juice.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "The bill includes soup you did not receive. Explain politely.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "speaking-prompts",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Customer: Order chicken and juice.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Server: State the total for that order.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Customer: Ask to change chicken to a bean sandwich.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Server: Confirm the new total with juice.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Customer: Check and pay the bill.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "A Changed Order",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What does David first want to eat?",
+                "choices": [
+                  "Vegetable soup",
+                  "Chicken with rice",
+                  "A bean sandwich"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What drink does he order?",
+                "choices": [
+                  "Orange juice",
+                  "Water",
+                  "Coffee"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What is the final total?",
+                "choices": [
+                  "Ten dollars",
+                  "Nine dollars",
+                  "Fourteen dollars"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "teacher": {
+        "overview": "Order a meal and a drink politely, respond to an unavailable item, and ask a server for the bill.\n\nScore each criterion 0–2: orders a food and drink politely; responds appropriately to an unavailable item; asks for the bill and checks the total. 4/6 indicates the task is substantially met. Intelligibility matters more than a perfect accent. This is a task rubric, not formal CEFR certification.",
+        "groupWorkGuidance": "Groups of 2; give everyone a speaking or checking role and rotate. Use Version B as alternate practice, not as a second full worksheet in the same session.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "answers": [
+              "menu",
+              "order",
+              "water",
+              "chicken",
+              "bill"
+            ],
+            "explanation": "Check meaning before form.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Reading",
+            "title": "Lunch at Cedar Café",
+            "answers": [
+              "Vegetable soup.",
+              "Chicken with rice.",
+              "She does not want juice.",
+              "$14."
+            ],
+            "explanation": "Use the passage, not outside knowledge.",
+            "expectedResponses": [
+              "1. Evidence: there is no soup today",
+              "2. Evidence: Rosa chooses the chicken with rice instead.",
+              "3. Evidence: She orders still water because she does not want juice.",
+              "4. Evidence: She pays $14 and says thank you."
+            ],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "answers": [
+              "Could I have some water, please?",
+              "I would like the chicken with rice, please.",
+              "I would like the bean sandwich instead, please.",
+              "Can I see the menu, please?",
+              "Could I have the bill, please?"
+            ],
+            "explanation": "Speaking practice with listening support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "answers": [
+              "Example: A bean sandwich and water, please. How much is that? Total: $9.",
+              "We do not have soup today. Would you like chicken with rice or a bean sandwich?",
+              "Could I have water instead of juice, please?",
+              "Chicken with rice and water. That is $14.",
+              "Thank you. Have a nice day."
+            ],
+            "explanation": "Speaking practice with listening support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Listening",
+            "title": "A Changed Order",
+            "answers": [
+              "Vegetable soup",
+              "Orange juice",
+              "Ten dollars"
+            ],
+            "explanation": "Read or listen twice. Answers refer only to this script.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Teacher transcript:\nWelcome to Cedar Café. I am your server today. A customer named David sits at a small table by the window. He asks for the menu, and I give it to him. He looks at the food and drinks for a minute.\n\nDavid says he would like vegetable soup and a glass of orange juice. I explain that we do not have soup today. We have chicken with rice or a bean sandwich. David thinks for a moment. Then he says, I would like the bean sandwich, please. I repeat his order: one bean sandwich and one orange juice. He says that is right.\n\nI bring the juice first. A few minutes later, I bring the sandwich. David asks for a little more time before he pays. I say that is fine. After he finishes his meal, he asks for the bill. The sandwich is seven dollars, and the juice is three dollars. The total is ten dollars. There are no extra charges in this practice café. David checks the bill, pays ten dollars, and thanks me. I thank him too. He leaves the café and walks back to his class.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+          }
+        ]
+      },
+      "teacherB": [
+        {
+          "label": "Section A",
+          "title": "Use the key words",
+          "answers": [
+            "Can I see the menu, please?",
+            "I would like to order.",
+            "Still water, please.",
+            "I would like the chicken.",
+            "Can I have the bill, please?"
+          ],
+          "explanation": "Check meaning before form.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Reading",
+          "title": "Lunch at Cedar Café",
+          "answers": [
+            "Vegetable soup.",
+            "Chicken with rice.",
+            "She does not want juice.",
+            "$14."
+          ],
+          "explanation": "Use the passage, not outside knowledge.",
+          "expectedResponses": [
+            "1. Evidence: there is no soup today",
+            "2. Evidence: Rosa chooses the chicken with rice instead.",
+            "3. Evidence: She orders still water because she does not want juice.",
+            "4. Evidence: She pays $14 and says thank you."
+          ],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section B",
+          "title": "Language in use",
+          "answers": [
+            "Do you have orange juice?",
+            "I would like a bean sandwich and water, please.",
+            "Could I have another minute, please?",
+            "Yes, chicken and orange juice. That is right.",
+            "Excuse me, I did not have soup. Could you check the bill, please?"
+          ],
+          "explanation": "Speaking practice with listening support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section C",
+          "title": "Apply and explain",
+          "answers": [
+            "Chicken with rice and orange juice, please.",
+            "$15, please.",
+            "Could I have the bean sandwich instead, please?",
+            "A bean sandwich and orange juice: $10.",
+            "The sandwich and juice are $10. Here you are. Thank you."
+          ],
+          "explanation": "Speaking practice with listening support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Listening",
+          "title": "A Changed Order",
+          "answers": [
+            "Vegetable soup",
+            "Orange juice",
+            "Ten dollars"
+          ],
+          "explanation": "Read or listen twice. Answers refer only to this script.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Teacher transcript:\nWelcome to Cedar Café. I am your server today. A customer named David sits at a small table by the window. He asks for the menu, and I give it to him. He looks at the food and drinks for a minute.\n\nDavid says he would like vegetable soup and a glass of orange juice. I explain that we do not have soup today. We have chicken with rice or a bean sandwich. David thinks for a moment. Then he says, I would like the bean sandwich, please. I repeat his order: one bean sandwich and one orange juice. He says that is right.\n\nI bring the juice first. A few minutes later, I bring the sandwich. David asks for a little more time before he pays. I say that is fine. After he finishes his meal, he asks for the bill. The sandwich is seven dollars, and the juice is three dollars. The total is ten dollars. There are no extra charges in this practice café. David checks the bill, pays ten dollars, and thanks me. I thank him too. He leaves the café and walks back to his class.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+        }
+      ]
+    },
+    "presentation": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "Food at a Restaurant",
+          "layout": "title",
+          "studentText": "Use a menu, make an order, handle one unavailable item, and ask for the bill.",
+          "interaction": "What do you already know about this topic?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 2,
+          "title": "Today’s goal",
+          "layout": "goal",
+          "studentText": "Order a meal and a drink politely, respond to an unavailable item, and ask a server for the bill.",
+          "interaction": "Explain the goal in your own words.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 3,
+          "title": "menu",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "menu",
+              "definition": "A list of food and drinks.",
+              "example": "Can I see the menu, please?",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “menu” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
+          "title": "order",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "order",
+              "definition": "Ask for food or drinks.",
+              "example": "I would like to order.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “order” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 5,
+          "title": "water",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "water",
+              "definition": "A drink.",
+              "example": "Still water, please.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “water” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 6,
+          "title": "chicken",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "chicken",
+              "definition": "A type of meat.",
+              "example": "I would like the chicken.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “chicken” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 7,
+          "title": "bill",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "bill",
+              "definition": "The list of what you need to pay.",
+              "example": "Can I have the bill, please?",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “bill” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 8,
+          "title": "Read and notice",
+          "layout": "question",
+          "studentText": "Lunch at Cedar Café",
+          "interaction": "Which food is unavailable?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the full reading printed in both worksheet versions. Check the four reading questions against the separate teacher key.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 9,
+          "title": "Listen for details",
+          "layout": "question",
+          "studentText": "A Changed Order",
+          "interaction": "Listen once for the situation, then again for details.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the supplied recording or read the exact script in the separate listening teacher copy. Do not display the transcript during the listening check.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 10,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Adapt one frame to the situation.",
+          "bullets": [
+            "I would like ___, please.",
+            "Do you have ___?",
+            "Could I have the bill, please?"
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 11,
+          "title": "Cedar Café role-play · 1",
+          "layout": "activity",
+          "studentText": "Menu: Chicken with rice $12; vegetable soup $6; bean sandwich $7; water $2; orange juice $3. Prices include all charges for this fictional activity.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Use imaginary preferences. Do not ask learners to reveal allergies, income or private health information. Menu prices are fictional.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 12,
+          "title": "Cedar Café role-play · 2",
+          "layout": "activity",
+          "studentText": "Customer: You have $15. Order food and a drink. Ask for the bill and check it.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Use imaginary preferences. Do not ask learners to reveal allergies, income or private health information. Menu prices are fictional.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 13,
+          "title": "Cedar Café role-play · 3",
+          "layout": "activity",
+          "studentText": "Server: Soup is unavailable. Offer another dish. Repeat the order and calculate the total.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Use imaginary preferences. Do not ask learners to reveal allergies, income or private health information. Menu prices are fictional.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 14,
+          "title": "Your final response",
+          "layout": "review",
+          "studentText": "Order food and a drink. Ask for the bill.",
+          "interaction": "Check the total. Thank the server.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        }
+      ]
+    },
+    "answerKey": {
+      "sections": [
+        {
+          "title": "Section A: Meet the key words",
+          "answers": [
+            "menu",
+            "order",
+            "water",
+            "chicken",
+            "bill"
+          ],
+          "notes": "Check meaning before form."
+        },
+        {
+          "title": "Reading: Lunch at Cedar Café",
+          "answers": [
+            "Vegetable soup.",
+            "Chicken with rice.",
+            "She does not want juice.",
+            "$14."
+          ],
+          "notes": "Use the passage, not outside knowledge."
+        },
+        {
+          "title": "Section B: Language in use",
+          "answers": [
+            "Could I have some water, please?",
+            "I would like the chicken with rice, please.",
+            "I would like the bean sandwich instead, please.",
+            "Can I see the menu, please?",
+            "Could I have the bill, please?"
+          ],
+          "notes": "Speaking practice with listening support."
+        },
+        {
+          "title": "Section C: Apply and explain",
+          "answers": [
+            "Example: A bean sandwich and water, please. How much is that? Total: $9.",
+            "We do not have soup today. Would you like chicken with rice or a bean sandwich?",
+            "Could I have water instead of juice, please?",
+            "Chicken with rice and water. That is $14.",
+            "Thank you. Have a nice day."
+          ],
+          "notes": "Speaking practice with listening support."
+        },
+        {
+          "title": "Listening: A Changed Order",
+          "answers": [
+            "Vegetable soup",
+            "Orange juice",
+            "Ten dollars"
+          ],
+          "notes": "Read or listen twice. Answers refer only to this script."
+        }
+      ]
+    },
+    "activity": {
+      "title": "Cedar Café role-play",
+      "objective": "Order a meal and a drink politely, respond to an unavailable item, and ask a server for the bill.",
+      "time": "15 minutes",
+      "grouping": "Groups of 2",
+      "materials": "Menu: Chicken with rice $12; vegetable soup $6; bean sandwich $7; water $2; orange juice $3. Prices include all charges for this fictional activity.\n\nCustomer: You have $15. Order food and a drink. Ask for the bill and check it.\n\nServer: Soup is unavailable. Offer another dish. Repeat the order and calculate the total.",
+      "teacherInstructions": [
+        "Use the exact situation cards below; no additional resource is needed.",
+        "Form groups of 2 and model one short response.",
+        "Allow 10 minutes for preparation and practice; use the remaining time for responses and feedback.",
+        "Score each criterion 0–2: orders a food and drink politely; responds appropriately to an unavailable item; asks for the bill and checks the total. 4/6 indicates the task is substantially met. Intelligibility matters more than a perfect accent. This is a task rubric, not formal CEFR certification."
+      ],
+      "studentInstructions": [
+        "Menu: Chicken with rice $12; vegetable soup $6; bean sandwich $7; water $2; orange juice $3. Prices include all charges for this fictional activity.",
+        "Customer: You have $15. Order food and a drink. Ask for the bill and check it.",
+        "Server: Soup is unavailable. Offer another dish. Repeat the order and calculate the total."
+      ],
+      "example": "Customer: I would like soup and water, please. Server: Sorry, we do not have soup. Customer: The bean sandwich, then. Server: A bean sandwich and water. That is nine dollars.",
+      "variation": "Exchange recommendations with another group and write one constructive challenge."
+    },
+    "homework": {
+      "title": "Continue the learning",
+      "instructions": "Use the lesson materials. No additional purchase or research is required.",
+      "tasks": [
+        "Write a six-line exchange at the café.",
+        "Include one change of order and a correct total."
+      ],
+      "estimatedTime": "10–15 minutes"
+    },
+    "exitTicket": {
+      "title": "Show what you can do",
+      "timeMinutes": 4,
+      "questions": [
+        "Customer: Order two menu items and ask their total.",
+        "Server: Confirm chicken and water and state the total.",
+        "Name one point you would improve in your response."
+      ],
+      "successIndicator": "Score each criterion 0–2: orders a food and drink politely; responds appropriately to an unavailable item; asks for the bill and checks the total. 4/6 indicates the task is substantially met. Intelligibility matters more than a perfect accent. This is a task rubric, not formal CEFR certification."
+    },
+    "assessment": {
+      "title": "Independent check — Version A",
+      "instructions": "Score each criterion 0–2: orders a food and drink politely; responds appropriately to an unavailable item; asks for the bill and checks the total. 4/6 indicates the task is substantially met. Intelligibility matters more than a perfect accent. This is a task rubric, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "Customer: Order two menu items and ask their total.",
+          "type": "Spoken or written response",
+          "answer": "Example: A bean sandwich and water, please. How much is that? Total: $9."
+        },
+        {
+          "prompt": "Server: Soup is unavailable. Offer two alternatives.",
+          "type": "Spoken or written response",
+          "answer": "We do not have soup today. Would you like chicken with rice or a bean sandwich?"
+        },
+        {
+          "prompt": "Customer: Change your drink from juice to water.",
+          "type": "Spoken or written response",
+          "answer": "Could I have water instead of juice, please?"
+        },
+        {
+          "prompt": "Server: Confirm chicken and water and state the total.",
+          "type": "Spoken or written response",
+          "answer": "Chicken with rice and water. That is $14."
+        },
+        {
+          "prompt": "Customer: End the exchange politely.",
+          "type": "Spoken or written response",
+          "answer": "Thank you. Have a nice day."
+        }
+      ]
+    },
+    "versionB": {
+      "title": "Independent check — Version B",
+      "instructions": "Score each criterion 0–2: orders a food and drink politely; responds appropriately to an unavailable item; asks for the bill and checks the total. 4/6 indicates the task is substantially met. Intelligibility matters more than a perfect accent. This is a task rubric, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "Customer: Order chicken and juice.",
+          "type": "Spoken or written response",
+          "answer": "Chicken with rice and orange juice, please."
+        },
+        {
+          "prompt": "Server: State the total for that order.",
+          "type": "Spoken or written response",
+          "answer": "$15, please."
+        },
+        {
+          "prompt": "Customer: Ask to change chicken to a bean sandwich.",
+          "type": "Spoken or written response",
+          "answer": "Could I have the bean sandwich instead, please?"
+        },
+        {
+          "prompt": "Server: Confirm the new total with juice.",
+          "type": "Spoken or written response",
+          "answer": "A bean sandwich and orange juice: $10."
+        },
+        {
+          "prompt": "Customer: Check and pay the bill.",
+          "type": "Spoken or written response",
+          "answer": "The sandwich and juice are $10. Here you are. Thank you."
+        }
+      ]
+    },
+    "supportVersion": {
+      "summary": "Reduce the number of ideas to compare while keeping the same reasoning goal.",
+      "sentenceFrames": [
+        "I would like ___, please.",
+        "Do you have ___?",
+        "Could I have the bill, please?"
+      ],
+      "wordBank": [
+        "menu",
+        "order",
+        "water",
+        "chicken",
+        "bill"
+      ],
+      "examples": [
+        "Customer: I would like soup and water, please. Server: Sorry, we do not have soup. Customer: The bean sandwich, then. Server: A bean sandwich and water. That is nine dollars."
+      ],
+      "steps": [
+        "State the situation in one sentence.",
+        "Select one relevant detail.",
+        "Use a frame to explain the response.",
+        "Add a limitation or another view."
+      ],
+      "guidedPractice": [
+        "Make this polite: Give me water. Model: Could I have some water, please?",
+        "Customer: Order two menu items and ask their total. Model: Example: A bean sandwich and water, please. How much is that? Total: $9."
+      ]
+    },
+    "challengeVersion": {
+      "summary": "Extend the same objective with less scaffolding and more independent explanation.",
+      "tasks": [
+        "Handle an incorrect bill politely.",
+        "Repeat the role-play without reading the sentence frames."
+      ],
+      "extensionQuestions": [
+        "Which assumption does your response depend on?",
+        "What evidence or constraint would change your choice?"
+      ]
+    },
+    "teacherNotes": {
+      "problems": [
+        {
+          "problem": "Pacing: the package includes more practice than one class needs.",
+          "solution": "Teach the selected Version A tasks and keep Version B, extension work and the independent assessment for follow-up."
+        },
+        {
+          "problem": "Sensitive or misleading assumptions.",
+          "solution": "Use imaginary preferences. Do not ask learners to reveal allergies, income or private health information. Menu prices are fictional."
+        }
+      ],
+      "tips": [
+        "Score each criterion 0–2: orders a food and drink politely; responds appropriately to an unavailable item; asks for the bill and checks the total. 4/6 indicates the task is substantially met. Intelligibility matters more than a perfect accent. This is a task rubric, not formal CEFR certification.",
+        "Reading and listening tell different stories. Keep their keys separate.",
+        "Student slides include tasks and language models. Facilitation notes and transcript answers belong in the separate teacher documents."
+      ]
+    },
+    "qualityCheck": {
+      "checks": [
+        {
+          "criterion": "Resource coverage",
+          "status": "pass",
+          "comment": "Both worksheet versions, answer keys, an original reading, a listening script, situation cards and student slides are supplied."
+        },
+        {
+          "criterion": "Classroom fit",
+          "status": "check",
+          "comment": "The stated level is a lesson target. Choose scaffolding and pacing for your actual learners."
+        }
+      ],
+      "overallNotes": "This is a curated preview of a complete package. Open responses have model answers, not a single required opinion. Review the supplied material against your class before teaching."
+    },
+    "reading": {
+      "status": "ready",
+      "fingerprint": "preview-food-at-a-restaurant",
+      "value": {
+        "cefr": "A2",
+        "title": "Lunch at Cedar Café",
+        "purpose": "Order a meal and a drink politely, respond to an unavailable item, and ask a server for the bill.",
+        "instructions": "Read for the situation, then use evidence to answer.",
+        "word_count": 116,
+        "text": "Cedar Café is a fictional practice restaurant. Its lunch menu is simple: chicken with rice costs $12, vegetable soup costs $6, and a bean sandwich costs $7. Still water costs $2 and orange juice costs $3. The listed prices are the full prices for this classroom role-play; there are no extra charges.\n\nRosa arrives at one o’clock. She asks for the menu. She wants soup, but the server says there is no soup today. Rosa chooses the chicken with rice instead. She orders still water because she does not want juice.\n\nAfter the meal, Rosa asks for the bill. The server brings it and Rosa checks the two items. She pays $14 and says thank you.",
+        "questions": [
+          {
+            "type": "short_answer",
+            "question": "Which food is unavailable?",
+            "choices": [],
+            "evidence": "there is no soup today",
+            "answerExplanation": "The quoted words support the response to: Which food is unavailable?"
+          },
+          {
+            "type": "short_answer",
+            "question": "What meal does Rosa choose?",
+            "choices": [],
+            "evidence": "Rosa chooses the chicken with rice instead.",
+            "answerExplanation": "The quoted words support the response to: What meal does Rosa choose?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Why does she order water?",
+            "choices": [],
+            "evidence": "She orders still water because she does not want juice.",
+            "answerExplanation": "The quoted words support the response to: Why does she order water?"
+          },
+          {
+            "type": "short_answer",
+            "question": "How much does she pay?",
+            "choices": [],
+            "evidence": "She pays $14 and says thank you.",
+            "answerExplanation": "The quoted words support the response to: How much does she pay?"
+          }
+        ],
+        "answers": [
+          "Vegetable soup.",
+          "Chicken with rice.",
+          "She does not want juice.",
+          "$14."
+        ],
+        "activity": "Cedar Café role-play",
+        "assessment": "Score each criterion 0–2: orders a food and drink politely; responds appropriately to an unavailable item; asks for the bill and checks the total. 4/6 indicates the task is substantially met. Intelligibility matters more than a perfect accent. This is a task rubric, not formal CEFR certification."
+      }
+    },
+    "listening": {
+      "status": "ready",
+      "fingerprint": "preview-food-at-a-restaurant",
+      "value": {
+        "cefr": "A2",
+        "title": "A Changed Order",
+        "purpose": "Order a meal and a drink politely, respond to an unavailable item, and ask a server for the bill.",
+        "instructions": "Listen once for the situation and again for details.",
+        "script": "Welcome to Cedar Café. I am your server today. A customer named David sits at a small table by the window. He asks for the menu, and I give it to him. He looks at the food and drinks for a minute.\n\nDavid says he would like vegetable soup and a glass of orange juice. I explain that we do not have soup today. We have chicken with rice or a bean sandwich. David thinks for a moment. Then he says, I would like the bean sandwich, please. I repeat his order: one bean sandwich and one orange juice. He says that is right.\n\nI bring the juice first. A few minutes later, I bring the sandwich. David asks for a little more time before he pays. I say that is fine. After he finishes his meal, he asks for the bill. The sandwich is seven dollars, and the juice is three dollars. The total is ten dollars. There are no extra charges in this practice café. David checks the bill, pays ten dollars, and thanks me. I thank him too. He leaves the café and walks back to his class.",
+        "teacherGuidance": "Read the exact script aloud twice. Read questions aloud where helpful. Pause for responses.",
+        "questions": [
+          {
+            "question": "What does David first want to eat?",
+            "answer": "Vegetable soup",
+            "evidence": "he would like vegetable soup",
+            "choices": [
+              "Vegetable soup",
+              "Chicken with rice",
+              "A bean sandwich"
+            ],
+            "explanation": "The script states: he would like vegetable soup"
+          },
+          {
+            "question": "What drink does he order?",
+            "answer": "Orange juice",
+            "evidence": "one bean sandwich and one orange juice",
+            "choices": [
+              "Orange juice",
+              "Water",
+              "Coffee"
+            ],
+            "explanation": "The script states: one bean sandwich and one orange juice"
+          },
+          {
+            "question": "What is the final total?",
+            "answer": "Ten dollars",
+            "evidence": "The total is ten dollars.",
+            "choices": [
+              "Ten dollars",
+              "Nine dollars",
+              "Fourteen dollars"
+            ],
+            "explanation": "The script states: The total is ten dollars."
+          }
+        ]
+      }
+    }
+  }
+}

@@ -58,10 +58,12 @@ export function WorksheetHub({
   worksheet,
   request,
   answerKey,
+  readOnly = false,
 }: {
   worksheet: Worksheet;
   request: LessonRequestInput;
   answerKey?: { sections: { title: string; answers: string[]; notes: string }[] };
+  readOnly?: boolean;
 }) {
   worksheet = { ...worksheet, student: prepareShapeWorksheet(worksheet.student, request), studentB: prepareShapeWorksheet(worksheet.studentB, request) };
   const [tab, setTab] = useState<Tab>("teacher");
@@ -127,7 +129,7 @@ export function WorksheetHub({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <ReportProblem context={{topic: request.topic, studentAge: request.studentAge, level: request.level, section: 'Worksheet', worksheetVersion: `Version ${hasVersionB ? version : 'A'} · ${label}`}} />
+          {!readOnly && <ReportProblem context={{topic: request.topic, studentAge: request.studentAge, level: request.level, section: 'Worksheet', worksheetVersion: `Version ${hasVersionB ? version : 'A'} · ${label}`}} />}
           {hasVersionB ? (
             <div className="inline-flex rounded-lg border bg-muted p-1">
               {(["A", "B"] as Version[]).map((v) => (

@@ -43,6 +43,7 @@ export function SiteNavigation() {
   function primaryLinks(mobile=false) {
     const classes=mobile?'w-full justify-start py-5':'';
     return <>
+      <Button variant="ghost" size="sm" className={classes} asChild><Link to="/examples" search={{}} activeProps={activeProps} onClick={closeAfterNavigation}>Examples</Link></Button>
       <Button variant="ghost" size="sm" className={classes} asChild><Link to="/builder" activeProps={activeProps} onClick={closeAfterNavigation}>Lesson builder</Link></Button>
       {isAuthenticated && <Button variant="ghost" size="sm" className={classes} asChild><Link to="/lessons" activeProps={activeProps} onClick={closeAfterNavigation}>My lessons</Link></Button>}
       <Button variant="ghost" size="sm" className={classes} asChild><Link to="/quick-start" activeProps={activeProps} onClick={closeAfterNavigation}>Quick-start guide</Link></Button>

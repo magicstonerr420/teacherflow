@@ -1,0 +1,1731 @@
+{
+  "request": {
+    "subject": "English",
+    "topic": "Toys and Play",
+    "studentAge": "8-9",
+    "level": "A2",
+    "durationMinutes": 45,
+    "mainSkill": "Speaking",
+    "secondarySkill": "Grammar",
+    "learningObjective": "Ask for a specific toy politely and answer a partner using want, have and What is it?",
+    "numberOfStudents": "20",
+    "previousKnowledge": "Basic classroom routines; some familiar nouns.",
+    "requiredVocabulary": "ball, doll, car, train, teddy",
+    "technologyAvailable": "No technology",
+    "teachingStyle": "Communicative",
+    "homeworkRequirement": "Yes",
+    "groupWorkEnabled": true,
+    "studentsPerGroup": 2,
+    "classroomLimitations": "Use oral responses and pointing before independent writing.",
+    "teacherNotes": "Practice both want and have. Model a polite tone; do not require children to bring or lend personal toys."
+  },
+  "lesson": {
+    "overview": {
+      "topic": "Toys and Play",
+      "age": "8-9",
+      "level": "A2",
+      "duration": "45 minutes",
+      "mainSkill": "Speaking",
+      "learningObjective": "Ask for a specific toy politely and answer a partner using want, have and What is it?",
+      "successCriteria": [
+        "Identify at least four of the five taught words.",
+        "Complete the short task using the target language.",
+        "Take a turn and respond to a partner."
+      ],
+      "prerequisiteKnowledge": [
+        "Basic classroom routines; some familiar nouns."
+      ],
+      "keyLanguage": [
+        "ball",
+        "doll",
+        "car",
+        "train",
+        "teddy",
+        "What is it? It is a ___.",
+        "I have a ___. Do you want it?",
+        "I want the ___, please."
+      ],
+      "materialsNeeded": [
+        "Student worksheets A and B with reading and listening questions; teacher answer keys.",
+        "Five included picture flashcards; paper and pencils.",
+        "Printed materials and the teacher’s voice."
+      ],
+      "anticipatedDifficulties": [
+        {
+          "difficulty": "Recognizing a word but not yet saying it.",
+          "solution": "Allow pointing, model the word, then invite a short response."
+        },
+        {
+          "difficulty": "Confusing model language with the only possible answer.",
+          "solution": "Accept equivalent accurate responses and use the task rubric."
+        }
+      ],
+      "teacherPreparation": [
+        "Read the two scripts and check the teacher keys before teaching.",
+        "Print one selected worksheet version per learner; keep teacher copies separate.",
+        "Print the included picture-front and word-back cards from the PowerPoint.",
+        "Practice both want and have. Model a polite tone; do not require children to bring or lend personal toys."
+      ]
+    },
+    "lessonPlan": {
+      "totalMinutes": 45,
+      "stages": [
+        {
+          "time": 4,
+          "stage": "Connect and set the goal",
+          "teacherActions": "Use the supplied picture cards to elicit familiar words. Read the goal aloud.",
+          "studentActions": "Point to a familiar picture and try its name.",
+          "materials": "Opening slide or printed opening card",
+          "purpose": "Activate prior knowledge without testing unfamiliar language."
+        },
+        {
+          "time": 6,
+          "stage": "Teach the five key words",
+          "teacherActions": "Show each supplied picture, say the word and model its example. Check meaning with pointing.",
+          "studentActions": "Listen, repeat, point and complete Section A orally.",
+          "materials": "Vocabulary cards; worksheet Section A",
+          "purpose": "Grammar supports the main speaking task."
+        },
+        {
+          "time": 6,
+          "stage": "Read for meaning",
+          "teacherActions": "Give a first reading for the main situation, followed by the four evidence questions. Clarify only vocabulary essential to meaning.",
+          "studentActions": "Read the passage, answer the questions and locate the supporting words.",
+          "materials": "Reading passage and four questions, supplied in the worksheet",
+          "purpose": "Establish a shared context and check literal understanding before interpretation."
+        },
+        {
+          "time": 7,
+          "stage": "Listen for a change or decision",
+          "teacherActions": "Read the supplied listening script twice. First check the main situation; then read the three questions and repeat for details.",
+          "studentActions": "Listen and say or circle the answer.",
+          "materials": "Supplied listening script and questions",
+          "purpose": "Practice listening with information that differs from the reading."
+        },
+        {
+          "time": 8,
+          "stage": "Guided language practice",
+          "teacherActions": "Use Version A Sections B and C. Model one response, then let pairs work. Keep Version B for a later lesson, reassessment or fast finishers. For children, Sections D and E are optional additional practice.",
+          "studentActions": "Say answers before writing; complete the selected items with a partner.",
+          "materials": "Worksheet A; sentence frames; optional worksheet B",
+          "purpose": "Move from recognition to usable language."
+        },
+        {
+          "time": 10,
+          "stage": "The toy lending table",
+          "teacherActions": "Arrange groups of 2. Read the supplied role or situation cards and assign roles. Model a short exchange and let learners switch roles. Monitor using the assessment criteria.",
+          "studentActions": "Take turns using the cards and the target phrases.",
+          "materials": "All situation cards appear under Activities and on the student slides",
+          "purpose": "Demonstrate the objective through a purposeful exchange."
+        },
+        {
+          "time": 4,
+          "stage": "Exit check and next step",
+          "teacherActions": "Use the three exit prompts. Record which part of the objective needs another model. Explain the short homework; use the separate assessment later if needed.",
+          "studentActions": "Give a short spoken response and show a picture where helpful.",
+          "materials": "Exit ticket and homework instructions",
+          "purpose": "Check individual progress after supported group work."
+        }
+      ]
+    },
+    "worksheet": {
+      "title": "Toys and Play",
+      "student": {
+        "title": "Toys and Play — Version A",
+        "instructions": "Start with Sections A–C, Reading and Listening. Sections D–E give extra practice. You may answer aloud.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "format": "multiple-choice",
+            "instructions": "Look at each picture. Say or circle the matching word.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "ball",
+                  "doll",
+                  "car",
+                  "train",
+                  "teddy"
+                ],
+                "answerLines": 0,
+                "visual": "ball"
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "ball",
+                  "doll",
+                  "car",
+                  "train",
+                  "teddy"
+                ],
+                "answerLines": 0,
+                "visual": "doll"
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "ball",
+                  "doll",
+                  "car",
+                  "train",
+                  "teddy"
+                ],
+                "answerLines": 0,
+                "visual": "car"
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "ball",
+                  "doll",
+                  "car",
+                  "train",
+                  "teddy"
+                ],
+                "answerLines": 0,
+                "visual": "train"
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Say the word.",
+                "choices": [
+                  "ball",
+                  "doll",
+                  "car",
+                  "train",
+                  "teddy"
+                ],
+                "answerLines": 0,
+                "visual": "teddy"
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "The Toy Swap",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "Ella and Ben have a toy box. Ella has a doll and a teddy. Ben has a ball, a car and a train.\n\n“I want the train, please,” says Ella. Ben gives her the train. “Thank you!” she says. Ben points to the teddy. “What is it?” he asks. “It is a teddy. Do you want it?” asks Ella. “Yes, please,” says Ben.\n\nThey play for ten minutes. Then they put every toy back in the box. They do not keep each other’s toys.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Who has the train at the start?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Which toy does Ella request?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What does Ben want?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Do they keep each other’s toys?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Complete and say",
+            "format": "short-answer",
+            "instructions": "Say the missing word. You may write it too.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "I ___ a ball. (have / has)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "I ___ the doll, please. (want / wants)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What ___ it? (is / are)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "It is ___ train. (a / an)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Can I have the teddy, ___? (please / thanks)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Use your words",
+            "format": "speaking-prompts",
+            "instructions": "Work with a partner. Take turns asking and answering.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Ask politely for a ball.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Tell a friend that you have a car.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Ask the name of a toy.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Offer your teddy to a friend.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Thank a friend for a toy.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section D",
+            "title": "Check the picture words",
+            "format": "multiple-choice",
+            "instructions": "Look carefully. Say or circle yes or no.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "The word for this picture is “ball”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "ball"
+              },
+              {
+                "number": 2,
+                "prompt": "The word for this picture is “train”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "doll"
+              },
+              {
+                "number": 3,
+                "prompt": "The word for this picture is “car”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "car"
+              },
+              {
+                "number": 4,
+                "prompt": "The word for this picture is “ball”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "train"
+              },
+              {
+                "number": 5,
+                "prompt": "The word for this picture is “teddy”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "teddy"
+              }
+            ]
+          },
+          {
+            "label": "Section E",
+            "title": "One more try",
+            "format": "speaking-prompts",
+            "instructions": "Say your answer. Draw or write if you want to.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Ask politely for a train.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Tell a friend that you have a doll.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Answer: What is it? Use ball.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Offer your car to a friend.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Ask for your teddy back politely.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "Sam’s Play Table",
+            "format": "multiple-choice",
+            "instructions": "Listen. Say or circle your answers.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What color is Sam’s car?",
+                "choices": [
+                  "Blue",
+                  "Red",
+                  "Green"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Which toy does Sam ask for?",
+                "choices": [
+                  "The teddy",
+                  "The doll",
+                  "The train"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Where does Alex put the train at the end?",
+                "choices": [
+                  "In the class box",
+                  "In his bag",
+                  "Under a chair"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "studentB": {
+        "title": "Toys and Play — Version B",
+        "instructions": "Start with Sections A–C, Reading and Listening. Sections D–E give extra practice. You may answer aloud.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Use the key words",
+            "format": "writing",
+            "instructions": "Look at each picture. Complete the sentence aloud using the word bank.",
+            "passage": "",
+            "wordBank": [
+              "ball",
+              "doll",
+              "car",
+              "train",
+              "teddy"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "ball"
+              },
+              {
+                "number": 2,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "doll"
+              },
+              {
+                "number": 3,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "car"
+              },
+              {
+                "number": 4,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "train"
+              },
+              {
+                "number": 5,
+                "prompt": "Look. Complete: I see ___.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": "teddy"
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "The Toy Swap",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "Ella and Ben have a toy box. Ella has a doll and a teddy. Ben has a ball, a car and a train.\n\n“I want the train, please,” says Ella. Ben gives her the train. “Thank you!” she says. Ben points to the teddy. “What is it?” he asks. “It is a teddy. Do you want it?” asks Ella. “Yes, please,” says Ben.\n\nThey play for ten minutes. Then they put every toy back in the box. They do not keep each other’s toys.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Who has the train at the start?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Which toy does Ella request?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What does Ben want?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Do they keep each other’s toys?",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Complete and say",
+            "format": "short-answer",
+            "instructions": "Say the missing word. You may write it too.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Do you ___ a toy car? (have / has)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "She ___ a train. (have / has)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "I want ___ ball, please. (the / an)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "What is it? It ___ a doll. (is / are)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Here you are. ___ you! (Thank / Please)",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Use your words",
+            "format": "speaking-prompts",
+            "instructions": "Work with a partner. Take turns asking and answering.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Ask politely for a train.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Tell a friend that you have a doll.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Answer: What is it? Use ball.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Offer your car to a friend.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Ask for your teddy back politely.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section D",
+            "title": "Check the picture words",
+            "format": "multiple-choice",
+            "instructions": "Look carefully. Say or circle yes or no.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "The word for this picture is “car”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "ball"
+              },
+              {
+                "number": 2,
+                "prompt": "The word for this picture is “doll”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "doll"
+              },
+              {
+                "number": 3,
+                "prompt": "The word for this picture is “teddy”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "car"
+              },
+              {
+                "number": 4,
+                "prompt": "The word for this picture is “train”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "train"
+              },
+              {
+                "number": 5,
+                "prompt": "The word for this picture is “doll”. Yes or no?",
+                "choices": [
+                  "Yes",
+                  "No"
+                ],
+                "answerLines": 0,
+                "visual": "teddy"
+              }
+            ]
+          },
+          {
+            "label": "Section E",
+            "title": "One more try",
+            "format": "speaking-prompts",
+            "instructions": "Say your answer. Draw or write if you want to.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Ask politely for a ball.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Tell a friend that you have a car.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Ask the name of a toy.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Offer your teddy to a friend.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Thank a friend for a toy.",
+                "choices": [],
+                "answerLines": 1,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "Sam’s Play Table",
+            "format": "multiple-choice",
+            "instructions": "Listen. Say or circle your answers.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What color is Sam’s car?",
+                "choices": [
+                  "Blue",
+                  "Red",
+                  "Green"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Which toy does Sam ask for?",
+                "choices": [
+                  "The teddy",
+                  "The doll",
+                  "The train"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Where does Alex put the train at the end?",
+                "choices": [
+                  "In the class box",
+                  "In his bag",
+                  "Under a chair"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "teacher": {
+        "overview": "Ask for a specific toy politely and answer a partner using want, have and What is it?\n\nOne point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+        "groupWorkGuidance": "Groups of 2; give everyone a speaking or checking role and rotate. Use Version B as alternate practice, not as a second full worksheet in the same session.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "answers": [
+              "ball",
+              "doll",
+              "car",
+              "train",
+              "teddy"
+            ],
+            "explanation": "Check meaning before form.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Reading",
+            "title": "The Toy Swap",
+            "answers": [
+              "Ben.",
+              "The train.",
+              "The teddy.",
+              "No."
+            ],
+            "explanation": "Use the passage, not outside knowledge.",
+            "expectedResponses": [
+              "1. Evidence: Ben has a ball, a car and a train.",
+              "2. Evidence: I want the train, please",
+              "3. Evidence: Ben points to the teddy.",
+              "4. Evidence: They do not keep each other’s toys."
+            ],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section B",
+            "title": "Complete and say",
+            "answers": [
+              "have",
+              "want",
+              "is",
+              "a",
+              "please"
+            ],
+            "explanation": "Speaking practice with grammar support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section C",
+            "title": "Use your words",
+            "answers": [
+              "I want the ball, please.",
+              "I have a car.",
+              "What is it?",
+              "Do you want the teddy?",
+              "Thank you!"
+            ],
+            "explanation": "Speaking practice with grammar support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section D",
+            "title": "Check the picture words",
+            "answers": [
+              "Yes.",
+              "No.",
+              "Yes.",
+              "No.",
+              "Yes."
+            ],
+            "explanation": "Speaking practice with grammar support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section E",
+            "title": "One more try",
+            "answers": [
+              "Can I have the train, please?",
+              "I have a doll.",
+              "It is a ball.",
+              "Do you want the car?",
+              "Can I have my teddy back, please?"
+            ],
+            "explanation": "Speaking practice with grammar support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Listening",
+            "title": "Sam’s Play Table",
+            "answers": [
+              "Blue",
+              "The teddy",
+              "In the class box"
+            ],
+            "explanation": "Read or listen twice. Answers refer only to this script.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Teacher transcript:\nWelcome to our play table. I am Sam. There are five toys here today. I have a red ball and a small blue car. My friend Nina has a doll and a teddy. There is a green train in the middle of the table. The train belongs to our class.\n\nNina looks at my ball. She says, I want the ball, please. I give her the ball. She says thank you. Then I look at her teddy. What is it? I ask. It is a teddy, she says. Do you want it? Yes, please. I want the teddy. Nina gives it to me. It is soft and brown.\n\nWe play together. Nina rolls the ball slowly. I make the teddy wave. Another friend, Alex, comes to the table. He wants the train. He says, Can I have the train, please? We say yes. Alex moves the train around the table.\n\nAt the end, we stop playing. Nina gives my ball back. I give her teddy back. Alex puts the train in the class box. We thank each other. Everyone has a turn, and all five toys are safe.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+          }
+        ]
+      },
+      "teacherB": [
+        {
+          "label": "Section A",
+          "title": "Use the key words",
+          "answers": [
+            "I see a ball.",
+            "I see a doll.",
+            "I see a car.",
+            "I see a train.",
+            "I see a teddy."
+          ],
+          "explanation": "Check meaning before form.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Reading",
+          "title": "The Toy Swap",
+          "answers": [
+            "Ben.",
+            "The train.",
+            "The teddy.",
+            "No."
+          ],
+          "explanation": "Use the passage, not outside knowledge.",
+          "expectedResponses": [
+            "1. Evidence: Ben has a ball, a car and a train.",
+            "2. Evidence: I want the train, please",
+            "3. Evidence: Ben points to the teddy.",
+            "4. Evidence: They do not keep each other’s toys."
+          ],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section B",
+          "title": "Complete and say",
+          "answers": [
+            "have",
+            "has",
+            "the",
+            "is",
+            "Thank"
+          ],
+          "explanation": "Speaking practice with grammar support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section C",
+          "title": "Use your words",
+          "answers": [
+            "Can I have the train, please?",
+            "I have a doll.",
+            "It is a ball.",
+            "Do you want the car?",
+            "Can I have my teddy back, please?"
+          ],
+          "explanation": "Speaking practice with grammar support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section D",
+          "title": "Check the picture words",
+          "answers": [
+            "No.",
+            "Yes.",
+            "No.",
+            "Yes.",
+            "No."
+          ],
+          "explanation": "Speaking practice with grammar support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section E",
+          "title": "One more try",
+          "answers": [
+            "I want the ball, please.",
+            "I have a car.",
+            "What is it?",
+            "Do you want the teddy?",
+            "Thank you!"
+          ],
+          "explanation": "Speaking practice with grammar support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Listening",
+          "title": "Sam’s Play Table",
+          "answers": [
+            "Blue",
+            "The teddy",
+            "In the class box"
+          ],
+          "explanation": "Read or listen twice. Answers refer only to this script.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Teacher transcript:\nWelcome to our play table. I am Sam. There are five toys here today. I have a red ball and a small blue car. My friend Nina has a doll and a teddy. There is a green train in the middle of the table. The train belongs to our class.\n\nNina looks at my ball. She says, I want the ball, please. I give her the ball. She says thank you. Then I look at her teddy. What is it? I ask. It is a teddy, she says. Do you want it? Yes, please. I want the teddy. Nina gives it to me. It is soft and brown.\n\nWe play together. Nina rolls the ball slowly. I make the teddy wave. Another friend, Alex, comes to the table. He wants the train. He says, Can I have the train, please? We say yes. Alex moves the train around the table.\n\nAt the end, we stop playing. Nina gives my ball back. I give her teddy back. Alex puts the train in the class box. We thank each other. Everyone has a turn, and all five toys are safe.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+        }
+      ]
+    },
+    "presentation": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "Toys and Play",
+          "layout": "title",
+          "studentText": "Look. Listen. Speak.",
+          "interaction": "What do you already know about this topic?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 2,
+          "title": "Today’s goal",
+          "layout": "goal",
+          "studentText": "Ask for a toy. Use please and thank you.",
+          "interaction": "Try one sentence.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 3,
+          "title": "ball",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "ball",
+              "definition": "A round toy you can roll.",
+              "example": "I have a ball.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “ball” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
+          "title": "doll",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "doll",
+              "definition": "A toy that looks like a person.",
+              "example": "I want the doll, please.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “doll” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 5,
+          "title": "car",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "car",
+              "definition": "A small toy vehicle with wheels.",
+              "example": "Do you have a toy car?",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “car” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 6,
+          "title": "train",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "train",
+              "definition": "A toy vehicle that runs on tracks.",
+              "example": "It is a train.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “train” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 7,
+          "title": "teddy",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Say the word.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "teddy",
+              "definition": "A soft toy bear.",
+              "example": "Can I have the teddy, please?",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “teddy” with the supplied example. Use the included picture; invite pointing before speech.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 8,
+          "title": "Read and notice",
+          "layout": "question",
+          "studentText": "The Toy Swap",
+          "interaction": "Who has the train at the start?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the full reading printed in both worksheet versions. Check the four reading questions against the separate teacher key.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 9,
+          "title": "Listen for details",
+          "layout": "question",
+          "studentText": "Sam’s Play Table",
+          "interaction": "Listen. Then answer.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the supplied recording or read the exact script in the separate listening teacher copy. Do not display the transcript during the listening check.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 10,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Say a sentence.",
+          "bullets": [
+            "What is it? It is a ___."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 11,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Say a sentence.",
+          "bullets": [
+            "I have a ___. Do you want it?"
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 12,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Say a sentence.",
+          "bullets": [
+            "I want the ___, please."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 13,
+          "title": "The toy lending table · 1",
+          "layout": "activity",
+          "studentText": "Partner A: You have the ball and car. Ask for the teddy.",
+          "interaction": "Take turns.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Practice both want and have. Model a polite tone; do not require children to bring or lend personal toys.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 14,
+          "title": "The toy lending table · 2",
+          "layout": "activity",
+          "studentText": "Partner B: You have the doll and teddy. Ask for the car.",
+          "interaction": "Take turns.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Practice both want and have. Model a polite tone; do not require children to bring or lend personal toys.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 15,
+          "title": "The toy lending table · 3",
+          "layout": "activity",
+          "studentText": "Shared toy: The train belongs to the class. Ask before taking it.",
+          "interaction": "Take turns.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Practice both want and have. Model a polite tone; do not require children to bring or lend personal toys.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 16,
+          "title": "Your final response",
+          "layout": "review",
+          "studentText": "Ask for a toy politely.",
+          "interaction": "Say it by yourself.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        }
+      ]
+    },
+    "answerKey": {
+      "sections": [
+        {
+          "title": "Section A: Meet the key words",
+          "answers": [
+            "ball",
+            "doll",
+            "car",
+            "train",
+            "teddy"
+          ],
+          "notes": "Check meaning before form."
+        },
+        {
+          "title": "Reading: The Toy Swap",
+          "answers": [
+            "Ben.",
+            "The train.",
+            "The teddy.",
+            "No."
+          ],
+          "notes": "Use the passage, not outside knowledge."
+        },
+        {
+          "title": "Section B: Complete and say",
+          "answers": [
+            "have",
+            "want",
+            "is",
+            "a",
+            "please"
+          ],
+          "notes": "Speaking practice with grammar support."
+        },
+        {
+          "title": "Section C: Use your words",
+          "answers": [
+            "I want the ball, please.",
+            "I have a car.",
+            "What is it?",
+            "Do you want the teddy?",
+            "Thank you!"
+          ],
+          "notes": "Speaking practice with grammar support."
+        },
+        {
+          "title": "Section D: Check the picture words",
+          "answers": [
+            "Yes.",
+            "No.",
+            "Yes.",
+            "No.",
+            "Yes."
+          ],
+          "notes": "Speaking practice with grammar support."
+        },
+        {
+          "title": "Section E: One more try",
+          "answers": [
+            "Can I have the train, please?",
+            "I have a doll.",
+            "It is a ball.",
+            "Do you want the car?",
+            "Can I have my teddy back, please?"
+          ],
+          "notes": "Speaking practice with grammar support."
+        },
+        {
+          "title": "Listening: Sam’s Play Table",
+          "answers": [
+            "Blue",
+            "The teddy",
+            "In the class box"
+          ],
+          "notes": "Read or listen twice. Answers refer only to this script."
+        }
+      ]
+    },
+    "activity": {
+      "title": "The toy lending table",
+      "objective": "Ask for a specific toy politely and answer a partner using want, have and What is it?",
+      "time": "10 minutes",
+      "grouping": "Groups of 2",
+      "materials": "Partner A: You have the ball and car. Ask for the teddy.\n\nPartner B: You have the doll and teddy. Ask for the car.\n\nShared toy: The train belongs to the class. Ask before taking it.",
+      "teacherInstructions": [
+        "Use the exact situation cards below; no additional resource is needed.",
+        "Form groups of 2 and model one short response.",
+        "Allow 5 minutes for preparation and practice; use the remaining time for responses and feedback.",
+        "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal."
+      ],
+      "studentInstructions": [
+        "Partner A: You have the ball and car. Ask for the teddy.",
+        "Partner B: You have the doll and teddy. Ask for the car.",
+        "Shared toy: The train belongs to the class. Ask before taking it."
+      ],
+      "example": "A: I want the teddy, please. B: Here you are. A: Thank you. B: Do you have a car? A: Yes. Do you want it?",
+      "variation": "Swap roles and repeat with a different picture."
+    },
+    "homework": {
+      "title": "Continue the learning",
+      "instructions": "Use the lesson materials. No additional purchase or research is required.",
+      "tasks": [
+        "Draw a toy you like.",
+        "Write or say a four-line toy request and response."
+      ],
+      "estimatedTime": "5–10 minutes"
+    },
+    "exitTicket": {
+      "title": "Show what you can do",
+      "timeMinutes": 4,
+      "questions": [
+        "Ask politely for a ball.",
+        "Offer your teddy to a friend.",
+        "Say one word you can use now."
+      ],
+      "successIndicator": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal."
+    },
+    "assessment": {
+      "title": "Independent check — Version A",
+      "instructions": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+      "questions": [
+        {
+          "prompt": "Ask politely for a ball.",
+          "type": "Oral response",
+          "answer": "I want the ball, please."
+        },
+        {
+          "prompt": "Tell a friend that you have a car.",
+          "type": "Oral response",
+          "answer": "I have a car."
+        },
+        {
+          "prompt": "Ask the name of a toy.",
+          "type": "Oral response",
+          "answer": "What is it?"
+        },
+        {
+          "prompt": "Offer your teddy to a friend.",
+          "type": "Oral response",
+          "answer": "Do you want the teddy?"
+        },
+        {
+          "prompt": "Thank a friend for a toy.",
+          "type": "Oral response",
+          "answer": "Thank you!"
+        }
+      ]
+    },
+    "versionB": {
+      "title": "Independent check — Version B",
+      "instructions": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+      "questions": [
+        {
+          "prompt": "Ask politely for a train.",
+          "type": "Oral response",
+          "answer": "Can I have the train, please?"
+        },
+        {
+          "prompt": "Tell a friend that you have a doll.",
+          "type": "Oral response",
+          "answer": "I have a doll."
+        },
+        {
+          "prompt": "Answer: What is it? Use ball.",
+          "type": "Oral response",
+          "answer": "It is a ball."
+        },
+        {
+          "prompt": "Offer your car to a friend.",
+          "type": "Oral response",
+          "answer": "Do you want the car?"
+        },
+        {
+          "prompt": "Ask for your teddy back politely.",
+          "type": "Oral response",
+          "answer": "Can I have my teddy back, please?"
+        }
+      ]
+    },
+    "supportVersion": {
+      "summary": "Move from pointing to a single word, then to a short phrase.",
+      "sentenceFrames": [
+        "What is it? It is a ___.",
+        "I have a ___. Do you want it?",
+        "I want the ___, please."
+      ],
+      "wordBank": [
+        "ball",
+        "doll",
+        "car",
+        "train",
+        "teddy"
+      ],
+      "examples": [
+        "A: I want the teddy, please. B: Here you are. A: Thank you. B: Do you have a car? A: Yes. Do you want it?"
+      ],
+      "steps": [
+        "Point to the relevant picture.",
+        "Hear and repeat the word.",
+        "Complete one frame with a partner."
+      ],
+      "guidedPractice": [
+        "I ___ a ball. (have / has) Model: have",
+        "Ask politely for a ball. Model: I want the ball, please."
+      ]
+    },
+    "challengeVersion": {
+      "summary": "Extend the same objective with less scaffolding and more independent explanation.",
+      "tasks": [
+        "Add a color to two requests.",
+        "Keep an exchange going for six turns, then return the toy politely."
+      ],
+      "extensionQuestions": [
+        "Can you make a different sentence with one of today’s words?"
+      ]
+    },
+    "teacherNotes": {
+      "problems": [
+        {
+          "problem": "Pacing: the package includes more practice than one class needs.",
+          "solution": "Teach the selected Version A tasks and keep Version B, extension work and the independent assessment for follow-up."
+        },
+        {
+          "problem": "Sensitive or misleading assumptions.",
+          "solution": "Practice both want and have. Model a polite tone; do not require children to bring or lend personal toys."
+        }
+      ],
+      "tips": [
+        "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal.",
+        "Reading and listening tell different stories. Keep their keys separate.",
+        "Student slides include tasks and language models. Facilitation notes and transcript answers belong in the separate teacher documents."
+      ]
+    },
+    "qualityCheck": {
+      "checks": [
+        {
+          "criterion": "Resource coverage",
+          "status": "pass",
+          "comment": "Both worksheet versions, answer keys, an original reading, a listening script, situation cards and student slides are supplied."
+        },
+        {
+          "criterion": "Classroom fit",
+          "status": "check",
+          "comment": "The stated level is a lesson target. Choose scaffolding and pacing for your actual learners."
+        }
+      ],
+      "overallNotes": "This is a curated preview of a complete package. Open responses have model answers, not a single required opinion. Review the supplied material against your class before teaching."
+    },
+    "reading": {
+      "status": "ready",
+      "fingerprint": "preview-toys-and-play",
+      "value": {
+        "cefr": "A2",
+        "title": "The Toy Swap",
+        "purpose": "Ask for a specific toy politely and answer a partner using want, have and What is it?",
+        "instructions": "Read for the situation, then use evidence to answer.",
+        "word_count": 84,
+        "text": "Ella and Ben have a toy box. Ella has a doll and a teddy. Ben has a ball, a car and a train.\n\n“I want the train, please,” says Ella. Ben gives her the train. “Thank you!” she says. Ben points to the teddy. “What is it?” he asks. “It is a teddy. Do you want it?” asks Ella. “Yes, please,” says Ben.\n\nThey play for ten minutes. Then they put every toy back in the box. They do not keep each other’s toys.",
+        "questions": [
+          {
+            "type": "short_answer",
+            "question": "Who has the train at the start?",
+            "choices": [],
+            "evidence": "Ben has a ball, a car and a train.",
+            "answerExplanation": "The quoted words support the response to: Who has the train at the start?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Which toy does Ella request?",
+            "choices": [],
+            "evidence": "I want the train, please",
+            "answerExplanation": "The quoted words support the response to: Which toy does Ella request?"
+          },
+          {
+            "type": "short_answer",
+            "question": "What does Ben want?",
+            "choices": [],
+            "evidence": "Ben points to the teddy.",
+            "answerExplanation": "The quoted words support the response to: What does Ben want?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Do they keep each other’s toys?",
+            "choices": [],
+            "evidence": "They do not keep each other’s toys.",
+            "answerExplanation": "The quoted words support the response to: Do they keep each other’s toys?"
+          }
+        ],
+        "answers": [
+          "Ben.",
+          "The train.",
+          "The teddy.",
+          "No."
+        ],
+        "activity": "The toy lending table",
+        "assessment": "One point each: identifies four of the five key words; completes the requested exchange or choice; responds intelligibly to a partner. Two points suggest useful progress; revisit the missing criterion. Writing accuracy is not the main goal."
+      }
+    },
+    "listening": {
+      "status": "ready",
+      "fingerprint": "preview-toys-and-play",
+      "value": {
+        "cefr": "A2",
+        "title": "Sam’s Play Table",
+        "purpose": "Ask for a specific toy politely and answer a partner using want, have and What is it?",
+        "instructions": "Listen. Say or circle your answers.",
+        "script": "Welcome to our play table. I am Sam. There are five toys here today. I have a red ball and a small blue car. My friend Nina has a doll and a teddy. There is a green train in the middle of the table. The train belongs to our class.\n\nNina looks at my ball. She says, I want the ball, please. I give her the ball. She says thank you. Then I look at her teddy. What is it? I ask. It is a teddy, she says. Do you want it? Yes, please. I want the teddy. Nina gives it to me. It is soft and brown.\n\nWe play together. Nina rolls the ball slowly. I make the teddy wave. Another friend, Alex, comes to the table. He wants the train. He says, Can I have the train, please? We say yes. Alex moves the train around the table.\n\nAt the end, we stop playing. Nina gives my ball back. I give her teddy back. Alex puts the train in the class box. We thank each other. Everyone has a turn, and all five toys are safe.",
+        "teacherGuidance": "Read the exact script aloud twice. Read questions aloud where helpful. Pause for responses.",
+        "questions": [
+          {
+            "question": "What color is Sam’s car?",
+            "answer": "Blue",
+            "evidence": "a small blue car",
+            "choices": [
+              "Blue",
+              "Red",
+              "Green"
+            ],
+            "explanation": "The script states: a small blue car"
+          },
+          {
+            "question": "Which toy does Sam ask for?",
+            "answer": "The teddy",
+            "evidence": "I want the teddy.",
+            "choices": [
+              "The teddy",
+              "The doll",
+              "The train"
+            ],
+            "explanation": "The script states: I want the teddy."
+          },
+          {
+            "question": "Where does Alex put the train at the end?",
+            "answer": "In the class box",
+            "evidence": "Alex puts the train in the class box.",
+            "choices": [
+              "In the class box",
+              "In his bag",
+              "Under a chair"
+            ],
+            "explanation": "The script states: Alex puts the train in the class box."
+          }
+        ]
+      }
+    }
+  }
+}

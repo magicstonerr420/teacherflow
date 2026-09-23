@@ -39,7 +39,7 @@ import {
   type SectionKeyName,
 } from "@/lib/lesson-schema";
 
-const SECTIONS = [
+export const SECTIONS = [
   { key: "overview", label: "Overview" },
   { key: "plan", label: "Lesson Plan" },
   { key: "presentation", label: "Presentation" },
@@ -56,7 +56,7 @@ const SECTIONS = [
   { key: "quality", label: "Quality Check" },
 ] as const;
 
-type SectionKey = (typeof SECTIONS)[number]["key"];
+export type SectionKey = (typeof SECTIONS)[number]["key"];
 
 /** Which lesson field each screen section edits. */
 const SECTION_FIELD: Record<SectionKey, keyof LessonPackage | null> = {
@@ -412,7 +412,7 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SectionBody({
+export function SectionBody({
   sectionKey,
   lesson,
   request,

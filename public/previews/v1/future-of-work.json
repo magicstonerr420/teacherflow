@@ -1,0 +1,1367 @@
+{
+  "request": {
+    "subject": "English",
+    "topic": "Future of Work",
+    "studentAge": "16-18",
+    "level": "C1",
+    "durationMinutes": 75,
+    "mainSkill": "Speaking",
+    "secondarySkill": "Writing",
+    "learningObjective": "Present an evidence-linked proposal for adapting to workplace change, with prioritized skills, a resource trade-off and a measurable review plan.",
+    "numberOfStudents": "20",
+    "previousKnowledge": "Language from the previous CEFR level; no specialist topic knowledge required.",
+    "requiredVocabulary": "employment, automation, adaptability, qualification, workforce",
+    "technologyAvailable": "Projector / screen",
+    "teachingStyle": "Project-based",
+    "homeworkRequirement": "Yes",
+    "groupWorkEnabled": true,
+    "studentsPerGroup": 2,
+    "classroomLimitations": "All core evidence and role cards are supplied.",
+    "teacherNotes": "Present the studio as a fictional scenario, not a forecast about any real job market. Students may use imagined career interests."
+  },
+  "lesson": {
+    "overview": {
+      "topic": "Future of Work",
+      "age": "16-18",
+      "level": "C1",
+      "duration": "75 minutes",
+      "mainSkill": "Speaking",
+      "learningObjective": "Present an evidence-linked proposal for adapting to workplace change, with prioritized skills, a resource trade-off and a measurable review plan.",
+      "successCriteria": [
+        "State a clear response that meets the task.",
+        "Use specific details from the supplied material.",
+        "Respond to another view and recognize an appropriate limitation."
+      ],
+      "prerequisiteKnowledge": [
+        "Language from the previous CEFR level; no specialist topic knowledge required."
+      ],
+      "keyLanguage": [
+        "employment",
+        "automation",
+        "adaptability",
+        "qualification",
+        "workforce",
+        "The evidence supports ___, but does not establish ___ .",
+        "We prioritize ___ over ___ because the immediate constraint is ___ .",
+        "We would revise this proposal if ___ ."
+      ],
+      "materialsNeeded": [
+        "Student worksheets A and B with reading and listening questions; teacher answer keys.",
+        "Supplied case and situation cards; paper and pens.",
+        "Projector / screen. Included recording and student slides."
+      ],
+      "anticipatedDifficulties": [
+        {
+          "difficulty": "Giving a broad claim without a relevant detail.",
+          "solution": "Ask which sentence in the case supports the claim."
+        },
+        {
+          "difficulty": "Confusing model language with the only possible answer.",
+          "solution": "Accept equivalent accurate responses and use the task rubric."
+        }
+      ],
+      "teacherPreparation": [
+        "Read the two scripts and check the teacher keys before teaching.",
+        "Print one selected worksheet version per learner; keep teacher copies separate.",
+        "Prepare the supplied role cards. No outside article or paid material is needed.",
+        "Present the studio as a fictional scenario, not a forecast about any real job market. Students may use imagined career interests."
+      ]
+    },
+    "lessonPlan": {
+      "totalMinutes": 75,
+      "stages": [
+        {
+          "time": 6,
+          "stage": "Connect and set the goal",
+          "teacherActions": "Invite an initial view on the case, then state the objective and distinguish the fictional scenario from factual research.",
+          "studentActions": "State an initial view and one question you want the case to answer.",
+          "materials": "Opening slide or printed opening card",
+          "purpose": "Activate prior knowledge without testing unfamiliar language."
+        },
+        {
+          "time": 10,
+          "stage": "Teach the five key words",
+          "teacherActions": "Model the five terms using their definitions and examples. Ask learners to explain a distinction in their own words.",
+          "studentActions": "Complete Section A and compare meanings with a partner.",
+          "materials": "Vocabulary cards; worksheet Section A",
+          "purpose": "Writing supports the main speaking task."
+        },
+        {
+          "time": 12,
+          "stage": "Read for meaning",
+          "teacherActions": "Give a first reading for the main situation, followed by the four evidence questions. Clarify only vocabulary essential to meaning.",
+          "studentActions": "Read the passage, answer the questions and locate the supporting words.",
+          "materials": "Reading passage and four questions, supplied in the worksheet",
+          "purpose": "Establish a shared context and check literal understanding before interpretation."
+        },
+        {
+          "time": 10,
+          "stage": "Listen for a change or decision",
+          "teacherActions": "Play the included recording twice: once for the main situation, then again after learners read the three questions. Use the teacher transcript to resolve disputed evidence.",
+          "studentActions": "Identify the main situation, then answer the three detail questions and compare evidence.",
+          "materials": "Supplied listening script and questions",
+          "purpose": "Practice listening with information that differs from the reading."
+        },
+        {
+          "time": 13,
+          "stage": "Guided language practice",
+          "teacherActions": "Use Version A Sections B and C. Model one response, then let pairs work. Keep Version B for a later lesson, reassessment or fast finishers. For children, Sections D and E are optional additional practice.",
+          "studentActions": "Apply the sentence frames, then respond to the five application prompts.",
+          "materials": "Worksheet A; sentence frames; optional worksheet B",
+          "purpose": "Move from recognition to usable language."
+        },
+        {
+          "time": 20,
+          "stage": "Pitch a six-week training pilot",
+          "teacherActions": "Arrange groups of 2. Read the supplied role or situation cards and assign roles. Require a choice, supporting reasons and a response to another view. Monitor using the assessment criteria.",
+          "studentActions": "Complete the group task, present your decision and respond to one question.",
+          "materials": "All situation cards appear under Activities and on the student slides",
+          "purpose": "Demonstrate the objective through a purposeful exchange."
+        },
+        {
+          "time": 4,
+          "stage": "Exit check and next step",
+          "teacherActions": "Use the three exit prompts. Record which part of the objective needs another model. Explain the short homework; use the separate assessment later if needed.",
+          "studentActions": "Give an independent response and identify one point to improve.",
+          "materials": "Exit ticket and homework instructions",
+          "purpose": "Check individual progress after supported group work."
+        }
+      ]
+    },
+    "worksheet": {
+      "title": "Future of Work",
+      "student": {
+        "title": "Future of Work — Version A",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "format": "matching",
+            "instructions": "Match each definition to a word from the bank.",
+            "passage": "",
+            "wordBank": [
+              "employment",
+              "automation",
+              "adaptability",
+              "qualification",
+              "workforce"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Paid work or the condition of having a job.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Using a system to carry out tasks with less direct human action.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "The ability to respond effectively to changed conditions.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "A recognized achievement or evidence of competence.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "The people who work in an organization or economy.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "A Training Plan for Northbridge",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "Northbridge is a fictional design studio with twelve employees. Its managers are considering a system that drafts routine project summaries from approved notes. Currently, staff spend part of each week producing these summaries and checking them with clients. The proposed system may reduce drafting time, but nobody has yet tested how accurately it handles ambiguous notes or unusual requests. The case does not assume that an entire occupation will disappear.\n\nA pilot team proposes a six-week trial. Staff would compare draft summaries with the original notes, record errors and seek client confirmation before anything is finalized. The trial would therefore change the distribution of tasks: less initial drafting might be balanced by more verification, exception handling and communication. Whether the overall workload falls remains an open question.\n\nThe studio has only two paid training afternoons available during the pilot. One proposal uses both afternoons to teach system operation. A second divides the time between operation and critical review, including how to identify an unsupported conclusion and explain an uncertainty to a client. The second proposal covers fewer features but may address a wider range of risks.\n\nAn employee representative adds that learning outside paid hours would affect workers unequally. Some have caring responsibilities or other commitments. She argues that adaptability should be supported by organizational time and clear procedures, rather than treated solely as an individual personality trait. Managers agree that a certificate alone would not prove competence; employees should demonstrate the skills on realistic examples.\n\nAt the end of six weeks, the team plans to review accuracy, total time spent, client corrections and staff feedback. A faster first draft would not count as success if verification or rework increased substantially. The decision to expand the system will depend on the whole process, not on an impressive demonstration.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What has not yet been tested?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Why might less drafting not reduce total workload?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What is the training constraint?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Why is a certificate insufficient in this case?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Correct the overclaim: Automated summaries will eliminate design jobs.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Distinguish a qualification from demonstrated competence.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Name a task likely to remain important in the proposed pilot.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Write a measurable question about total workload.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Explain one equity concern about unpaid training.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "speaking-prompts",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Prioritize two training skills and explain the choice.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Allocate the two paid afternoons.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Choose two process measures.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Include a worker participation safeguard.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Present a conditional recommendation.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "The Employee Representative’s Proposal",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "How would the two afternoons be used?",
+                "choices": [
+                  "Operation, then checking realistic examples",
+                  "Two afternoons of advanced features",
+                  "Only certificate preparation"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What trade-off does the proposal acknowledge?",
+                "choices": [
+                  "Some advanced features are postponed",
+                  "All clients leave",
+                  "Staff stop learning"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What should trigger revision?",
+                "choices": [
+                  "Errors take longer to resolve despite faster drafting",
+                  "Everyone attends training",
+                  "Staff ask useful questions"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "studentB": {
+        "title": "Future of Work — Version B",
+        "instructions": "Complete the sections your teacher assigns. Use the reading and the supplied case details. Version B is an alternative for later practice.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Use the key words",
+            "format": "writing",
+            "instructions": "Write a sentence that shows each word’s meaning.",
+            "passage": "",
+            "wordBank": [
+              "employment",
+              "automation",
+              "adaptability",
+              "qualification",
+              "workforce"
+            ],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Use “employment” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Use “automation” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Use “adaptability” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Use “qualification” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Use “workforce” in a sentence about this lesson.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Reading",
+            "title": "A Training Plan for Northbridge",
+            "format": "reading",
+            "instructions": "Read the passage and answer the questions.",
+            "passage": "Northbridge is a fictional design studio with twelve employees. Its managers are considering a system that drafts routine project summaries from approved notes. Currently, staff spend part of each week producing these summaries and checking them with clients. The proposed system may reduce drafting time, but nobody has yet tested how accurately it handles ambiguous notes or unusual requests. The case does not assume that an entire occupation will disappear.\n\nA pilot team proposes a six-week trial. Staff would compare draft summaries with the original notes, record errors and seek client confirmation before anything is finalized. The trial would therefore change the distribution of tasks: less initial drafting might be balanced by more verification, exception handling and communication. Whether the overall workload falls remains an open question.\n\nThe studio has only two paid training afternoons available during the pilot. One proposal uses both afternoons to teach system operation. A second divides the time between operation and critical review, including how to identify an unsupported conclusion and explain an uncertainty to a client. The second proposal covers fewer features but may address a wider range of risks.\n\nAn employee representative adds that learning outside paid hours would affect workers unequally. Some have caring responsibilities or other commitments. She argues that adaptability should be supported by organizational time and clear procedures, rather than treated solely as an individual personality trait. Managers agree that a certificate alone would not prove competence; employees should demonstrate the skills on realistic examples.\n\nAt the end of six weeks, the team plans to review accuracy, total time spent, client corrections and staff feedback. A faster first draft would not count as success if verification or rework increased substantially. The decision to expand the system will depend on the whole process, not on an impressive demonstration.",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "What has not yet been tested?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Why might less drafting not reduce total workload?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What is the training constraint?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Why is a certificate insufficient in this case?",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "format": "short-answer",
+            "instructions": "Respond using language that fits the situation.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Qualify: Fast output means successful automation.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Turn adaptability into a specific observable skill.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Name a trade-off in the two-afternoon plan.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Specify an assessment beyond attendance.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Write a condition for delaying expansion.",
+                "choices": [],
+                "answerLines": 2,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "format": "speaking-prompts",
+            "instructions": "Give a reason, an example or a case detail when the prompt asks for one.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "Design one realistic competence check.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "Explain why a job is more than one task.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "Identify one uncertainty the pilot can address.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 4,
+                "prompt": "Identify one claim this small pilot cannot establish.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              },
+              {
+                "number": 5,
+                "prompt": "Defend a revision rule in a one-minute pitch.",
+                "choices": [],
+                "answerLines": 3,
+                "visual": ""
+              }
+            ]
+          },
+          {
+            "label": "Listening",
+            "title": "The Employee Representative’s Proposal",
+            "format": "multiple-choice",
+            "instructions": "Listen for meaning, then answer the questions.",
+            "passage": "",
+            "wordBank": [],
+            "items": [
+              {
+                "number": 1,
+                "prompt": "How would the two afternoons be used?",
+                "choices": [
+                  "Operation, then checking realistic examples",
+                  "Two afternoons of advanced features",
+                  "Only certificate preparation"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 2,
+                "prompt": "What trade-off does the proposal acknowledge?",
+                "choices": [
+                  "Some advanced features are postponed",
+                  "All clients leave",
+                  "Staff stop learning"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              },
+              {
+                "number": 3,
+                "prompt": "What should trigger revision?",
+                "choices": [
+                  "Errors take longer to resolve despite faster drafting",
+                  "Everyone attends training",
+                  "Staff ask useful questions"
+                ],
+                "answerLines": 0,
+                "visual": ""
+              }
+            ]
+          }
+        ]
+      },
+      "teacher": {
+        "overview": "Present an evidence-linked proposal for adapting to workplace change, with prioritized skills, a resource trade-off and a measurable review plan.\n\nScore each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+        "groupWorkGuidance": "Groups of 2; give everyone a speaking or checking role and rotate. Use Version B as alternate practice, not as a second full worksheet in the same session.",
+        "sections": [
+          {
+            "label": "Section A",
+            "title": "Meet the key words",
+            "answers": [
+              "employment",
+              "automation",
+              "adaptability",
+              "qualification",
+              "workforce"
+            ],
+            "explanation": "Check meaning before form.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Reading",
+            "title": "A Training Plan for Northbridge",
+            "answers": [
+              "Accuracy with ambiguous notes and unusual requests.",
+              "Verification and other tasks may increase.",
+              "Two paid afternoons.",
+              "Competence should be demonstrated on realistic examples."
+            ],
+            "explanation": "Use the passage, not outside knowledge.",
+            "expectedResponses": [
+              "1. Evidence: nobody has yet tested how accurately it handles ambiguous notes or unusual requests",
+              "2. Evidence: less initial drafting might be balanced by more verification, exception handling and communication",
+              "3. Evidence: The studio has only two paid training afternoons available during the pilot.",
+              "4. Evidence: employees should demonstrate the skills on realistic examples"
+            ],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section B",
+            "title": "Language in use",
+            "answers": [
+              "The pilot concerns summary drafting; the case does not establish job elimination.",
+              "A qualification records an achievement; competence requires evidence of effective performance.",
+              "Checking a draft against source notes or clarifying uncertainty with a client.",
+              "How does total drafting, checking and correction time compare with the previous process?",
+              "Employees with caring responsibilities may have less time to participate."
+            ],
+            "explanation": "Speaking practice with writing support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Section C",
+            "title": "Apply and explain",
+            "answers": [
+              "Basic operation and critical review address immediate use and reliability risks.",
+              "One operation workshop and one applied review workshop, with clear tasks.",
+              "Total completion time and confirmed error rate; define how each is recorded.",
+              "Collect confidential feedback during paid time and allow staff to flag unreliable output.",
+              "Proceed with a limited pilot, subject to accuracy, workload and participation checks."
+            ],
+            "explanation": "Speaking practice with writing support.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+          },
+          {
+            "label": "Listening",
+            "title": "The Employee Representative’s Proposal",
+            "answers": [
+              "Operation, then checking realistic examples",
+              "Some advanced features are postponed",
+              "Errors take longer to resolve despite faster drafting"
+            ],
+            "explanation": "Read or listen twice. Answers refer only to this script.",
+            "expectedResponses": [],
+            "commonErrors": [
+              "Answering a different question or giving a claim without the requested detail."
+            ],
+            "corrections": [
+              "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+            ],
+            "teacherNotes": "Teacher transcript:\nBefore we decide which training to buy, I want us to separate two questions. The first is whether staff can operate the new system. The second is whether they can judge its output responsibly. Being able to produce a fluent draft does not establish that the draft is accurate.\n\nI propose using our first training afternoon for basic operation and our second for checking realistic examples. In the review session, people would compare a summary with its source notes, identify unsupported claims and explain unresolved questions to a client. That approach leaves some advanced features for later, which is a real trade-off.\n\nI also want the studio to protect learning time. If employees have to practice after work, those with caring responsibilities may have fewer opportunities. Adaptability should be supported through the way work is organized, not just demanded in a job description.\n\nAfter six weeks, we should review the time spent on the entire process, including corrections. We should also ask whether employees feel able to challenge an unreliable result. If drafting becomes faster but errors take longer to resolve, we should revise the plan. The goal is a more reliable service and a workforce that can exercise informed judgment, rather than a certificate that everyone receives for attending.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+          }
+        ]
+      },
+      "teacherB": [
+        {
+          "label": "Section A",
+          "title": "Use the key words",
+          "answers": [
+            "Employment involves more than completing isolated tasks.",
+            "Automation can change part of a role.",
+            "Adaptability includes revising an unsuccessful approach.",
+            "A qualification should demonstrate relevant learning.",
+            "The workforce needs time to learn new processes."
+          ],
+          "explanation": "Check meaning before form.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Reading",
+          "title": "A Training Plan for Northbridge",
+          "answers": [
+            "Accuracy with ambiguous notes and unusual requests.",
+            "Verification and other tasks may increase.",
+            "Two paid afternoons.",
+            "Competence should be demonstrated on realistic examples."
+          ],
+          "explanation": "Use the passage, not outside knowledge.",
+          "expectedResponses": [
+            "1. Evidence: nobody has yet tested how accurately it handles ambiguous notes or unusual requests",
+            "2. Evidence: less initial drafting might be balanced by more verification, exception handling and communication",
+            "3. Evidence: The studio has only two paid training afternoons available during the pilot.",
+            "4. Evidence: employees should demonstrate the skills on realistic examples"
+          ],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section B",
+          "title": "Language in use",
+          "answers": [
+            "Fast output is useful only if accuracy and downstream work remain acceptable.",
+            "Revise a checking procedure after identifying a recurring error.",
+            "Time spent on critical review reduces time for advanced system features.",
+            "Compare a draft with notes and explain two unsupported claims correctly.",
+            "Delay expansion if total correction time rises or serious errors persist."
+          ],
+          "explanation": "Speaking practice with writing support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Section C",
+          "title": "Apply and explain",
+          "answers": [
+            "Provide source notes and a flawed summary; assess detection, correction and explanation.",
+            "The role also includes judgment, communication and handling unusual cases.",
+            "Whether the system handles ambiguous notes accurately.",
+            "A general prediction about employment across the whole economy.",
+            "State a threshold or review criterion, explain its purpose and avoid claiming unsupported forecasts."
+          ],
+          "explanation": "Speaking practice with writing support.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Answers are in item order. Model responses are examples, not the only acceptable wording."
+        },
+        {
+          "label": "Listening",
+          "title": "The Employee Representative’s Proposal",
+          "answers": [
+            "Operation, then checking realistic examples",
+            "Some advanced features are postponed",
+            "Errors take longer to resolve despite faster drafting"
+          ],
+          "explanation": "Read or listen twice. Answers refer only to this script.",
+          "expectedResponses": [],
+          "commonErrors": [
+            "Answering a different question or giving a claim without the requested detail."
+          ],
+          "corrections": [
+            "Return to the exact prompt. Accept accurate equivalent wording for open responses."
+          ],
+          "teacherNotes": "Teacher transcript:\nBefore we decide which training to buy, I want us to separate two questions. The first is whether staff can operate the new system. The second is whether they can judge its output responsibly. Being able to produce a fluent draft does not establish that the draft is accurate.\n\nI propose using our first training afternoon for basic operation and our second for checking realistic examples. In the review session, people would compare a summary with its source notes, identify unsupported claims and explain unresolved questions to a client. That approach leaves some advanced features for later, which is a real trade-off.\n\nI also want the studio to protect learning time. If employees have to practice after work, those with caring responsibilities may have fewer opportunities. Adaptability should be supported through the way work is organized, not just demanded in a job description.\n\nAfter six weeks, we should review the time spent on the entire process, including corrections. We should also ask whether employees feel able to challenge an unreliable result. If drafting becomes faster but errors take longer to resolve, we should revise the plan. The goal is a more reliable service and a workforce that can exercise informed judgment, rather than a certificate that everyone receives for attending.\n\nRead the questions aloud for young learners. Replay or reread in short sections if needed."
+        }
+      ]
+    },
+    "presentation": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "Future of Work",
+          "layout": "title",
+          "studentText": "Separate tasks from jobs, question assumptions, and defend a realistic training proposal.",
+          "interaction": "What do you already know about this topic?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 2,
+          "title": "Today’s goal",
+          "layout": "goal",
+          "studentText": "Present an evidence-linked proposal for adapting to workplace change, with prioritized skills, a resource trade-off and a measurable review plan.",
+          "interaction": "Explain the goal in your own words.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 3,
+          "title": "employment",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "employment",
+              "definition": "Paid work or the condition of having a job.",
+              "example": "Employment involves more than completing isolated tasks.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “employment” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 4,
+          "title": "automation",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "automation",
+              "definition": "Using a system to carry out tasks with less direct human action.",
+              "example": "Automation can change part of a role.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “automation” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 5,
+          "title": "adaptability",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "adaptability",
+              "definition": "The ability to respond effectively to changed conditions.",
+              "example": "Adaptability includes revising an unsuccessful approach.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “adaptability” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 6,
+          "title": "qualification",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "qualification",
+              "definition": "A recognized achievement or evidence of competence.",
+              "example": "A qualification should demonstrate relevant learning.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “qualification” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 7,
+          "title": "workforce",
+          "layout": "vocabulary",
+          "studentText": "",
+          "interaction": "Use the word in a new example.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [
+            {
+              "word": "workforce",
+              "definition": "The people who work in an organization or economy.",
+              "example": "The workforce needs time to learn new processes.",
+              "imagePrompt": ""
+            }
+          ],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Model “workforce” with the supplied example. Check that learners distinguish the definition from an example.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 8,
+          "title": "Read and notice",
+          "layout": "question",
+          "studentText": "A Training Plan for Northbridge",
+          "interaction": "What has not yet been tested?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the full reading printed in both worksheet versions. Check the four reading questions against the separate teacher key.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 9,
+          "title": "Listen for details",
+          "layout": "question",
+          "studentText": "The Employee Representative’s Proposal",
+          "interaction": "Listen once for the situation, then again for details.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use the supplied recording or read the exact script in the separate listening teacher copy. Do not display the transcript during the listening check.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 10,
+          "title": "Useful language",
+          "layout": "expressions",
+          "studentText": "",
+          "interaction": "Adapt one frame to the situation.",
+          "bullets": [
+            "The evidence supports ___, but does not establish ___ .",
+            "We prioritize ___ over ___ because the immediate constraint is ___ .",
+            "We would revise this proposal if ___ ."
+          ],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "These are language models, not answers to the reading or listening questions.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 11,
+          "title": "Pitch a six-week training pilot · 1",
+          "layout": "activity",
+          "studentText": "Studio constraint: Twelve employees; two paid training afternoons; a six-week pilot.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Present the studio as a fictional scenario, not a forecast about any real job market. Students may use imagined career interests.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 12,
+          "title": "Pitch a six-week training pilot · 2",
+          "layout": "activity",
+          "studentText": "Deliverable: A one-page proposal with two skills, a schedule, an assessment and a review rule.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Present the studio as a fictional scenario, not a forecast about any real job market. Students may use imagined career interests.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 13,
+          "title": "Pitch a six-week training pilot · 3",
+          "layout": "activity",
+          "studentText": "Review panel: Question one assumption, one resource trade-off and the difference between task speed and overall service quality.",
+          "interaction": "Discuss your choice and explain your reason.",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Use in the group activity. Present the studio as a fictional scenario, not a forecast about any real job market. Students may use imagined career interests.",
+          "purpose": "Build toward the stated learning objective."
+        },
+        {
+          "number": 14,
+          "title": "Your final response",
+          "layout": "review",
+          "studentText": "State your choice. Give evidence. Recognize a limitation.",
+          "interaction": "What would make you change your response?",
+          "bullets": [],
+          "highlightWords": [],
+          "vocabulary": [],
+          "visualSuggestion": "",
+          "imagePrompt": "",
+          "teacherNote": "Allow thinking time, then invite a response. Accept equivalent language that meets the objective.",
+          "purpose": "Build toward the stated learning objective."
+        }
+      ]
+    },
+    "answerKey": {
+      "sections": [
+        {
+          "title": "Section A: Meet the key words",
+          "answers": [
+            "employment",
+            "automation",
+            "adaptability",
+            "qualification",
+            "workforce"
+          ],
+          "notes": "Check meaning before form."
+        },
+        {
+          "title": "Reading: A Training Plan for Northbridge",
+          "answers": [
+            "Accuracy with ambiguous notes and unusual requests.",
+            "Verification and other tasks may increase.",
+            "Two paid afternoons.",
+            "Competence should be demonstrated on realistic examples."
+          ],
+          "notes": "Use the passage, not outside knowledge."
+        },
+        {
+          "title": "Section B: Language in use",
+          "answers": [
+            "The pilot concerns summary drafting; the case does not establish job elimination.",
+            "A qualification records an achievement; competence requires evidence of effective performance.",
+            "Checking a draft against source notes or clarifying uncertainty with a client.",
+            "How does total drafting, checking and correction time compare with the previous process?",
+            "Employees with caring responsibilities may have less time to participate."
+          ],
+          "notes": "Speaking practice with writing support."
+        },
+        {
+          "title": "Section C: Apply and explain",
+          "answers": [
+            "Basic operation and critical review address immediate use and reliability risks.",
+            "One operation workshop and one applied review workshop, with clear tasks.",
+            "Total completion time and confirmed error rate; define how each is recorded.",
+            "Collect confidential feedback during paid time and allow staff to flag unreliable output.",
+            "Proceed with a limited pilot, subject to accuracy, workload and participation checks."
+          ],
+          "notes": "Speaking practice with writing support."
+        },
+        {
+          "title": "Listening: The Employee Representative’s Proposal",
+          "answers": [
+            "Operation, then checking realistic examples",
+            "Some advanced features are postponed",
+            "Errors take longer to resolve despite faster drafting"
+          ],
+          "notes": "Read or listen twice. Answers refer only to this script."
+        }
+      ]
+    },
+    "activity": {
+      "title": "Pitch a six-week training pilot",
+      "objective": "Present an evidence-linked proposal for adapting to workplace change, with prioritized skills, a resource trade-off and a measurable review plan.",
+      "time": "20 minutes",
+      "grouping": "Groups of 2",
+      "materials": "Studio constraint: Twelve employees; two paid training afternoons; a six-week pilot.\n\nDeliverable: A one-page proposal with two skills, a schedule, an assessment and a review rule.\n\nReview panel: Question one assumption, one resource trade-off and the difference between task speed and overall service quality.",
+      "teacherInstructions": [
+        "Use the exact situation cards below; no additional resource is needed.",
+        "Form groups of 2 and model one short response.",
+        "Allow 15 minutes for preparation and practice; use the remaining time for responses and feedback.",
+        "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+      ],
+      "studentInstructions": [
+        "Studio constraint: Twelve employees; two paid training afternoons; a six-week pilot.",
+        "Deliverable: A one-page proposal with two skills, a schedule, an assessment and a review rule.",
+        "Review panel: Question one assumption, one resource trade-off and the difference between task speed and overall service quality."
+      ],
+      "example": "We propose operation training followed by critical review. Employees will demonstrate checking on realistic notes. We will compare total processing time and confirmed errors after six weeks, and postpone expansion if reliability deteriorates.",
+      "variation": "Exchange recommendations with another group and write one constructive challenge."
+    },
+    "homework": {
+      "title": "Continue the learning",
+      "instructions": "Use the lesson materials. No additional purchase or research is required.",
+      "tasks": [
+        "Write a 250–300-word proposal using the group’s pilot plan.",
+        "Include a limitation, a cost in staff time, and a clear review rule."
+      ],
+      "estimatedTime": "20 minutes"
+    },
+    "exitTicket": {
+      "title": "Show what you can do",
+      "timeMinutes": 4,
+      "questions": [
+        "Prioritize two training skills and explain the choice.",
+        "Include a worker participation safeguard.",
+        "Name one point you would improve in your response."
+      ],
+      "successIndicator": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+    },
+    "assessment": {
+      "title": "Independent check — Version A",
+      "instructions": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "Prioritize two training skills and explain the choice.",
+          "type": "Spoken or written response",
+          "answer": "Basic operation and critical review address immediate use and reliability risks."
+        },
+        {
+          "prompt": "Allocate the two paid afternoons.",
+          "type": "Spoken or written response",
+          "answer": "One operation workshop and one applied review workshop, with clear tasks."
+        },
+        {
+          "prompt": "Choose two process measures.",
+          "type": "Spoken or written response",
+          "answer": "Total completion time and confirmed error rate; define how each is recorded."
+        },
+        {
+          "prompt": "Include a worker participation safeguard.",
+          "type": "Spoken or written response",
+          "answer": "Collect confidential feedback during paid time and allow staff to flag unreliable output."
+        },
+        {
+          "prompt": "Present a conditional recommendation.",
+          "type": "Spoken or written response",
+          "answer": "Proceed with a limited pilot, subject to accuracy, workload and participation checks."
+        }
+      ]
+    },
+    "versionB": {
+      "title": "Independent check — Version B",
+      "instructions": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+      "questions": [
+        {
+          "prompt": "Design one realistic competence check.",
+          "type": "Spoken or written response",
+          "answer": "Provide source notes and a flawed summary; assess detection, correction and explanation."
+        },
+        {
+          "prompt": "Explain why a job is more than one task.",
+          "type": "Spoken or written response",
+          "answer": "The role also includes judgment, communication and handling unusual cases."
+        },
+        {
+          "prompt": "Identify one uncertainty the pilot can address.",
+          "type": "Spoken or written response",
+          "answer": "Whether the system handles ambiguous notes accurately."
+        },
+        {
+          "prompt": "Identify one claim this small pilot cannot establish.",
+          "type": "Spoken or written response",
+          "answer": "A general prediction about employment across the whole economy."
+        },
+        {
+          "prompt": "Defend a revision rule in a one-minute pitch.",
+          "type": "Spoken or written response",
+          "answer": "State a threshold or review criterion, explain its purpose and avoid claiming unsupported forecasts."
+        }
+      ]
+    },
+    "supportVersion": {
+      "summary": "Reduce the number of ideas to compare while keeping the same reasoning goal.",
+      "sentenceFrames": [
+        "The evidence supports ___, but does not establish ___ .",
+        "We prioritize ___ over ___ because the immediate constraint is ___ .",
+        "We would revise this proposal if ___ ."
+      ],
+      "wordBank": [
+        "employment",
+        "automation",
+        "adaptability",
+        "qualification",
+        "workforce"
+      ],
+      "examples": [
+        "We propose operation training followed by critical review. Employees will demonstrate checking on realistic notes. We will compare total processing time and confirmed errors after six weeks, and postpone expansion if reliability deteriorates."
+      ],
+      "steps": [
+        "State the situation in one sentence.",
+        "Select one relevant detail.",
+        "Use a frame to explain the response.",
+        "Add a limitation or another view."
+      ],
+      "guidedPractice": [
+        "Correct the overclaim: Automated summaries will eliminate design jobs. Model: The pilot concerns summary drafting; the case does not establish job elimination.",
+        "Prioritize two training skills and explain the choice. Model: Basic operation and critical review address immediate use and reliability risks."
+      ]
+    },
+    "challengeVersion": {
+      "summary": "Extend the same objective with less scaffolding and more independent explanation.",
+      "tasks": [
+        "Redesign the proposal if only one training afternoon is approved.",
+        "Explain what evidence would justify reversing your recommendation."
+      ],
+      "extensionQuestions": [
+        "Which assumption does your response depend on?",
+        "What evidence or constraint would change your choice?"
+      ]
+    },
+    "teacherNotes": {
+      "problems": [
+        {
+          "problem": "Pacing: the package includes more practice than one class needs.",
+          "solution": "Teach the selected Version A tasks and keep Version B, extension work and the independent assessment for follow-up."
+        },
+        {
+          "problem": "Sensitive or misleading assumptions.",
+          "solution": "Present the studio as a fictional scenario, not a forecast about any real job market. Students may use imagined career interests."
+        }
+      ],
+      "tips": [
+        "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification.",
+        "Reading and listening tell different stories. Keep their keys separate.",
+        "Student slides include tasks and language models. Facilitation notes and transcript answers belong in the separate teacher documents."
+      ]
+    },
+    "qualityCheck": {
+      "checks": [
+        {
+          "criterion": "Resource coverage",
+          "status": "pass",
+          "comment": "Both worksheet versions, answer keys, an original reading, a listening script, situation cards and student slides are supplied."
+        },
+        {
+          "criterion": "Classroom fit",
+          "status": "check",
+          "comment": "The stated level is a lesson target. Choose scaffolding and pacing for your actual learners."
+        }
+      ],
+      "overallNotes": "This is a curated preview of a complete package. Open responses have model answers, not a single required opinion. Review the supplied material against your class before teaching."
+    },
+    "reading": {
+      "status": "ready",
+      "fingerprint": "preview-future-of-work",
+      "value": {
+        "cefr": "C1",
+        "title": "A Training Plan for Northbridge",
+        "purpose": "Present an evidence-linked proposal for adapting to workplace change, with prioritized skills, a resource trade-off and a measurable review plan.",
+        "instructions": "Read for the situation, then use evidence to answer.",
+        "word_count": 298,
+        "text": "Northbridge is a fictional design studio with twelve employees. Its managers are considering a system that drafts routine project summaries from approved notes. Currently, staff spend part of each week producing these summaries and checking them with clients. The proposed system may reduce drafting time, but nobody has yet tested how accurately it handles ambiguous notes or unusual requests. The case does not assume that an entire occupation will disappear.\n\nA pilot team proposes a six-week trial. Staff would compare draft summaries with the original notes, record errors and seek client confirmation before anything is finalized. The trial would therefore change the distribution of tasks: less initial drafting might be balanced by more verification, exception handling and communication. Whether the overall workload falls remains an open question.\n\nThe studio has only two paid training afternoons available during the pilot. One proposal uses both afternoons to teach system operation. A second divides the time between operation and critical review, including how to identify an unsupported conclusion and explain an uncertainty to a client. The second proposal covers fewer features but may address a wider range of risks.\n\nAn employee representative adds that learning outside paid hours would affect workers unequally. Some have caring responsibilities or other commitments. She argues that adaptability should be supported by organizational time and clear procedures, rather than treated solely as an individual personality trait. Managers agree that a certificate alone would not prove competence; employees should demonstrate the skills on realistic examples.\n\nAt the end of six weeks, the team plans to review accuracy, total time spent, client corrections and staff feedback. A faster first draft would not count as success if verification or rework increased substantially. The decision to expand the system will depend on the whole process, not on an impressive demonstration.",
+        "questions": [
+          {
+            "type": "short_answer",
+            "question": "What has not yet been tested?",
+            "choices": [],
+            "evidence": "nobody has yet tested how accurately it handles ambiguous notes or unusual requests",
+            "answerExplanation": "The quoted words support the response to: What has not yet been tested?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Why might less drafting not reduce total workload?",
+            "choices": [],
+            "evidence": "less initial drafting might be balanced by more verification, exception handling and communication",
+            "answerExplanation": "The quoted words support the response to: Why might less drafting not reduce total workload?"
+          },
+          {
+            "type": "short_answer",
+            "question": "What is the training constraint?",
+            "choices": [],
+            "evidence": "The studio has only two paid training afternoons available during the pilot.",
+            "answerExplanation": "The quoted words support the response to: What is the training constraint?"
+          },
+          {
+            "type": "short_answer",
+            "question": "Why is a certificate insufficient in this case?",
+            "choices": [],
+            "evidence": "employees should demonstrate the skills on realistic examples",
+            "answerExplanation": "The quoted words support the response to: Why is a certificate insufficient in this case?"
+          }
+        ],
+        "answers": [
+          "Accuracy with ambiguous notes and unusual requests.",
+          "Verification and other tasks may increase.",
+          "Two paid afternoons.",
+          "Competence should be demonstrated on realistic examples."
+        ],
+        "activity": "Pitch a six-week training pilot",
+        "assessment": "Score each criterion 0–2: a clear conditional position; accurate evidence; a meaningful counterargument; a feasible recommendation. 6/8 indicates the task is substantially met. These are task rubrics, not formal CEFR certification."
+      }
+    },
+    "listening": {
+      "status": "ready",
+      "fingerprint": "preview-future-of-work",
+      "value": {
+        "cefr": "C1",
+        "title": "The Employee Representative’s Proposal",
+        "purpose": "Present an evidence-linked proposal for adapting to workplace change, with prioritized skills, a resource trade-off and a measurable review plan.",
+        "instructions": "Listen once for the situation and again for details.",
+        "script": "Before we decide which training to buy, I want us to separate two questions. The first is whether staff can operate the new system. The second is whether they can judge its output responsibly. Being able to produce a fluent draft does not establish that the draft is accurate.\n\nI propose using our first training afternoon for basic operation and our second for checking realistic examples. In the review session, people would compare a summary with its source notes, identify unsupported claims and explain unresolved questions to a client. That approach leaves some advanced features for later, which is a real trade-off.\n\nI also want the studio to protect learning time. If employees have to practice after work, those with caring responsibilities may have fewer opportunities. Adaptability should be supported through the way work is organized, not just demanded in a job description.\n\nAfter six weeks, we should review the time spent on the entire process, including corrections. We should also ask whether employees feel able to challenge an unreliable result. If drafting becomes faster but errors take longer to resolve, we should revise the plan. The goal is a more reliable service and a workforce that can exercise informed judgment, rather than a certificate that everyone receives for attending.",
+        "teacherGuidance": "Play the included recording once for meaning and once for details. The transcript is for teacher reference.",
+        "questions": [
+          {
+            "question": "How would the two afternoons be used?",
+            "answer": "Operation, then checking realistic examples",
+            "evidence": "our first training afternoon for basic operation and our second for checking realistic examples",
+            "choices": [
+              "Operation, then checking realistic examples",
+              "Two afternoons of advanced features",
+              "Only certificate preparation"
+            ],
+            "explanation": "The script states: our first training afternoon for basic operation and our second for checking realistic examples"
+          },
+          {
+            "question": "What trade-off does the proposal acknowledge?",
+            "answer": "Some advanced features are postponed",
+            "evidence": "That approach leaves some advanced features for later",
+            "choices": [
+              "Some advanced features are postponed",
+              "All clients leave",
+              "Staff stop learning"
+            ],
+            "explanation": "The script states: That approach leaves some advanced features for later"
+          },
+          {
+            "question": "What should trigger revision?",
+            "answer": "Errors take longer to resolve despite faster drafting",
+            "evidence": "If drafting becomes faster but errors take longer to resolve, we should revise the plan.",
+            "choices": [
+              "Errors take longer to resolve despite faster drafting",
+              "Everyone attends training",
+              "Staff ask useful questions"
+            ],
+            "explanation": "The script states: If drafting becomes faster but errors take longer to resolve, we should revise the plan."
+          }
+        ]
+      }
+    }
+  }
+}

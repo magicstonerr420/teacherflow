@@ -128,8 +128,8 @@ export function runQualityControl(
 
   /* --- kids structure --- */
   if (ageBand(request.studentAge) === "Kids") {
-    const coreA = studentSections.filter(s => s.label !== READING_LABEL);
-    const coreB = worksheet.studentB.sections.filter(s => s.label !== READING_LABEL);
+    const coreA = studentSections.filter(s => s.label !== READING_LABEL && s.format !== 'reading' && s.label !== 'Listening');
+    const coreB = worksheet.studentB.sections.filter(s => s.label !== READING_LABEL && s.format !== 'reading' && s.label !== 'Listening');
     const okA = coreA.length === 5 && coreA.every((s) => s.items.length === 5);
     const okB =
       coreB.length === 5 && coreB.every((s) => s.items.length === 5);
@@ -137,7 +137,7 @@ export function runQualityControl(
       "Two equivalent worksheets",
       okA && okB ? "pass" : "warning",
       okA && okB
-        ? "Version A and Version B both have 5 core sections of 5 questions; any dedicated reading is additional."
+        ? "Version A and Version B both have 5 core sections of 5 questions; dedicated reading and listening are additional."
         : "Young learners should get two worksheets of 5 sections x 5 questions.",
     );
   }

@@ -157,7 +157,6 @@ export async function buildPresentationBlob(
   pptx.author = "TeacherFlow";
   pptx.title = `${request.topic} — ${request.level}`;
 
-  if (isYoungA1(request))
     for (const data of Object.values(images)) {
       const img = new Image();
       img.src = data;
@@ -519,11 +518,7 @@ function addStandardSlide(
     const imgX = 0.55 + bodyW + 0.3;
     s.addImage({
       data: image,
-      x: imgX,
-      y: bodyTop,
-      w: W - 0.55 - imgX,
-      h: bodyH,
-      sizing: { type: "contain", w: W - 0.55 - imgX, h: bodyH },
+      ...containImage(image, imgX, bodyTop, W - 0.55 - imgX, bodyH),
     });
   }
 
@@ -635,11 +630,7 @@ function addVocabularySlides(
       const imgX = 0.55 + textW + 0.3;
       s.addImage({
         data: image,
-        x: imgX,
-        y: top,
-        w: W - 0.55 - imgX,
-        h,
-        sizing: { type: "contain", w: W - 0.55 - imgX, h },
+        ...containImage(image, imgX, top, W - 0.55 - imgX, h),
       });
     }
 
