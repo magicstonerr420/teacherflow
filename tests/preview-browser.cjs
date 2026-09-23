@@ -10,6 +10,8 @@ const destination=process.env.PREVIEW_QA_DIR||'.local-runtime/preview-qa';
   page.on('pageerror',e=>errors.push(e.message));
   page.on('request',r=>{if(r.url().includes('/_serverFn/')||r.url().includes('/api/'))api.push(r.url());});
   await page.goto(origin+'/');await page.getByRole('link',{name:'View Example',exact:true}).click();
+  await page.locator('[data-preview="weather-and-clothes"]').waitFor();
+  await page.getByRole('link',{name:'Browse all previews'}).click();
   await page.getByRole('heading',{name:'Start simple.'}).waitFor();
   assert.equal(await page.getByRole('link',{name:'Explore lesson'}).count(),8);
   await page.screenshot({path:path.join(destination,'gallery-desktop.png'),fullPage:true});

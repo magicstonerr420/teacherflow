@@ -3,6 +3,7 @@ import { ArrowRight, ClipboardList, FileText, GraduationCap, Layers } from "luci
 
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
+import { FIRST_PREVIEW_SLUG } from '@/lib/preview-entry';
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -73,7 +74,7 @@ function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/examples" search={{}}>
+              <Link to="/examples" search={{ lesson: FIRST_PREVIEW_SLUG }}>
                 View Example
               </Link>
             </Button>

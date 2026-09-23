@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { Download, ArrowRight, BookOpen, Headphones, FileText } from 'lucide-react';
-import { SECTIONS, SectionBody, type SectionKey } from './LessonPackageView';
+import { useMemo } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { Download, BookOpen, Headphones, FileText } from 'lucide-react';
+import { SectionBody } from './LessonPackageView';
+import { SECTIONS, type SectionKey } from '@/lib/lesson-sections';
+import { PreviewPager } from './PreviewNavigation';
 import { WorksheetHub } from './WorksheetHub';
 import { SlidePreview } from './PresentationPanel';
 import { ListeningAudioPlayer } from './ListeningAudioPlayer';
@@ -18,11 +20,12 @@ import { cn } from '@/lib/utils';
 
 export type PreviewPayload = { request: LessonRequestInput; lesson: LessonPackage };
 
-export default function PreviewLesson({ data, preview }: { data: PreviewPayload; preview: Preview }) {
+export default function PreviewLesson({ data, preview, section = 'overview' }: { data: PreviewPayload; preview: Preview; section?: SectionKey }) {
   const { lesson, request } = data;
-  const [active, setActive] = useState<SectionKey>('overview');
+  const active = section;
+  const navigate = useNavigate();
+  const setActive = (section: SectionKey) => void navigate({ to: '/examples', search: { lesson: preview.slug, section }, replace: true, resetScroll: false });
   const checks = useMemo(() => runQualityControl(lesson, request), [lesson, request]);
-  const next = PREVIEWS.find(p => p.step === preview.step + 1);
   const asset = (suffix: string) => `${previewBase}${preview.slug}${suffix}?v=${preview.hash}`;
   const reading = lesson.reading?.status === 'ready' ? lesson.reading.value : null;
   const listening = lesson.listening?.status === 'ready' ? lesson.listening.value : null;
@@ -64,10 +67,7 @@ export default function PreviewLesson({ data, preview }: { data: PreviewPayload;
         </> : <SectionBody sectionKey={active} lesson={lesson} request={request} checks={checks} />}
       </section>
     </div>
-    <footer className="flex flex-wrap items-center justify-between gap-4 border-t py-7">
-      <Link className="font-semibold text-primary underline" to="/examples" search={{}}>All eight previews</Link>
-      {next && <Button asChild variant="outline"><Link to="/examples" search={{lesson:next.slug}}>Next: {next.title}<ArrowRight className="size-4"/></Link></Button>}
-    </footer>
+    <PreviewPager preview={preview} section={active}/>
   </article>;
 }
 

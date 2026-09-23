@@ -39,24 +39,8 @@ import {
   type SectionKeyName,
 } from "@/lib/lesson-schema";
 
-export const SECTIONS = [
-  { key: "overview", label: "Overview" },
-  { key: "plan", label: "Lesson Plan" },
-  { key: "presentation", label: "Presentation" },
-  { key: "worksheet", label: "Worksheet" },
-  { key: "reading", label: "Reading" },
-  { key: "listening", label: "Listening" },
-  { key: "activity", label: "Activities" },
-  { key: "homework", label: "Homework" },
-  { key: "exitTicket", label: "Exit Ticket" },
-  { key: "assessment", label: "Assessment" },
-  { key: "support", label: "Support Version" },
-  { key: "challenge", label: "Challenge Version" },
-  { key: "notes", label: "Teacher Notes" },
-  { key: "quality", label: "Quality Check" },
-] as const;
-
-export type SectionKey = (typeof SECTIONS)[number]["key"];
+import { SECTIONS, type SectionKey } from '@/lib/lesson-sections';
+export { SECTIONS, type SectionKey } from '@/lib/lesson-sections';
 
 /** Which lesson field each screen section edits. */
 const SECTION_FIELD: Record<SectionKey, keyof LessonPackage | null> = {

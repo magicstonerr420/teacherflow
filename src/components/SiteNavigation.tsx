@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useBetaStatus } from '@/hooks/useBetaStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from './ui/button';
+import { FIRST_PREVIEW_SLUG } from '@/lib/preview-entry';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './ui/dropdown-menu';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
 
@@ -43,7 +44,7 @@ export function SiteNavigation() {
   function primaryLinks(mobile=false) {
     const classes=mobile?'w-full justify-start py-5':'';
     return <>
-      <Button variant="ghost" size="sm" className={classes} asChild><Link to="/examples" search={{}} activeProps={activeProps} onClick={closeAfterNavigation}>Examples</Link></Button>
+      <Button variant="ghost" size="sm" className={classes} asChild><Link to="/examples" search={{lesson:FIRST_PREVIEW_SLUG}} activeOptions={{includeSearch:false}} activeProps={activeProps} onClick={closeAfterNavigation}>Examples</Link></Button>
       <Button variant="ghost" size="sm" className={classes} asChild><Link to="/builder" activeProps={activeProps} onClick={closeAfterNavigation}>Lesson builder</Link></Button>
       {isAuthenticated && <Button variant="ghost" size="sm" className={classes} asChild><Link to="/lessons" activeProps={activeProps} onClick={closeAfterNavigation}>My lessons</Link></Button>}
       <Button variant="ghost" size="sm" className={classes} asChild><Link to="/quick-start" activeProps={activeProps} onClick={closeAfterNavigation}>Quick-start guide</Link></Button>
