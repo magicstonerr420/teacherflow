@@ -352,6 +352,12 @@ interaction, vocabulary, visualSuggestion, imagePrompt, teacherNote, purpose.
   display slides. At least HALF of the slides must have a real interaction: questions,
   prediction, choose-the-answer, complete-the-sentence, error correction, matching, guessing,
   pair or group discussion, think-pair-share, quick challenge or mini-practice.
+- The PowerPoint is a student-only file, including its speaker notes. Keep all teaching
+  directions, answer keys, expected responses, facilitation, timing, and assessment advice
+  in teacherNote. Never put "Ask:", "Choral drill", "Students should...", or teacher narration
+  into interaction, studentText, bullets, or vocabulary definitions/examples. Write the actual
+  learner question or instruction directly ("Can you do one action?", "Listen and repeat.").
+  Keep practice answers in teacherNote; clearly identified teaching examples may stay visible.
 - vocabulary: ONLY on "vocabulary" layout slides. Teach the lesson's own key language — never
   invent unrelated words. 1-4 entries, each with word, a level-appropriate simple definition,
   one example sentence, and imagePrompt = a short description of an original, clear, age-

@@ -5,6 +5,8 @@ import { youngSlidePages } from "@/lib/young-slides";
 import { loadPresentationTools } from "@/lib/presentation-tools";
 import { capitalizeHeading, presentationParagraphs } from "@/lib/presentation-text";
 import { colorShapeResources } from '@/lib/color-shape-resources';
+import { studentPresentationSlide } from '@/lib/presentation-audience';
+import { toast } from 'sonner';
 import { generationErrorMessage } from '@/lib/generation-errors';
 import {
   AlertCircle,
@@ -49,6 +51,7 @@ function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType
 
   return (
     <div
+      data-audience="student"
       className="overflow-hidden rounded-xl border shadow-sm"
       style={{ backgroundColor: "#FFFFFF" }}
     >
@@ -122,7 +125,18 @@ function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType
           </div>
         ) : null}
 
-        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+      </div>
+    </div>
+  );
+}
+
+function TeacherSlideGuidance({ slides }: { slides: Slide[] }) {
+  return <details data-audience="teacher" className="no-print rounded-xl border bg-card p-5">
+    <summary className="cursor-pointer font-semibold">Teacher guidance — excluded from PowerPoint</summary>
+    {slides.map((slide,index)=><section key={index} className="mt-5">
+      <h3 className="font-semibold">{slide.number}. {slide.title}</h3>
+      {slide.interaction && <p className="mt-2 text-sm"><strong>Original task / facilitation:</strong> {slide.interaction}</p>}
+      <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Visual
@@ -141,10 +155,9 @@ function SlidePreview({ slide, theme, young }: { slide: Slide; theme: ReturnType
             </dt>
             <dd className="text-muted-foreground">{slide.purpose || "—"}</dd>
           </div>
-        </dl>
-      </div>
-    </div>
-  );
+      </dl>
+    </section>)}
+  </details>;
 }
 
 export function PresentationActions({
@@ -155,6 +168,7 @@ export function PresentationActions({
   request: LessonRequestInput;
 }) {
   const [busy, setBusy] = useState(false);
+  const [guideBusy, setGuideBusy] = useState(false);
   const [status, setStatus] = useState("");
   const [blob, setBlob] = useState<Blob | null>(null);
   const [failed, setFailed] = useState(false);
@@ -175,7 +189,7 @@ export function PresentationActions({
   const theme = useMemo(() => themeFor(bandOfRequest(request)), [request]);
   const slides = useMemo(
     () =>
-      normalizeSlides(americanEnglishContent(lesson.presentation)).flatMap((s) =>
+      normalizeSlides(americanEnglishContent(lesson.presentation)).map(studentPresentationSlide).flatMap((s) =>
         isYoungA1(request) ? youngSlidePages(s) : [s],
       ),
     [lesson, request],
@@ -257,12 +271,20 @@ export function PresentationActions({
                 {cards.length > omittedCards.length ? ", including flashcard fronts and backs" : ""}
               </p>
               <p className="text-sm text-muted-foreground">
-                Teacher notes go into PowerPoint speaker notes, never onto student slides.
+                Student-only PowerPoint. Teaching directions and answers stay in the separate teacher guide.
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" disabled={guideBusy} onClick={async()=>{
+              setGuideBusy(true);
+              try {
+                const { buildPresentationTeacherGuidePdf }=await import('@/lib/exports');
+                downloadBlob(await buildPresentationTeacherGuidePdf(lesson,request),filename.replace(/\.pptx$/i,'_Teacher_Guide.pdf'));
+              } catch { toast.error('Could not download the teacher guide. Please try again.'); }
+              finally { setGuideBusy(false); }
+            }}>{guideBusy ? 'Preparing guide…' : 'Download teacher guide'}</Button>
             {blob ? (
               <>
                 <span className="flex items-center gap-1.5 text-sm font-medium text-primary">
@@ -421,6 +443,7 @@ export function PresentationActions({
           ))}
         </section>
       ) : null}
+      <TeacherSlideGuidance slides={normalizeSlides(lesson.presentation)} />
       {slides.map((slide, index) => (
         <SlidePreview key={index} slide={slide} theme={theme} young={isYoungA1(request)} />
       ))}

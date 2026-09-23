@@ -9,6 +9,7 @@ import { isYoungA1, picturePng, pictureSvg, youngPresentationIssues } from "./yo
 import { youngSlidePages, youngSlideRows, wrapSlideText } from "./young-slides";
 import { capitalizeHeading, presentationParagraphs } from "./presentation-text";
 import { colorShapeResources } from './color-shape-resources';
+import { assertStudentPresentation, studentPresentationSlide } from './presentation-audience';
 import { ageBand, normalizeSlides, type Slide } from "@/lib/lesson-schema";
 import type { LessonPackage, LessonRequestInput } from "@/lib/lesson-schema";
 
@@ -126,8 +127,8 @@ export interface SlideImages {
 
 /**
  * Builds a real .pptx from the lesson's generated presentation.
- * Student-facing content goes on the slides; teacher notes go into
- * PowerPoint speaker notes so they never clutter the projected slide.
+ * Student-facing content only, including the downloaded file's notes.
+ * Original teacher directions remain in the separate presentation guide.
  */
 export async function buildPresentationBlob(
   lesson: LessonPackage,
@@ -135,6 +136,7 @@ export async function buildPresentationBlob(
   images: SlideImages = {},
   options: { omitMissingFlashcards?: boolean } = {},
 ): Promise<Blob> {
+  assertStudentPresentation(normalizeSlides(lesson.presentation));
   if (isYoungA1(request) && !options.omitMissingFlashcards) {
     const plannedPresentation = { slides: normalizeSlides(lesson.presentation).map(slide => ({ ...slide,
       vocabulary: slide.vocabulary.map(v => ({ ...v, imagePrompt: vocabularyImagePrompt(v.word, v.imagePrompt) })),
@@ -164,7 +166,7 @@ export async function buildPresentationBlob(
   lesson = americanEnglishContent(lesson);
   const band = bandOfRequest(request);
   const t = themeFor(band);
-  const slides: Slide[] = normalizeSlides(lesson.presentation).flatMap((s) =>
+  const slides: Slide[] = normalizeSlides(lesson.presentation).map(studentPresentationSlide).flatMap((s) =>
     isYoungA1(request) ? youngSlidePages(s) : [s],
   );
 
@@ -224,7 +226,6 @@ export async function buildPresentationBlob(
       const size = Math.min(width - 0.25, height - 0.25, 2.1);
       board.addImage({ data, x: 0.55 + (i % columns) * width + (width - size) / 2, y: 1.05 + Math.floor(i / columns) * height + (height - size) / 2, w: size, h: size });
     }
-    board.addNotes(`First teach these words, then say each phrase in a mixed order and let students point: ${words.join('; ')}. Compare the same shape in different colors, then the same color on different shapes across the boards. Picture order, left to right by row: ${words.join('; ')}.`);
   } };
   if (!shapeResources?.extended) await addMatchingBoards();
 
@@ -266,7 +267,7 @@ export async function buildPresentationBlob(
   }
 
   if (shapeResources?.extended) await addMatchingBoards();
-  for (const [index, card] of flashcardsFor(lesson, request).entries()) {
+  for (const card of flashcardsFor(lesson, request)) {
     const data = card.visual ? await picturePng(card.visual) : images[card.imagePrompt] || (await picturePng(card.word));
     if (!data) {
       if (options.omitMissingFlashcards) continue;
@@ -281,9 +282,6 @@ export async function buildPresentationBlob(
     const front = pptx.addSlide();
     front.background = { color: "FFFFFF" };
     front.addImage({ data, ...containImage(data, 1, 0.7, 8, 4.2) });
-    front.addNotes(
-      `Flashcard ${index + 1} FRONT. Pair with the next slide (word back). Print the pair and glue back-to-back or use single-card duplex printing after checking orientation.`,
-    );
     const back = pptx.addSlide();
     back.background = { color: "FFFFFF" };
     back.addText(capitalizeHeading(card.word), {
@@ -299,9 +297,6 @@ export async function buildPresentationBlob(
       margin: 0,
       fit: "shrink",
     });
-    back.addNotes(
-      `Flashcard ${index + 1} BACK. Word: ${card.word}. The preceding slide is its picture front.`,
-    );
   }
   const blob = (await pptx.write({ outputType: "blob" })) as Blob;
   return repairPresentationXml(blob);
@@ -360,15 +355,6 @@ function slideFooter(s: any, slide: Slide, t: Theme, W: number, H: number) {
     align: "right",
     fontFace: t.bodyFont,
   });
-  const notes = [
-    slide.teacherNote ? `Teacher note: ${slide.teacherNote}` : "",
-    slide.interaction ? `Student task: ${slide.interaction}` : "",
-    slide.purpose ? `Purpose: ${slide.purpose}` : "",
-    slide.visualSuggestion ? `Visual: ${slide.visualSuggestion}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-  if (notes) s.addNotes(notes);
 }
 
 const imageRatios = new Map<string, number>();
@@ -430,7 +416,7 @@ function addYoungStandardSlide(
   if (image) s.addImage({ data: image, ...containImage(image, 5.85, 1.35, 3.6, 2.85) });
   if (slide.interaction) {
     const lines = wrapSlideText(slide.interaction, 8.5, 12);
-    // Full adult directions always remain in speaker notes.
+    // Only the filtered student prompt reaches the projected slide.
     if (lines.length <= 3) {
       s.addShape("roundRect", {
         x: 0.55,

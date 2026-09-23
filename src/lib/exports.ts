@@ -6,11 +6,13 @@ import { prepareLessonReading } from './reading';
 import { loadPresentationTools } from '@/lib/presentation-tools';
 import {
   normalizeWorksheet,
+  normalizeSlides,
   type LessonPackage,
   type LessonRequestInput,
   type Worksheet,
 } from "@/lib/lesson-schema";
-import { buildPresentationBlob, presentationFileName } from "@/lib/pptx";
+import { buildPresentationBlob, presentationFileName, flashcardsFor } from "@/lib/pptx";
+import { colorShapeResources } from './color-shape-resources';
 
 /* --------------------------- text safety --------------------------------- */
 
@@ -439,6 +441,7 @@ export async function buildLessonPackageZip(
     },
     { name: `${base}_Teacher_Answer_Key.pdf`, blob: await buildAnswerKeyPdf(lesson, request) },
     { name: presentationFileName(request), blob: await buildPresentationBlob(lesson, request, images) },
+    { name: `${base}_Presentation_Teacher_Guide.pdf`, blob: await buildPresentationTeacherGuidePdf(lesson, request) },
   ];
 
   if (lesson.listening?.status === 'ready') {
@@ -501,12 +504,36 @@ export async function buildCompleteLessonPdf(lesson: LessonPackage, request: Les
   }
   if(lesson.challengeVersion){d.ensure(45);d.heading('Challenge');d.text(lesson.challengeVersion.summary);d.bullets(lesson.challengeVersion.tasks);d.bullets(lesson.challengeVersion.extensionQuestions);}
   for(const p of lesson.teacherNotes?.problems??[]){d.subheading(p.problem);d.text(p.solution);}
+  writePresentationTeacherGuide(d, lesson, request);
+  return d.blob();
+}
+
+function writePresentationTeacherGuide(d: Awaited<ReturnType<typeof createDoc>>, lesson: LessonPackage, request: LessonRequestInput) {
   d.heading('Presentation — teaching notes');
-  for(const slide of lesson.presentation?.slides??[]){
+  d.text('Teacher copy. Keep this guide separate from the student PowerPoint. Slide numbers below refer to the numbered lesson slides; an exported slide may continue over several pages.');
+  for(const slide of normalizeSlides(lesson.presentation)){
     d.subheading(`${slide.number}. ${slide.title}`);d.text(slide.studentText);d.bullets(slide.bullets);
     for(const v of slide.vocabulary??[]){d.text(`${v.word}: ${v.definition}`);if(v.example)d.text(v.example);}
     d.label('Task',slide.interaction);d.label('Teacher note',slide.teacherNote);
+    d.label('Purpose',slide.purpose);d.label('Visual guidance',slide.visualSuggestion);
   }
+  const resources = colorShapeResources(request, lesson.presentation);
+  if(resources){
+    d.subheading('Matching boards');
+    d.text('Teach the words first, then say each phrase in a mixed order and let students point. Compare the same shape in different colors, then the same color on different shapes.');
+    resources.boards.forEach((words,index)=>d.label(`Board ${index+1}: picture order, left to right by row`,words.join('; ')));
+  }
+  const cards=flashcardsFor(lesson,request);
+  if(cards.length){
+    d.subheading('Flashcard preparation');
+    d.text('Each picture front is followed by its word back. Print each pair and glue back-to-back, or use single-card duplex printing after checking orientation.');
+    d.bullets(cards.map((card,index)=>`${index+1}. ${card.word}`));
+  }
+}
+
+export async function buildPresentationTeacherGuidePdf(lesson: LessonPackage, request: LessonRequestInput): Promise<Blob> {
+  const d=await createDoc(`${request.topic} — Presentation Teacher Guide`,header(request));
+  writePresentationTeacherGuide(d,lesson,request);
   return d.blob();
 }
 export async function buildTeacherWorksheetPdf(lesson: Pick<LessonPackage, 'worksheet'|'answerKey'>, request: LessonRequestInput, version: 'A'|'B'): Promise<Blob>{
