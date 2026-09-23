@@ -9,7 +9,7 @@ export const PREVIEWS = [
     "skill": "Listening",
     "summary": "Name five pictures, listen for details, and choose clothes for a simple situation.",
     "step": 1,
-    "hash": "bb8b57567362"
+    "hash": "4b8fce2ad573"
   },
   {
     "slug": "toys-and-play",
@@ -20,7 +20,7 @@ export const PREVIEWS = [
     "skill": "Speaking",
     "summary": "Move from naming toys to polite requests and a short partner exchange.",
     "step": 2,
-    "hash": "710b95f867ae"
+    "hash": "bfdf5a8d5903"
   },
   {
     "slug": "food-at-a-restaurant",
@@ -31,7 +31,7 @@ export const PREVIEWS = [
     "skill": "Speaking",
     "summary": "Use a menu, make an order, handle one unavailable item, and ask for the bill.",
     "step": 3,
-    "hash": "43b0d3dc9009"
+    "hash": "368b2abc291f"
   },
   {
     "slug": "teen-life-and-free-time",
@@ -42,7 +42,7 @@ export const PREVIEWS = [
     "skill": "Speaking",
     "summary": "Compare two hobbies, explain a preference, and negotiate a club choice.",
     "step": 4,
-    "hash": "a48e1e29e006"
+    "hash": "6a106e68cd6a"
   },
   {
     "slug": "solving-everyday-problems",
@@ -53,7 +53,7 @@ export const PREVIEWS = [
     "skill": "Mixed",
     "summary": "Weigh competing solutions against time, fairness, cost, and likely consequences.",
     "step": 5,
-    "hash": "320d4fea04ff"
+    "hash": "3b90c78ef291"
   },
   {
     "slug": "globalization-and-culture",
@@ -64,7 +64,7 @@ export const PREVIEWS = [
     "skill": "Writing",
     "summary": "Distinguish access from control and write a qualified argument about cultural exchange.",
     "step": 6,
-    "hash": "3c778b0a31c8"
+    "hash": "0a353d3f4ffe"
   },
   {
     "slug": "future-of-work",
@@ -75,7 +75,7 @@ export const PREVIEWS = [
     "skill": "Speaking",
     "summary": "Separate tasks from jobs, question assumptions, and defend a realistic training proposal.",
     "step": 7,
-    "hash": "87062ac9ad7c"
+    "hash": "dc035a62c9d1"
   },
   {
     "slug": "inequality-and-social-mobility",
@@ -86,7 +86,7 @@ export const PREVIEWS = [
     "skill": "Writing",
     "summary": "Evaluate causal claims, distinguish outcomes from mechanisms, and defend a conditional policy judgment.",
     "step": 8,
-    "hash": "ca67c1d1968f"
+    "hash": "097eb737d176"
   }
 ] as const;
 export type Preview = (typeof PREVIEWS)[number];

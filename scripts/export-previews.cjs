@@ -22,7 +22,7 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:4201';
     const guide=await ex.buildCompleteLessonPdf(lesson,request);
     zip.file('Complete_Teacher_Guide.pdf',new Uint8Array(await guide.arrayBuffer()));
     for(const version of ['A','B']){
-     const key=await ex.buildAnswerKeyPdf(lesson,request,version);
+     const key=await ex.buildAnswerKeyPdf(version==='B'?{...lesson,assessment:lesson.versionB}:lesson,request,version);
      zip.file(`Teacher_Answer_Key_${version}.pdf`,new Uint8Array(await key.arrayBuffer()));
     }
     // Keep assessment questions student-facing, with the rubric and both keys separate.
