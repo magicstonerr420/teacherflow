@@ -79,6 +79,7 @@ function Home() {
               </Link>
             </Button>
           </div>
+          <p className="mt-5 text-sm">Need an invitation? <Link className="font-semibold text-primary underline" to="/request-access">Request beta access</Link></p>
         </div>
       </section>
 

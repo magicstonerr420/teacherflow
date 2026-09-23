@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Download, BookOpen, Headphones, FileText } from 'lucide-react';
 import { SectionBody } from './LessonPackageView';
 import { SECTIONS, type SectionKey } from '@/lib/lesson-sections';
@@ -40,6 +40,7 @@ export default function PreviewLesson({ data, preview, section = 'overview' }: {
         <Button asChild variant="outline"><a href={asset('-guide.pdf')} download><FileText className="size-4"/>Complete teacher guide</a></Button>
       </div>
       <p className="text-sm text-muted-foreground">Includes worksheets A/B, answer keys, student PowerPoint, teacher guides and an MP3. These previews are free to explore and download.</p>
+      <div className="flex flex-wrap items-center gap-3 border-t pt-4"><p className="text-sm">Want to create a lesson for your own class?</p><Button asChild variant="outline" size="sm"><Link to="/request-access">Request beta access</Link></Button></div>
     </header>
     <div className="grid items-start gap-6 lg:grid-cols-[205px_minmax(0,1fr)]">
       <aside>

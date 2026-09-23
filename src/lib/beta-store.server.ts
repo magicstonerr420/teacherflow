@@ -13,7 +13,7 @@ const stable = (value: any): string => JSON.stringify(value, (_key, v) => v && t
 type Job = { attempts: number; retryCredits?: number; lease?: string; until?: number; value?: any };
 type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean; recording?: Job & { fingerprint?: string; choice?: string } };
 type Teacher = { runs: Record<string, Run>; email?: string; name?:string; joinedAt?: string; lastSeenAt?: string; revokedAt?: string };
-type Invite = { digest: string; user?: string; code?: string; label?: string; claimedAt?: string; deactivatedAt?: string };
+type Invite = { digest: string; user?: string; code?: string; label?: string; email?: string; claimedAt?: string; deactivatedAt?: string };
 type State = { managementActions?:Record<string,boolean>; invites: Invite[]; teachers: Record<string, Teacher>; usedEmails?:Record<string,string>; allowanceResets?:Record<string,boolean>; inviteCreations?: Record<string,number>; accessHistory?: { action: string; actor: string; user?: string; seat: number; at: string }[] };
 const revision = (invite: Invite) => hash('beta-seat:' + invite.digest + (invite.deactivatedAt??''));
 const allowanceRevision = (teacher: Teacher|undefined) => hash(stable(Object.entries(teacher?.runs??{}).map(([key,run])=>[key,!!run.credited,run.complete])));
@@ -59,6 +59,7 @@ export class BetaStore {
       if (s.teachers[user]?.revokedAt) throw new Error('Your beta access was removed. Contact the organizer.');
       const invite = s.invites.find(i => i.digest === hash(code));
       if (!invite || invite.deactivatedAt || (invite.user && invite.user !== user)) throw new Error('This invitation is invalid, deactivated, or already claimed.');
+      if (invite.email && invite.email !== email?.trim().toLowerCase()) throw new Error('Sign in with the email approved for this invitation.');
       if (s.teachers[user] && invite.user !== user) throw new Error('Your account already has beta access.');
       invite.user = user;
       invite.claimedAt ??= new Date().toISOString();
@@ -102,7 +103,7 @@ export class BetaStore {
       seats:s.invites.map((invite,index)=>{
         const t=invite.user?s.teachers[invite.user]:undefined;
         const runs=Object.values(t?.runs??{}), counted=runs.filter(r=>!r.credited);
-        return {seat:index+1,revision:revision(invite),active:!invite.deactivatedAt,label:invite.label??'',user:invite.user??null,email:t?.email??null,name:t?.name||null,
+        return {seat:index+1,revision:revision(invite),active:!invite.deactivatedAt,label:invite.label??'',user:invite.user??null,email:t?.email??invite.email??null,name:t?.name||null,
           claimedAt:invite.claimedAt??t?.joinedAt??null,lastSeenAt:t?.lastSeenAt??null,
           remaining:invite.user?Math.max(0,3-counted.length):3,completed:counted.filter(r=>r.complete).length,
           allowanceRevision:allowanceRevision(t),pending:runs.filter(r=>!r.complete&&!r.credited).length,

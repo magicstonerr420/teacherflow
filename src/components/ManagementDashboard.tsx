@@ -9,6 +9,7 @@ import { PART_NAMES, safeDiagnostic } from '@/lib/management';
 import { providerEventLabel } from '@/lib/generation-health';
 import { CONTACT_EMAIL } from '@/config/contact';
 import { BetaTeacherControls } from './BetaTeacherControls';
+import { AccessRequestsPanel } from './AccessRequestsPanel';
 import { TeacherFeedbackPanel } from './TeacherFeedbackPanel';
 import { GenerationHealth } from './GenerationHealth';
 import { Button } from './ui/button';
@@ -24,7 +25,7 @@ type Lesson = ManagementData['lessons'][number];
 type RecoveryAction = 'resolve' | 'allow_retry' | 'restore_slot';
 type Confirmation = { operation: Operation; action: RecoveryAction };
 const tabs = [ ['overview', 'Overview'], ['teachers', 'Teachers'], ['generation', 'Generation'], ['budget', 'Budget'] ] as const;
-const sections = ['overview', 'teachers', 'activity', 'issues', 'budget', 'feedback'] as const;
+const sections = ['overview', 'teachers', 'requests', 'activity', 'issues', 'budget', 'feedback'] as const;
 const disclosureStyle = 'cursor-pointer rounded-md font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
 const panel = 'space-y-4 rounded-xl border bg-card p-4 sm:p-5';
 const selectStyle = 'h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
@@ -206,7 +207,7 @@ export function ManagementDashboard() {
   const hash = useLocation({ select: location => location.hash });
   const navigate = useNavigate();
   const section = hash === 'lesson-allowances' ? 'teachers' : hash === 'generation' ? 'issues' : sections.some(value => value === hash) ? hash : 'overview';
-  const tab = ['teachers', 'feedback'].includes(section) ? 'teachers' : ['issues', 'activity'].includes(section) ? 'generation' : section;
+  const tab = ['teachers', 'requests', 'feedback'].includes(section) ? 'teachers' : ['issues', 'activity'].includes(section) ? 'generation' : section;
   const [teacher, setTeacher] = useState(''), [confirmation, setConfirmation] = useState<Confirmation | null>(null), [busy, setBusy] = useState(false), [message, setMessage] = useState(''), [actionError, setActionError] = useState('');
   const lock = useRef(false);
   const tabClick = useRef(false);
@@ -250,6 +251,7 @@ export function ManagementDashboard() {
       <TabsList aria-label="Management sections" className="grid h-auto w-full grid-cols-2 gap-1 p-1.5 sm:grid-cols-4">{tabs.map(([value, label]) => <TabsTrigger key={value} value={value} className="min-h-10 whitespace-normal px-2 text-center text-sm">{label}</TabsTrigger>)}</TabsList>
       <TabsContent value="overview"><div id="overview" tabIndex={-1} className="scroll-mt-24 space-y-5 outline-none">{data ? <>
         <p className="text-sm text-muted-foreground">Your beta at a glance. Start with anything that needs your attention.</p>
+        <section className={panel}><h2 className="font-semibold">New beta applications</h2><p className="text-sm text-muted-foreground">Review requests from visitors who want to create lessons with TeacherFlow.</p><Button variant="outline" onClick={() => void navigate({to: '/beta-management', hash: 'requests'})}>Review access requests</Button></section>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4"><Metric label="Issues to review" value={openIssues.length} icon={<AlertCircle className="size-4" />} /><Metric label="Generating now" value={generatingCount} icon={<Activity className="size-4" />} /><Metric label="Completed lessons" value={data.lessons.filter(row => row.complete).length} icon={<CheckCircle2 className="size-4" />} /><Metric label="Active teachers" value={data.teachers.filter(row => !row.revoked).length} icon={<Users className="size-4" />} /></div>
         <section className={panel}><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="font-semibold">Needs your attention</h2><Button size="sm" variant="outline" onClick={() => void navigate({ to: '/beta-management', hash: 'issues' })}>Review issues</Button></div>{openIssues.length ? <><p className="text-sm text-muted-foreground">{openIssues.filter(row => row.source === 'server' && row.status === 'failed').length} confirmed server failures · {openIssues.filter(row => row.source !== 'server' || row.status !== 'failed').length} reports needing investigation</p><ul className="space-y-3">{openIssues.slice(0, 5).map(row => <li key={row.id} className="border-t pt-3 text-sm"><p className="break-words font-medium">{topic(row.request)} · {partName(row.part)}</p><p className="mt-1 break-words text-muted-foreground">{person(data, row.user)} · {row.failure?.explanation ?? 'Review the operation details.'}</p></li>)}</ul></> : <p className="text-sm text-muted-foreground">No unresolved generation issues in the available records.</p>}</section>
         <section className={panel}><h2 className="font-semibold">Round at a glance</h2><p className="text-3xl font-semibold">${data.budget.remainingUsd.toFixed(2)} <span className="text-sm font-normal text-muted-foreground">available of ${data.budget.limitUsd.toFixed(2)}</span></p><p className="text-sm">{data.lessons.filter(row => !row.complete).length} unfinished lessons · {data.operations.filter(row => row.status === 'recovered').length} recovered operations</p><p className="text-sm text-muted-foreground">Earlier lessons may have saved progress without detailed operation history. Check Teachers for the last completed step.</p>{data.budget.paused && <p role="alert" className="text-sm text-destructive">New teacher generation is paused for a provider charge review.</p>}<Button size="sm" variant="outline" onClick={() => void navigate({ to: '/beta-management', hash: 'budget' })}>Review budget</Button></section>
@@ -258,8 +260,9 @@ export function ManagementDashboard() {
       </> : pending}</div></TabsContent>
       <TabsContent value="teachers" className="space-y-4">
         <p className="text-sm text-muted-foreground">Manage invitations, lesson allowances, and teacher support.</p>
-        <Tabs value={section === 'feedback' ? 'feedback' : 'teachers'} onValueChange={selectSection} className="min-w-0 space-y-4">
-          <TabsList aria-label="Teacher sections" className="grid h-auto w-full grid-cols-2 gap-1 sm:w-fit"><TabsTrigger value="teachers" className="min-h-10 whitespace-normal text-center">Teachers &amp; invitations</TabsTrigger><TabsTrigger value="feedback" className="min-h-10">Feedback</TabsTrigger></TabsList>
+        <Tabs value={section === 'feedback' ? 'feedback' : section === 'requests' ? 'requests' : 'teachers'} onValueChange={selectSection} className="min-w-0 space-y-4">
+          <TabsList aria-label="Teacher sections" className="grid h-auto w-full grid-cols-3 gap-1 sm:w-fit"><TabsTrigger value="teachers" className="min-h-10 whitespace-normal text-center">Teachers &amp; invitations</TabsTrigger><TabsTrigger value="requests" className="min-h-10">Requests</TabsTrigger><TabsTrigger value="feedback" className="min-h-10">Feedback</TabsTrigger></TabsList>
+          <TabsContent value="requests"><div id="requests" tabIndex={-1} className="scroll-mt-24 outline-none"><AccessRequestsPanel /></div></TabsContent>
           <TabsContent value="teachers"><div id="teachers" tabIndex={-1} className="scroll-mt-24 space-y-5 outline-none">{data ? <TeacherDetails data={data} selected={teacher} onSelect={setTeacher} refresh={refresh} /> : pending}<section className={panel} aria-label="Sharing invitations"><h2 className="font-semibold">Invite a teacher with a link</h2><ol className="list-decimal space-y-2 pl-5 text-sm"><li>Use <strong>Create invitation</strong> below to add an invitation card.</li><li>Use <strong>Copy invitation link</strong> on that card, then share it in WhatsApp or an email.</li><li>The teacher opens the link and signs in or creates an account. The link claims the invitation automatically.</li></ol></section><div className={panel}><BetaTeacherControls /></div></div></TabsContent>
           <TabsContent value="feedback"><div id="feedback" tabIndex={-1} className="scroll-mt-24 outline-none"><TeacherFeedbackPanel /></div></TabsContent>
         </Tabs>

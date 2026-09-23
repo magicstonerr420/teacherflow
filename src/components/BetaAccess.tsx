@@ -65,6 +65,7 @@ export function BetaAccess({onOpen,onAccess}: {onOpen: (request: LessonRequestIn
   return <section className="my-6 space-y-3 rounded-xl border bg-card p-5" aria-label="Teacher beta access">
     <h2 className="font-semibold">Private teacher beta</h2>
     <p className="text-sm">Signing in, including with Google, does not activate generation. You need an active invitation from the owner.</p>
+    {!status?.claimed && <p className="text-sm"><Link className="font-medium text-primary underline" to="/request-access">Request beta access or check your request status</Link></p>}
     <p className="text-sm">Three lessons per invited account, with up to six illustrations and one recording per lesson. Progress and completed images are saved for reuse.</p>
     {loading ? <p>Checking sign-in…</p> : !isAuthenticated ? <a className="underline" href="/auth?redirect=%2Fbuilder">Sign in or create an account to claim your invitation</a> : !status && !error ? <p>Checking your account access…</p> : status?.claimed ? <>
       <p className="font-medium">{status.remaining} new lesson slots remaining · {status.completed} of 3 lessons completed</p>

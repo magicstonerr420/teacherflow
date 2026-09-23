@@ -108,6 +108,7 @@ export function BetaTeacherControls() {
             <Button variant="destructive" disabled={busy} onClick={()=>{setConfirm({...seat,intent:'replace'});setError('');}}>Remove access</Button>
           </> : <>
             <p className="text-sm">One teacher can claim this invitation and generate three lessons.</p>
+            {seat.email && <p className="break-words text-sm">Reserved for {seat.email}. The teacher must sign in with this email.</p>}
             {seat.code ? <Button disabled={busy} onClick={()=>void copy(seat)}>Copy invitation link</Button> : <p className="text-sm">Use your previously saved invitation link, or replace it below.</p>}
             {shown===seat.seat && seat.code && <Input ref={invitationLink} aria-label={`Invitation ${seat.seat} link`} readOnly value={link(seat)} onFocus={e=>e.target.select()}/>}
             <Button variant="outline" disabled={busy} onClick={()=>{setConfirm({...seat,intent:'replace'});setError('');}}>Replace invitation link</Button>

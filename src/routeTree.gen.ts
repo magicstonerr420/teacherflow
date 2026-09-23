@@ -17,6 +17,8 @@ import { Route as BuilderRouteImport } from './routes/builder'
 import { Route as ExamplesRouteImport } from './routes/examples'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as QuickStartRouteImport } from './routes/quick-start'
+import { Route as RequestAccessRouteImport } from './routes/request-access'
+import { Route as ApiAccessRequestRouteImport } from './routes/api/access-request'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 import { Route as ApiGenerationEventsRouteImport } from './routes/api/generation-events'
 import { Route as LessonsIndexRouteImport } from './routes/lessons.index'
@@ -63,6 +65,16 @@ const QuickStartRoute = QuickStartRouteImport.update({
   path: '/quick-start',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RequestAccessRoute = RequestAccessRouteImport.update({
+  id: '/request-access',
+  path: '/request-access',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccessRequestRoute = ApiAccessRequestRouteImport.update({
+  id: '/api/access-request',
+  path: '/api/access-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
   id: '/api/generate-image',
   path: '/api/generate-image',
@@ -98,6 +110,8 @@ export interface FileRoutesByFullPath {
   '/examples': typeof ExamplesRoute
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
+  '/request-access': typeof RequestAccessRoute
+  '/api/access-request': typeof ApiAccessRequestRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
@@ -113,6 +127,8 @@ export interface FileRoutesByTo {
   '/examples': typeof ExamplesRoute
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
+  '/request-access': typeof RequestAccessRoute
+  '/api/access-request': typeof ApiAccessRequestRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
@@ -129,6 +145,8 @@ export interface FileRoutesById {
   '/examples': typeof ExamplesRoute
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
+  '/request-access': typeof RequestAccessRoute
+  '/api/access-request': typeof ApiAccessRequestRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
@@ -146,6 +164,8 @@ export interface FileRouteTypes {
     | '/examples'
     | '/profile'
     | '/quick-start'
+    | '/request-access'
+    | '/api/access-request'
     | '/api/generate-image'
     | '/api/generation-events'
     | '/lessons/$id'
@@ -161,6 +181,8 @@ export interface FileRouteTypes {
     | '/examples'
     | '/profile'
     | '/quick-start'
+    | '/request-access'
+    | '/api/access-request'
     | '/api/generate-image'
     | '/api/generation-events'
     | '/lessons/$id'
@@ -176,6 +198,8 @@ export interface FileRouteTypes {
     | '/examples'
     | '/profile'
     | '/quick-start'
+    | '/request-access'
+    | '/api/access-request'
     | '/api/generate-image'
     | '/api/generation-events'
     | '/lessons/$id'
@@ -192,6 +216,8 @@ export interface RootRouteChildren {
   ExamplesRoute: typeof ExamplesRoute
   ProfileRoute: typeof ProfileRoute
   QuickStartRoute: typeof QuickStartRoute
+  RequestAccessRoute: typeof RequestAccessRoute
+  ApiAccessRequestRoute: typeof ApiAccessRequestRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
   ApiGenerationEventsRoute: typeof ApiGenerationEventsRoute
   LessonsIdRoute: typeof LessonsIdRoute
@@ -257,6 +283,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuickStartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/request-access': {
+      id: '/request-access'
+      path: '/request-access'
+      fullPath: '/request-access'
+      preLoaderRoute: typeof RequestAccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/access-request': {
+      id: '/api/access-request'
+      path: '/api/access-request'
+      fullPath: '/api/access-request'
+      preLoaderRoute: typeof ApiAccessRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/generate-image': {
       id: '/api/generate-image'
       path: '/api/generate-image'
@@ -304,6 +344,8 @@ const rootRouteChildren: RootRouteChildren = {
   ExamplesRoute: ExamplesRoute,
   ProfileRoute: ProfileRoute,
   QuickStartRoute: QuickStartRoute,
+  RequestAccessRoute: RequestAccessRoute,
+  ApiAccessRequestRoute: ApiAccessRequestRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
   ApiGenerationEventsRoute: ApiGenerationEventsRoute,
   LessonsIdRoute: LessonsIdRoute,
