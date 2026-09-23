@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { consumeManagementRetry, observeGeneration } from './management-store.server.ts';
+import { consumeManagementRetry, observeGeneration, recordProviderEvent } from './management-store.server.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -11,6 +11,7 @@ import { isYoungA1 } from './young-learners';
 import { AMERICAN_ENGLISH_RULES, americanEnglishContent } from './american-english';
 import { listeningContext, listeningSchema, validateListening, type ListeningState, type ListeningAudio, type VoiceChoice } from './listening';
 import { generateSpeech } from './speech.server';
+import { validateMp3DataUrl } from './media-validation.server.ts';
 import type { LessonRequestInput, LessonPackage } from './lesson-schema';
 import { isNoTechRequest } from './no-tech';
 
@@ -33,6 +34,11 @@ function checkedResponse<T>(schema: z.ZodType<T>, value: unknown): T {
 
 /** Repair questions against a fixed script, so correcting a quote cannot rewrite its source. */
 async function repairListening(value: unknown, issue: string, context: unknown, generate: typeof requestOpenRouter) {
+  recordProviderEvent({
+    model: generate === requestReadingOpenRouter ? 'deepseek/deepseek-v4-flash-0731' : modelSetting('OPENROUTER_MODEL', 'openai/gpt-5.4-mini'),
+    kind: 'text', event: 'validation', ms: 0,
+    detail: 'The listening script or its questions needed a content repair.',
+  });
   let parsed = listeningSchema.safeParse(value);
   const words = parsed.success ? parsed.data.script.split(/\s+/u).length : 0;
   if (parsed.success && (words < 160 || words > 300)) {
@@ -167,14 +173,19 @@ export async function generateListeningAudio(fingerprint: string, scope: string,
   const script = lookup<ListeningState>(fingerprint, scope);
   if (script.status !== 'ready') throw new Error('Generate the listening script first.');
   const id = hash(stable({ scope, fingerprint, choice, version: 3, accent: 'en-US' }));
-  return cached(id, scope, limited, async () => {
+  const result = await cached(id, scope, limited, async () => {
     const audio = await generateSpeech(script.value.script, choice);
     return { audio: { id, model: audio.model, voice: audio.voice, choice, mime: 'audio/mpeg', accent: 'en-US' } as ListeningAudio,
-      dataUrl: `data:audio/mpeg;base64,${Buffer.from(audio.bytes).toString('base64')}` };
+      dataUrl: validateMp3DataUrl(`data:audio/mpeg;base64,${Buffer.from(audio.bytes).toString('base64')}`) };
   }, 'recording', fingerprint);
+  return checkedAudio(result, id);
+}
+function checkedAudio(result: { audio: ListeningAudio; dataUrl: string }, id: string) {
+  if (result?.audio?.id !== id || result.audio.mime !== 'audio/mpeg') throw new Error('The saved recording is invalid. Your listening script has been kept.');
+  validateMp3DataUrl(result.dataUrl);
+  return result;
 }
 export function getListeningAudio(id: string, scope: string) {
   const result = lookup<{ audio: ListeningAudio; dataUrl: string }>(id, scope);
-  if (!result.audio || !result.dataUrl?.startsWith('data:audio/mpeg;base64,')) throw new Error('The saved recording is invalid.');
-  return result;
+  return checkedAudio(result, id);
 }

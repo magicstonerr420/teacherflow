@@ -79,7 +79,7 @@ test('a throttled provider call records each attempt, recovers once and retains 
     const result = await store.stage('teacher', request, 'foundation', generate);
     assert.equal(calls, 3); assert.equal(budget.status().accountedUsd, .003); assert.equal(budget.status().reservedUsd, 0);
     const [operation] = management.list(); assert.equal(operation.status, 'recovered'); assert.equal(operation.issue, 'recovered');
-    assert.deepEqual(operation.providers.map(p => p.status), [429, 429, 200]); assert.deepEqual(operation.request, request);
+    assert.deepEqual(operation.providers.filter(p => !p.event || p.event === 'request').map(p => p.status), [429, 429, 200]); assert.deepEqual(operation.request, request);
     assert.deepEqual(await store.stage('teacher', request, 'foundation', () => assert.fail('Saved stage must not buy again')), result);
     assert.equal(management.list().length, 1); assert.equal(budget.status().accountedUsd, .003);
   } finally { management.close(); budget.close(); store.db.close(); }

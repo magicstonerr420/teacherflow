@@ -10,7 +10,7 @@ export class ProviderRateLimitError extends Error {
   }
 }
 
-function retryAfter(response: Response, now: number): number | undefined {
+export function retryAfter(response: Response, now: number): number | undefined {
   const value = response.headers.get('retry-after')?.trim();
   if (!value) return undefined;
   if (/^\d+(?:\.\d+)?$/.test(value)) {

@@ -3,11 +3,16 @@ import { createHash, randomUUID } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { recordProvider } from './management-store.server.ts';
+import { recordProvider, recordProviderEvent } from './management-store.server.ts';
+import { inProviderQueue, ProviderQueueError, type ProviderQueue, type ProviderKind } from './provider-queue.server.ts';
+import { retryAfter } from './provider-retry.server.ts';
 
 // Invoked only after server-side invitation/ownership checks. Owner calls have no scope.
 const context = new AsyncLocalStorage<string>();
+const operationContext = new AsyncLocalStorage<string>();
 export const withBetaBudget = <T>(user: string, work: () => T): T => context.run(user, work);
+/** A retry or alternate model must honor uncertainty from the same logical action. */
+export const withProviderOperation = <T>(identity:string,work:()=>T):T => operationContext.run(hash(identity),work);
 export class BetaBudgetError extends Error {}
 const micros = (usd: number) => Math.ceil(usd * 1_000_000);
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
@@ -143,18 +148,30 @@ async function quote(path: string, body: any): Promise<{ kind: string; reserve: 
 
 /** All three paid transports use this gate. Reservations precede requests across processes. */
 export async function budgetFetch(url: string, options: RequestInit): Promise<Response> {
+  const body=JSON.parse(String(options.body));
+  const kind:ProviderKind=url.endsWith('/images')?'image':url.endsWith('/audio/speech')?'audio':'text';
+  return inProviderQueue(kind,String(body.model),options.signal??undefined,queue=>budgetFetchUnlocked(url,options,queue),
+    ms=>recordProviderEvent({model:String(body.model),kind,event:'queued',ms}));
+}
+async function budgetFetchUnlocked(url:string,options:RequestInit,queue:ProviderQueue):Promise<Response>{
   const scope = context.getStore();
-  if (!scope) return fetch(url, options);
   const body = JSON.parse(String(options.body));
+  const rememberCooldown=(response:Response)=>{if(response.status===429)queue.cooldown(String(body.model),retryAfter(response,Date.now())??2000);};
+  if (!scope) {
+    const kind=url.endsWith('/images')?'image':url.endsWith('/audio/speech')?'audio':'text',started=Date.now();
+    try{const response=await fetch(url,options);rememberCooldown(response);await response.clone().arrayBuffer();recordProvider(body.model,kind,response.status,Date.now()-started);return response;}
+    catch(error){recordProvider(body.model,kind,undefined,Date.now()-started,error);throw error;}
+  }
   const estimate = await quote(url, body);
+  if(options.signal?.aborted)throw new ProviderQueueError('The generation wait was cancelled before the provider request. Your saved work is retained. No new provider request was sent.');
   const payload = JSON.stringify(body);
   const budget = new BetaBudget();
   let id: string | undefined;
   try {
-    id = budget.reserve(scope, hash(`${scope}:${url}:${payload}`), estimate.kind, body.model, estimate.reserve);
+    id = budget.reserve(scope, hash(`${scope}:${url}:${operationContext.getStore()??payload}`), estimate.kind, body.model, estimate.reserve);
     let response: Response;
     const started=Date.now();
-    try { response = await fetch(url, { ...options, body: payload }); recordProvider(body.model,estimate.kind,response.status,Date.now()-started); }
+    try { response = await fetch(url, { ...options, body: payload }); rememberCooldown(response); recordProvider(body.model,estimate.kind,response.status,Date.now()-started); }
     catch (error) {
       recordProvider(body.model,estimate.kind,undefined,Date.now()-started,error);
       budget.settle(id);

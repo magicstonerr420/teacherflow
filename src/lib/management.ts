@@ -17,6 +17,8 @@ export function safeDiagnostic(value: unknown): string {
 export function explainFailure(value: unknown, status?: number) {
   const detail = safeDiagnostic(value);
   const categories: [boolean, string, string, string][] = [
+    [/generation.*busy|generation wait expired/i.test(detail), 'queue', 'Generation waited for available capacity.', 'Retry this part shortly. No provider request was sent for the expired wait.'],
+    [status === 404 || /model.*unavailable/i.test(detail), 'model_unavailable', 'The selected model was unavailable.', 'Review the model attempts and backup result.'],
     [/uncertain|charge.*confirm|running or its previous charge/i.test(detail), 'uncertain_charge', 'The provider charge could not be confirmed.', 'Review the provider charge before retrying. Budget reservations remain protected.'],
     [status === 429 || /rate limit/i.test(detail), 'rate_limit', 'The AI provider temporarily limited requests.', 'Wait for the cooldown. Retry only this part.'],
     [status === 402 || /credits|spending allowance|account balance/i.test(detail), 'provider_credit', 'The provider rejected the request for a billing or spending-limit reason.', 'Check the provider balance and spending allowance.'],

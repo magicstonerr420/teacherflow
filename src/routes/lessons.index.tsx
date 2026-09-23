@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Copy, FileText, Trash2, Star } from "lucide-react";
+import { Copy, FileText, Trash2, Star, FolderOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { ClassLessonLibrary } from "@/components/ClassLessonLibrary";
 import { UnfinishedLessons } from '@/components/UnfinishedLessons';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,19 +34,24 @@ export const Route = createFileRoute("/lessons/")({
 
 function LessonsPage() {
   const { isAuthenticated, loading, user } = useAuth();
-  const [view,setView] = useState('all');
-  const [filters,setFilters] = useState({search:'',level:'',skill:'',favoritesOnly:false});
   const navigate = useNavigate();
-  const fetchLessons = useServerFn(listLessons);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) navigate({ to: "/auth", search: { redirect: "/lessons" } });
   }, [loading, isAuthenticated, navigate]);
 
+  return <AppShell>{user ? <LessonLibrary key={user.id} userId={user.id} /> : <div className="mx-auto max-w-4xl px-5 py-12"><Skeleton className="h-20 w-full" /></div>}</AppShell>;
+}
+
+function LessonLibrary({ userId }: { userId: string }) {
+  const [view,setView] = useState('all');
+  const [filters,setFilters] = useState({search:'',level:'',skill:'',favoritesOnly:false});
+  const fetchLessons = useServerFn(listLessons);
+
   const { data, isPending, error } = useQuery({
-    queryKey: ["lessons",user?.id],
+    queryKey: ["lessons",userId],
     queryFn: () => fetchLessons(),
-    enabled: isAuthenticated,
+    enabled: !!userId,
   });
 
   const queryClient = useQueryClient();
@@ -53,10 +59,10 @@ function LessonsPage() {
   const removeLesson = useServerFn(deleteLesson);
   const fetchFavorites = useServerFn(listFavorites);
   const toggleFavorite = useServerFn(setLessonFavorite);
-  const favorites = useQuery({queryKey:['favorites',user?.id],queryFn:()=>fetchFavorites(),enabled:isAuthenticated});
+  const favorites = useQuery({queryKey:['favorites',userId],queryFn:()=>fetchFavorites(),enabled:!!userId});
   const favorite = useMutation({
     mutationFn:(lessonId:string)=>toggleFavorite({data:{lessonId,active:!favorites.data?.includes(lessonId)}}),
-    onSuccess:()=>queryClient.invalidateQueries({queryKey:['favorites',user?.id]}),
+    onSuccess:()=>queryClient.invalidateQueries({queryKey:['favorites',userId]}),
     onError:()=>toast.error('Could not update this favorite. Please try again.'),
   });
   const visible = filterLibrary(data??[],filters,favorites.data??[]);
@@ -66,7 +72,7 @@ function LessonsPage() {
     mutationFn: (id: string) => copyLesson({ data: { id } }),
     onSuccess: () => {
       toast.success("Lesson duplicated.");
-      void queryClient.invalidateQueries({ queryKey: ["lessons"] });
+      void queryClient.invalidateQueries({ queryKey: ["lessons", userId] });
     },
     onError: () => toast.error("We could not duplicate this lesson. Please try again."),
   });
@@ -75,14 +81,14 @@ function LessonsPage() {
     mutationFn: (id: string) => removeLesson({ data: { id } }),
     onSuccess: () => {
       toast.success("Lesson deleted.");
-      void queryClient.invalidateQueries({ queryKey: ["lessons"] });
+      void queryClient.invalidateQueries({ queryKey: ["lessons", userId] });
+      void queryClient.invalidateQueries({ queryKey: ["class-library", userId] });
     },
     onError: () => toast.error("We could not delete this lesson. Please try again."),
   });
 
 
   return (
-    <AppShell>
       <div className="mx-auto max-w-4xl px-5 py-12">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="display-heading text-3xl">My lessons</h1>
@@ -96,16 +102,20 @@ function LessonsPage() {
             <TabsTrigger value="all">All lessons</TabsTrigger>
             <TabsTrigger value="favorites" disabled={favorites.isPending||favorites.isError}><Star className="mr-2 size-4"/>Favorites</TabsTrigger>
             <TabsTrigger value="unfinished">Unfinished</TabsTrigger>
+            <TabsTrigger value="classes"><FolderOpen className="mr-2 size-4" />Classes</TabsTrigger>
           </TabsList>
           <TabsContent value="unfinished">
-            <UnfinishedLessons userId={user?.id} />
+            <UnfinishedLessons userId={userId} />
           </TabsContent>
-          <TabsContent value={view==='unfinished'?'all':view}>
+          <TabsContent value="classes">
+            <ClassLessonLibrary userId={userId} />
+          </TabsContent>
+          <TabsContent value={view==='favorites'?'favorites':'all'}>
         {error ? (
           <p className="mt-8 text-sm text-destructive">We could not load your lessons. Please refresh.</p>
         ) : null}
 
-        {isPending && isAuthenticated ? (
+        {isPending ? (
           <div className="mt-8 space-y-3">
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-20 w-full" />
@@ -200,6 +210,5 @@ function LessonsPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppShell>
   );
 }

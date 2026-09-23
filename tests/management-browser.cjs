@@ -32,12 +32,19 @@ const origin = process.env.TEST_ORIGIN || 'http://127.0.0.1:3008';
         const now = Date.now();
         const request = { subject: 'English', topic: 'Weather', studentAge: '8-9', level: 'A1', durationMinutes: 45, mainSkill: 'Speaking', secondarySkill: 'Reading', learningObjective: 'Describe the weather with complete sentences.', teacherNotes: 'Use simple examples and warm colors.', groupWorkEnabled: true, studentsPerGroup: 4, classroomLimitations: 'No internet in class' };
         const failed = { id: '10000000-0000-4000-8000-000000000001', user: 'ana', lesson: 'weather', part: 'student', detail: 'Worksheet A', target: '', source: 'server', status: 'failed', issue: 'open', started: now - 60000, updated: now - 50000, finished: now - 50000, request, failure: { category: 'content', explanation: 'Generated material did not pass its content checks.', nextAction: 'Review the diagnostic details and allow a targeted retry.', detail: 'One question was missing an answer.' }, providers: [{ model: 'provider/example-model', kind: 'text', status: 200, ms: 900, at: now - 55000, detail: 'Content validation failed.' }] };
+        failed.providers.unshift({ model: 'provider/example-model', kind: 'text', event: 'queued', ms: 300, at: now - 56000 });
+        failed.providers.push({ model: 'provider/example-model', kind: 'text', event: 'validation', ms: 0, at: now - 54000 });
         const lesson = { user: 'ana', key: 'weather', request, complete: false, credited: false, steps: [{ part: 'foundation', complete: true, attempts: 1, running: false }, { part: 'student', complete: false, attempts: 2, running: false }, { part: 'teacher', complete: false, attempts: 0, running: false }] };
         window.managementData = { operations: [failed,
           { ...failed, id: '10000000-0000-4000-8000-000000000002', lesson: 'interrupted', part: 'foundation', status: 'interrupted', request: { ...request, topic: 'Animals' }, failure: { category: 'unknown', explanation: 'No completion was recorded.', nextAction: 'Review saved progress.', detail: 'Cause unknown.' }, providers: [] },
           { ...failed, id: '10000000-0000-4000-8000-000000000003', lesson: 'browser', source: 'browser', part: 'export', request: { ...request, topic: 'Transport' }, providers: [] },
           { ...failed, id: '10000000-0000-4000-8000-000000000004', lesson: 'billing', part: 'recording', request: { ...request, topic: 'Food' }, failure: { category: 'uncertain_charge', explanation: 'Provider charge could not be confirmed.', nextAction: 'Review the provider charge.', detail: 'Awaiting charge confirmation.' } },
-          { ...failed, id: '10000000-0000-4000-8000-000000000005', lesson: 'restored', status: 'recovered', issue: 'recovered', request: { ...request, topic: 'Colors' }, failure: null },
+          { ...failed, id: '10000000-0000-4000-8000-000000000005', lesson: 'restored', status: 'recovered', issue: 'recovered', request: { ...request, topic: 'Colors' }, failure: null, providers: [
+            { model: 'provider/example-model', kind: 'text', status: 429, ms: 80, at: now - 55000 },
+            { model: 'provider/example-model', kind: 'text', event: 'retry', ms: 500, at: now - 54000 },
+            { model: 'provider/backup-model', kind: 'text', event: 'fallback', ms: 0, at: now - 53000 },
+            { model: 'provider/backup-model', kind: 'text', status: 200, ms: 500, at: now - 52000 }
+          ] },
           { ...failed, id: '10000000-0000-4000-8000-000000000006', lesson: 'running', status: 'generating', issue: 'none', request: { ...request, topic: 'Hobbies' }, failure: null },
           { ...failed, id: '10000000-0000-4000-8000-000000000007', lesson: 'running', source: 'browser', status: 'generating', issue: 'none', request: { ...request, topic: 'Hobbies' }, failure: null }
         ], teachers: [{ user: 'ana', name: 'Ana Teacher', email: 'ana@example.test', revoked: false }, { user: 'bea', name: 'Bea Teacher', email: 'bea@example.test', revoked: false }], lessons: [lesson, { ...lesson, user: 'bea', key: 'legacy', complete: true, credited: true, steps: lesson.steps.map(step => ({ ...step, complete: true })), request: { ...request, topic: 'Earlier lesson' } }], notes: [], audit: [], history: [{ action: 'reset-allowance', user: 'ana', actor: 'owner', seat: 1, at: new Date(now).toISOString() }], budget: { limitUsd: 10, accountedUsd: 0.25, reservedUsd: 0.1, remainingUsd: 9.65, paused: false }, spending: [{ user: 'ana', kind: 'text', model: 'provider/example-model', requests: 3, confirmedUsd: 0.25, reservedUsd: 0.1, uncertain: 1 }], settings: { emailEnabled: true, dailySummary: false }, email: { configured: false, from: '', to: 'owner@example.test', missing: ['RESEND_API_KEY', 'TEACHERFLOW_ALERT_FROM'] }, alerts: [{ id: 'a', status: 'accepted', created: now, attempts: 1, error: null }, { id: 'b', status: 'queued', created: now, attempts: 2, error: 'Email delivery was interrupted; waiting to retry.' }] };
@@ -50,6 +57,15 @@ const origin = process.env.TEST_ORIGIN || 'http://127.0.0.1:3008';
     assert.equal(await page.getByRole('tab').count(), 6);
     await page.getByText('Generating now', { exact: true }).locator('../..').getByText('1', { exact: true }).waitFor();
     await page.getByText('2 confirmed server failures · 2 reports needing investigation', { exact: true }).waitFor();
+    const reliability = page.getByRole('region', { name: 'Generation reliability', exact: true });
+    await reliability.getByText(/Based on 5 server operations in the latest 7 tracked records/).waitFor();
+    await reliability.getByText(/5 recorded provider requests/).waitFor();
+    assert.match(await reliability.locator('dt').filter({ hasText: /^Rate-limit rejections$/ }).locator('..').locator('dd').innerText(), /^1\b/);
+    assert.match(await reliability.locator('dt').filter({ hasText: /^Successful recoveries$/ }).locator('..').locator('dd').innerText(), /^1\b/);
+    assert.match(await reliability.locator('dt').filter({ hasText: /^Backup model selections$/ }).locator('..').locator('dd').innerText(), /^1\b/);
+    await reliability.getByText('Requests by model (2)', { exact: true }).click();
+    await reliability.getByRole('heading', { name: 'provider/backup-model', exact: true }).waitFor();
+    await reliability.getByText(/HTTP success means the provider accepted a request/).waitFor();
     await page.evaluate(() => { window.managementError = '<!doctype html><html><head><title>502 Bad Gateway</title></head><body>private-gateway-dump Bearer fixture-secret</body></html>'; });
     await page.getByRole('button', { name: 'Refresh dashboard', exact: true }).click();
     const refreshError = page.getByRole('alert').filter({ hasText: 'Could not refresh Management.' });
@@ -80,7 +96,9 @@ const origin = process.env.TEST_ORIGIN || 'http://127.0.0.1:3008';
     await failed.locator('summary').first().click();
     await failed.getByText('Full submitted lesson settings', { exact: true }).click();
     await failed.getByText('No internet in class', { exact: true }).waitFor();
-    await failed.getByText('Provider attempts (1)', { exact: true }).click();
+    await failed.getByText('Provider attempts and events (3)', { exact: true }).click();
+    await failed.getByText(/Queued for capacity/).waitFor();
+    await failed.getByText(/Provider accepted request/).waitFor();
     await failed.getByText('Content validation failed.', { exact: true }).waitFor();
     await failed.getByRole('button', { name: 'Allow one extra attempt' }).click();
     await page.getByRole('alertdialog').getByRole('button', { name: 'Cancel' }).click();

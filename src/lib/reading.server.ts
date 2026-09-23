@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
-import { consumeManagementRetry, observeGeneration } from './management-store.server.ts';
+import { consumeManagementRetry, observeGeneration, recordProviderEvent } from './management-store.server.ts';
+import { generateValidated } from './generation-validation.server.ts';
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
@@ -90,21 +91,17 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
       const generate = async (): Promise<ReadingState> => {
       let result: ReadingState;
       try {
-        let passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({
-          system, input: `${JSON.stringify(context)}\nFIRST STEP: Write only the passage, title, purpose and CEFR required by the schema. Keep the stated age/level length. Questions come in a separate request.`, schemaName: "teacherflow_reading_passage",
-          schema: zodToJsonSchema(passageSchema, { $refStrategy: "none" }),
-        })));
-        const passageTech = noTech ? findTechTerms(passage) : [];
-        if (missingReadingReference(passage.text) || passageTech.length) {
-          // Repair the source BEFORE freezing it for questions and evidence.
-          // A tasks-only repair cannot remove an invalid fact from a fixed passage.
-          passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({ system,
-            input: `${JSON.stringify(context)}\nRevise this passage: ${JSON.stringify(passage)}. Remove directions that need a missing picture. State all facts in words so the reading can be understood without an illustration. Keep the same objective, topic, age and level.\n${passageTech.length ? noTechRepairInstruction(passageTech) : ''}`,
-            schemaName: 'teacherflow_reading_passage_reference_repair', schema: zodToJsonSchema(passageSchema, { $refStrategy: 'none' }) })));
-        }
-        if (passage.cefr !== request.level) throw new Error('DeepSeek returned the wrong reading level.');
-        if (missingReadingReference(passage.text)) throw new Error('The reading still depends on an unavailable reference picture.');
-        if (noTech && findTechTerms(passage).length) throw new Error('The reading passage still needs a paper-based classroom version. Your lesson is retained; retry only the reading.');
+        const passage=await generateValidated((issue,previous)=>requestReadingOpenRouter({
+          system,input:`${JSON.stringify(context)}\nFIRST STEP: Write only the passage, title, purpose and CEFR required by the schema. Keep the stated age/level length. Questions come in a separate request.${issue?`\nRepair this completed draft: ${JSON.stringify(previous)}\nValidation issue: ${issue}\nKeep the original topic, objective, age and level. State all facts in words; remove directions requiring an unavailable picture.`:''}`,
+          schemaName:issue?'teacherflow_reading_passage_reference_repair':'teacherflow_reading_passage',schema:zodToJsonSchema(passageSchema,{$refStrategy:'none'}),
+        }),value=>{
+          const passage=passageSchema.parse(americanEnglishContent(value));
+          if(passage.cefr!==request.level)throw Error(`Return the requested CEFR level ${request.level}.`);
+          if(missingReadingReference(passage.text))throw Error('The reading depends on an unavailable reference picture.');
+          const terms=noTech?findTechTerms(passage):[];
+          if(terms.length)throw Error(noTechRepairInstruction(terms));
+          return passage;
+        },READING_MODEL);
         const extracts = (passage.text.match(/[^.!?]+(?:[.!?]+|$)/gu) ?? [passage.text]).map(s => s.trim()).filter(Boolean);
         const taskInput = `${JSON.stringify(context)}\nFIXED PASSAGE\n${JSON.stringify(passage)}\nNUMBERED EVIDENCE SENTENCES\n${extracts.map((s, i) => `${i + 1}: ${s}`).join('\n')}\n${QUESTION_RULES}`;
         let value = await requestReadingOpenRouter({ system: `${system}\n${QUESTION_RULES}`, input: taskInput,
@@ -120,6 +117,7 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
         };
         try { validate(value); }
         catch (error) {
+          recordProviderEvent({model:READING_MODEL,kind:'text',event:'validation',ms:0,detail:'Reading questions needed a repair against the fixed passage.'});
           // One bounded repair, using the same reading model, only when a complete JSON result fails validation.
           value = await requestReadingOpenRouter({ system: `${system}\n${QUESTION_RULES}`, schemaName: "teacherflow_reading_repair",
             schema: zodToJsonSchema(taskSchema, { $refStrategy: "none" }),

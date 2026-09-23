@@ -12,7 +12,7 @@ const chat = (text = 'Hello') => ({ method: 'POST', body: JSON.stringify({ model
 const url = 'https://openrouter.ai/api/v1/chat/completions';
 const worker = (file) => new Promise(resolve => {
   const source = `import {BetaBudget} from './src/lib/beta-budget.server.ts'; const b=new BetaBudget(process.argv[1]); try { b.reserve('teacher','key-'+process.pid,'text','test',6);console.log('reserved');} catch {console.log('blocked');} finally{b.close();}`;
-  const child=spawn(process.execPath,['--input-type=module','-e',source,file],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']}); let out='';child.stdout.on('data',v=>out+=v);child.on('close',()=>resolve(out.trim()));
+  const child=spawn(process.execPath,['--experimental-transform-types','--input-type=module','-e',source,file],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']}); let out='',errors='';child.stdout.on('data',v=>out+=v);child.stderr.on('data',v=>errors+=v);child.on('close',code=>resolve(code===0?out.trim():errors));
 });
 
 test('US$10 round persists; competing processes cannot overspend; unknown costs stay reserved', async () => {

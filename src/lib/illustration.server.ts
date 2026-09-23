@@ -1,6 +1,9 @@
-import { budgetFetch } from './beta-budget.server.ts';
+import { budgetFetch, BetaBudgetError } from './beta-budget.server.ts';
 import { modelSetting } from "./model-settings.server.ts";
-import { retryRateLimited } from './provider-retry.server.ts';
+import { ProviderRateLimitError, retryRateLimited } from './provider-retry.server.ts';
+import { validateImageBase64 } from './media-validation.server.ts';
+import { ProviderQueueError } from './provider-queue.server.ts';
+import { recordProviderEvent } from './management-store.server.ts';
 
 export class IllustrationBillingError extends Error {
   readonly code = 'image_billing';
@@ -31,7 +34,8 @@ export async function generateIllustration(prompt: string, age: string, level: s
   if (!key) throw new Error("The OpenRouter image key is not configured.");
   const model = modelSetting("OPENROUTER_IMAGE_MODEL", "google/gemini-3.1-flash-image-preview");
   const signal = AbortSignal.timeout(180_000);
-  const response = await retryRateLimited(() => budgetFetch("https://openrouter.ai/api/v1/images", {
+  let response: Response;
+  try { response = await retryRateLimited(() => budgetFetch("https://openrouter.ai/api/v1/images", {
     method: "POST",
     signal,
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
@@ -42,17 +46,27 @@ export async function generateIllustration(prompt: string, age: string, level: s
       ...(model === "google/gemini-3.1-flash-image-preview" ? { resolution: "1K" } : {}),
       n: 1,
     }),
-  }), { signal });
+  }), { signal, onRetry: async (_attempt, ms) => { recordProviderEvent({ model, kind: 'image', event: 'retry', ms, detail: 'Explicit image rate-limit rejection.' }); } }); }
+  catch (error) {
+    if (error instanceof BetaBudgetError || error instanceof ProviderRateLimitError || error instanceof ProviderQueueError) throw error;
+    throw new Error('The image service connection was interrupted. Your completed pictures have been kept. The previous request may still be running; contact the organizer before requesting another picture.');
+  }
   if (response.status === 402) throw new IllustrationBillingError();
-  if (!response.ok) throw new Error("OpenRouter could not generate an illustration. Please retry.");
+  if (!response.ok) throw new Error(response.status >= 500 || response.status === 408
+    ? 'The image service could not confirm this picture. Your completed pictures have been kept. Contact the organizer before retrying this picture.'
+    : 'OpenRouter could not generate this illustration. Your completed pictures have been kept; retry only this picture.');
   let result;
   try { result = await response.json(); }
-  catch { throw new Error('The image service returned an incomplete picture. Your completed pictures have been kept; retry only the missing picture.'); }
-  const item = result?.data?.[0];
-  const url = typeof item?.b64_json === "string" && /^image\/(png|jpeg|webp)$/.test(item.media_type)
-    ? `data:${item.media_type};base64,${item.b64_json}` : null;
-  if (typeof url !== "string" || !/^data:image\/(png|jpeg|webp);base64,/.test(url)) {
-    throw new Error("The image provider did not return a usable illustration.");
+  catch {
+    recordProviderEvent({ model, kind: 'image', event: 'validation', ms: 0, detail: 'Image response was not complete JSON.' });
+    throw new Error('The image service returned an incomplete picture. Your completed pictures have been kept. Contact the organizer before retrying this picture.');
   }
-  return url;
+  const item = result?.data?.[0];
+  // Malformed successful delivery may already have been billed. Validate once;
+  // never regenerate or switch models automatically for this response.
+  try { return validateImageBase64(item?.b64_json, item?.media_type); }
+  catch (error) {
+    recordProviderEvent({ model, kind: 'image', event: 'validation', ms: 0, detail: 'Image bytes were missing, corrupt or did not match their format.' });
+    throw error;
+  }
 }

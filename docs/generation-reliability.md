@@ -1,0 +1,15 @@
+# Generation reliability
+
+All paid text, image and audio requests enter a persistent SQLite queue before dispatch. The queue permits at most three simultaneous requests overall, with two text, one image and one audio request per lane. It retains model cooldowns across processes and holds capacity until the response body has arrived. Waiting or cancellation before dispatch uses no provider budget. Waiting is bounded to 90 seconds; abandoned worker leases expire after six minutes. The queue defaults to the existing budget database and is covered by its backup.
+
+Explicit rate-limit rejections receive up to two delayed retries, respecting Retry-After. A longer cooldown is surfaced instead of retrying early. Text may try one alternate between the two existing approved models after a missing-model rejection, short rate-limit cooldown, or invalid complete JSON with a confirmed charge. The audio standard voice may use the already approved economy voice after a missing endpoint. Images retain the current approved Gemini model; no untested image model or new price schedule is enabled.
+
+Every beta attempt retains the existing price checks and shared $10 ceiling. Text and speech fallbacks share a stable logical billing identity: an uncertain backup charge blocks a later retry through either model. Timeouts, gateway errors, refusals, credential errors and uncertain delivery do not cause automatic paid fallback. Queue cleanup failures cannot discard a successful response.
+
+Reading passages receive one bounded content repair before questions are built against them. Existing reading/listening question and evidence checks remain active. Image validation checks MIME, decoded bytes and bounded container structure; audio requires complete MP3 frames. Saved media is checked when reopened, without silently purchasing a replacement. These checks cannot guarantee factual correctness or pedagogical quality; teachers still review the materials.
+
+Management → Overview includes Generation reliability for the latest tracked operations. HTTP attempts are separate from queue, retry, backup and validation notices. An accepted HTTP response is not reported as proof of correct content. Browser reports are separate from confirmed server failures. Only the owner can access these diagnostics.
+
+Verification uses mocked provider responses and isolated databases. See provider-reliability, provider-transport, provider-retry, generation-validation, generation-health, speech-operation, media-validation and image-cache-validation tests. No paid AI calls are needed.
+
+Provider behavior references: [OpenRouter model fallback documentation](https://openrouter.ai/docs/guides/routing/model-fallbacks) and [provider routing](https://openrouter.ai/docs/guides/routing/provider-selection). TeacherFlow deliberately applies narrower fallback conditions to preserve billing certainty.

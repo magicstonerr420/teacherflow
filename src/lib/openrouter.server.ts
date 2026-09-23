@@ -1,7 +1,10 @@
-import { budgetFetch, BetaBudgetError } from './beta-budget.server.ts';
+import { budgetFetch, BetaBudgetError, withProviderOperation } from './beta-budget.server.ts';
 import { appendFile, mkdir } from "node:fs/promises";
 import { modelSetting } from "./model-settings.server.ts";
 import { ProviderRateLimitError, retryRateLimited } from './provider-retry.server.ts';
+import { ProviderQueueError } from './provider-queue.server.ts';
+import { ProviderRejectedError, ProviderFormatError, withTextModelFallback } from './provider-fallback.server.ts';
+import { recordProviderEvent } from './management-store.server.ts';
 
 async function recordResult(event: Record<string, unknown>) {
   console.info("TeacherFlow generation", event);
@@ -19,17 +22,22 @@ type OpenRouterRequest = {
   schema: unknown;
 };
 export function requestOpenRouter(args: OpenRouterRequest): Promise<unknown> {
-  return sendOpenRouter(args, modelSetting("OPENROUTER_MODEL", "openai/gpt-5.4-mini"), 12000);
+  return requestWithFallback(args, modelSetting("OPENROUTER_MODEL", "openai/gpt-5.4-mini"), 12000);
 }
 export function requestReadingOpenRouter(args: OpenRouterRequest): Promise<unknown> {
-  return sendOpenRouter(args, "deepseek/deepseek-v4-flash-0731", 6000);
+  return requestWithFallback(args, "deepseek/deepseek-v4-flash-0731", 6000);
 }
-async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens: number): Promise<unknown> {
+function requestWithFallback(args:OpenRouterRequest,model:string,maxTokens:number){
+  const signal=AbortSignal.timeout(240_000);
+  return withProviderOperation(JSON.stringify({kind:'structured',args,primary:model,maxTokens}),()=>withTextModelFallback(model,signal,selected=>sendOpenRouter(args,selected,maxTokens,signal),{
+    onFallback:(from,to,reason)=>recordProviderEvent({model:to,kind:'text',event:'fallback',ms:0,detail:`Backup after ${from}: ${reason}.`}),
+  }));
+}
+async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens: number,signal:AbortSignal): Promise<unknown> {
   const apiKey = process.env["OPENROUTER_API_KEY"]?.trim();
   if (!apiKey) throw new Error("Add your OpenRouter API key to .env.local and restart TeacherFlow.");
   // Model choice comes only from server settings, never a client-supplied userTier.
   let response: Response;
-  const signal = AbortSignal.timeout(240_000);
   try {
     response = await retryRateLimited(() => budgetFetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -56,9 +64,12 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
         ...(model === "openai/gpt-5.4-mini" ? { reasoning: { effort: "low" } } : {}),
         stream: false,
       }),
-    }), { signal, onRetry: (attempt, delayMs) => recordResult({ model, section: args.schemaName, outcome: 'rate_limit_retry', attempt, delayMs }) });
+    }), { signal, onRetry: async(attempt, delayMs) => {
+      recordProviderEvent({model,kind:'text',event:'retry',ms:delayMs,detail:`Rate-limit retry ${attempt}.`});
+      await recordResult({ model, section: args.schemaName, outcome: 'rate_limit_retry', attempt, delayMs });
+    } });
   } catch (error) {
-    if (error instanceof BetaBudgetError || error instanceof ProviderRateLimitError) throw error;
+    if (error instanceof BetaBudgetError || error instanceof ProviderRateLimitError || error instanceof ProviderQueueError) throw error;
     const cause = error as { name?: string; cause?: { code?: string } };
     await recordResult({ model, section: args.schemaName, outcome: "network", reason: cause.cause?.code ?? cause.name });
     if (cause.name === "TimeoutError" || cause.name === "AbortError") throw new Error("The AI provider exceeded the four-minute time limit for this part. Retry this part; completed parts are retained.");
@@ -68,9 +79,9 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
   // Do not relay upstream bodies or log prompts/credentials.
   if (!response.ok) {
     if (model === "deepseek/deepseek-v4-flash-0731" && (response.status === 400 || response.status === 404)) {
-      throw new Error(response.status === 404
+      throw new ProviderRejectedError(response.status === 404
         ? "DeepSeek V4 Flash 0731 is unavailable on OpenRouter. Retry the reading later."
-        : "OpenRouter rejected DeepSeek's structured reading request. The lesson is retained; the reading configuration needs checking.");
+        : "OpenRouter rejected DeepSeek's structured reading request. The lesson is retained; the reading configuration needs checking.",response.status);
     }
     const messages: Record<number, string> = {
       400: "OpenRouter rejected the model or lesson format. Check your server model setting.",
@@ -79,7 +90,7 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
       403: "OpenRouter denied this request. Check your key permissions and model access.",
       404: "The configured OpenRouter model is unavailable. Update OPENROUTER_MODEL.",
     };
-    throw new Error(messages[response.status] || "OpenRouter could not complete this lesson. Please retry.");
+    throw new ProviderRejectedError(messages[response.status] || "OpenRouter could not complete this lesson. Please retry.",response.status);
   }
   let payload;
   try { payload = await response.json(); }
@@ -103,6 +114,7 @@ async function sendOpenRouter(args: OpenRouterRequest, model: string, maxTokens:
     return JSON.parse(fenced?.[1] ?? content);
   } catch {
     console.warn("OpenRouter JSON parsing failed", { model, section: args.schemaName, contentType: typeof choice.message?.content, contentLength: typeof choice.message?.content === "string" ? choice.message.content.length : 0 });
-    throw new Error("The model returned an invalid lesson format. Please retry.");
+    recordProviderEvent({model,kind:'text',event:'validation',ms:0,detail:'The completed text was not valid JSON.'});
+    throw new ProviderFormatError("The model returned an invalid lesson format. Please retry.",typeof payload?.usage?.cost==='number'&&Number.isFinite(payload.usage.cost)&&payload.usage.cost>=0);
   }
 }

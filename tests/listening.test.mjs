@@ -3,6 +3,8 @@ import { createServer } from 'vite';
 import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+import { mp3Fixture } from './media-fixtures.mjs';
 const server = await createServer({ configFile: false, server: { middlewareMode: true, watch: null }, resolve: { alias: { '@': path.resolve('src') } } });
 const originalFetch = globalThis.fetch;
 const saved = { ...process.env };
@@ -46,8 +48,10 @@ try {
   assert.deepEqual(applied.presentation, fixture.lesson.presentation);
 
   process.env.OPENROUTER_API_KEY = 'test-only';
+  process.env.NODE_ENV = 'test';
   process.env.TEACHERFLOW_LISTENING_DB = path.join(await mkdtemp(path.join(tmpdir(), 'teacherflow-listening-')), 'test.sqlite');
-  const mp3 = new Uint8Array(2048); mp3.set([0x49, 0x44, 0x33]);
+  process.env.TEACHERFLOW_PROVIDER_QUEUE_DB = path.join(path.dirname(process.env.TEACHERFLOW_LISTENING_DB), 'queue.sqlite');
+  const mp3 = mp3Fixture(true);
   let scriptCalls = 0, reviewCalls = 0, voiceCalls = 0, rateLimits = 0;
   globalThis.fetch = async (url, options) => {
     const body = JSON.parse(options.body);
@@ -71,6 +75,25 @@ try {
   assert.throws(() => getListeningAudio(audio.audio.id, 'someone-else'));
   await assert.rejects(() => generateListeningAudio(a.fingerprint, 'someone-else', 'standard'));
   await generateListeningAudio(a.fingerprint, 'teacher', 'standard'); assert.equal(voiceCalls, 1);
+  const cache = new DatabaseSync(process.env.TEACHERFLOW_LISTENING_DB);
+  const savedAudio = cache.prepare('SELECT result FROM listening_jobs WHERE id=?').get(audio.audio.id).result;
+  const corruptAudio = { ...audio, dataUrl: `data:audio/mpeg;base64,${Buffer.from('<html>502 private diagnostics</html>').toString('base64')}` };
+  cache.prepare('UPDATE listening_jobs SET result=? WHERE id=?').run(JSON.stringify(corruptAudio), audio.audio.id);
+  assert.throws(() => getListeningAudio(audio.audio.id, 'teacher'), /saved recording is invalid/);
+  await assert.rejects(() => generateListeningAudio(a.fingerprint, 'teacher', 'standard'), /saved recording is invalid/);
+  assert.equal(voiceCalls, 1, 'A corrupt stored recording is not replaced by another paid request');
+  cache.prepare('UPDATE listening_jobs SET result=? WHERE id=?').run(savedAudio, audio.audio.id);
+  cache.close();
+  assert.deepEqual(getListeningAudio(audio.audio.id, 'teacher'), audio, 'Other valid recordings and their identifiers are retained');
+
+  let invalidCalls = 0;
+  globalThis.fetch = async () => { invalidCalls++; return new Response('<html>502 private diagnostics</html>', { headers: { 'Content-Type': 'audio/mpeg' } }); };
+  await assert.rejects(() => generateListeningAudio(a.fingerprint, 'teacher', 'test'), /invalid recording/);
+  const checkedCache = new DatabaseSync(process.env.TEACHERFLOW_LISTENING_DB);
+  assert.equal(checkedCache.prepare('SELECT COUNT(*) AS n FROM listening_jobs WHERE result IS NOT NULL').get().n, 2, 'Invalid delivery is never cached as a successful recording');
+  checkedCache.close();
+  assert.deepEqual(await generateListeningAudio(a.fingerprint, 'teacher', 'standard'), audio);
+  assert.equal(invalidCalls, 1, 'Failure does not disturb the completed recording or buy a replacement');
 
   let models = [];
   let speechAttempts = 0;
@@ -79,26 +102,29 @@ try {
   assert.equal(speechAttempts, 2, 'Explicit throttling retries the same voice before giving up');
   globalThis.fetch = async (_url, options) => {
     const body = JSON.parse(options.body); models.push(body.model);
-    if (models.length === 1) return new Response('Unavailable', { status: 503 });
+    if (models.length === 1) return new Response('Unavailable', { status: 404 });
     assert.deepEqual(body.provider, { only: ['deepinfra'], allow_fallbacks: false, options: { deepinfra: { speed: 0.8 } } });
     assert.equal(body.voice, 'af_heart');
     return new Response(mp3, { headers: { 'Content-Type': 'audio/mpeg' } });
   };
   assert.equal((await generateSpeech(script)).model, 'hexgrad/kokoro-82m');
   assert.deepEqual(models, ['microsoft/mai-voice-2', 'hexgrad/kokoro-82m']);
-  for (const status of [401, 402, 403]) {
+  for (const status of [401, 402, 403, 408, 500, 502, 503, 504]) {
     let calls = 0; globalThis.fetch = async () => { calls++; return new Response('', { status }); };
-    await assert.rejects(() => generateSpeech(script)); assert.equal(calls, 1, 'Do not retry auth or credit failures');
+    await assert.rejects(() => generateSpeech(script)); assert.equal(calls, 1, 'Do not retry auth, credit or uncertain gateway failures');
   }
-  for (const failure of ['network', 'invalid', 'download']) {
+  for (const failure of ['network', 'invalid', 'download', 'html', 'mime', 'id3']) {
     let requests = 0;
     globalThis.fetch = async () => {
       requests++;
       if (failure === 'network') throw Error('Connection interrupted');
       if (failure === 'download') return { ok:true, headers:new Headers({'Content-Type':'audio/mpeg'}), arrayBuffer:async()=>{ throw Error('Interrupted download'); } };
+      if (failure === 'html') return new Response('<html>502 private diagnostics</html>', { headers: { 'Content-Type': 'text/html' } });
+      if (failure === 'mime') return new Response(mp3, { headers: { 'Content-Type': 'audio/wav' } });
+      if (failure === 'id3') { const tag = new Uint8Array(2048); tag.set([0x49, 0x44, 0x33]); return new Response(tag, { headers: { 'Content-Type': 'audio/mpeg' } }); }
       return new Response('not an mp3', { headers: { 'Content-Type': 'audio/mpeg' } });
     };
-    await assert.rejects(() => generateSpeech(script, 'standard'));
+    await assert.rejects(() => generateSpeech(script, 'standard'), error => { assert.doesNotMatch(error.message, /<html>|private diagnostics|Interrupted download/); return true; });
     assert.equal(requests, 1, 'Never automatically buy fallback audio after uncertain or invalid delivery');
   }
   globalThis.fetch = async () => new Response('not an mp3', { headers: { 'Content-Type': 'audio/mpeg' } });
@@ -116,6 +142,6 @@ try {
   console.log('PASS: script validation, worksheet/answer separation, unchanged Version B and presentation, concurrent/persistent cache, account isolation, bounded fallback, billing failures, invalid audio, development-only free voice and owner quota exemption.');
 } finally {
   globalThis.fetch = originalFetch;
-  for (const key of ['OPENROUTER_API_KEY', 'TEACHERFLOW_LISTENING_DB', 'NODE_ENV']) saved[key] === undefined ? delete process.env[key] : process.env[key] = saved[key];
+  for (const key of ['OPENROUTER_API_KEY', 'TEACHERFLOW_LISTENING_DB', 'TEACHERFLOW_PROVIDER_QUEUE_DB', 'NODE_ENV']) saved[key] === undefined ? delete process.env[key] : process.env[key] = saved[key];
   await server.close();
 }

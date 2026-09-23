@@ -3,6 +3,7 @@ import { generateIllustration, IllustrationBillingError } from "@/lib/illustrati
 import { betaEnabled, betaStore } from "@/lib/beta-store.server";
 import { generationAccess } from "@/lib/generation-access.server";
 import { lessonRequestSchema } from "@/lib/lesson-schema";
+import { validateImageDataUrl } from '@/lib/media-validation.server';
 
 /**
  * Generates one original classroom illustration for a slide.
@@ -21,10 +22,14 @@ export const Route = createFileRoute("/api/generate-image")({
             const input = await request.json();
             const lessonRequest = lessonRequestSchema.parse(input.request);
             if (typeof input.prompt !== 'string' || input.prompt.length > 4000) throw new Error('Invalid illustration prompt.');
-            if (input.recoverOnly === true) return Response.json(limited ? betaStore().imageProgress(user, lessonRequest, input.prompt) : { pending: false });
+            if (input.recoverOnly === true) {
+              const progress = limited ? betaStore().imageProgress(user, lessonRequest, input.prompt) : { pending: false };
+              if ('dataUrl' in progress && progress.dataUrl !== undefined) validateImageDataUrl(progress.dataUrl);
+              return Response.json(progress);
+            }
             const generate = () => generateIllustration(input.prompt, lessonRequest.studentAge, lessonRequest.level);
             const dataUrl = limited ? await betaStore().image(user, lessonRequest, input.prompt, generate) : await generate();
-            return Response.json({dataUrl});
+            return Response.json({dataUrl: validateImageDataUrl(dataUrl)});
           } catch (error) {
             if (error instanceof IllustrationBillingError) return Response.json({error:error.message,code:error.code}, {status:402});
             return Response.json({error: error instanceof Error ? error.message : 'Beta illustration failed.'}, {status:403});

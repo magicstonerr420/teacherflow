@@ -49,6 +49,9 @@ function QuickStartPage() {
         <Step number={6} title="Resume when something is interrupted">
           If generation stops, click <strong>Retry failed part</strong>. You can also reopen <strong>My lessons → Unfinished</strong> and choose <strong>Continue unfinished lesson</strong>, even after closing the browser. The original settings and completed parts are restored, using the same lesson slot. If a part is still running, wait for its progress to update before continuing. Changing the inputs starts a different lesson. If retries are exhausted, report the problem so your organizer can help. Reopen completed lessons from <strong>My lessons</strong>.
         </Step>
+        <Step number={7} title="Organize lessons by class">
+          In <strong>My lessons → Classes</strong>, open a saved class or create one. Choose <strong>Add saved lesson</strong> to keep its materials together. Enter a <strong>Taught date</strong> and optional <strong>Class notes</strong>, then save the teaching details. <strong>Teaching history</strong> shows what you have taught. The same lesson can belong to more than one class; removing it from a class keeps the original in your lesson library.
+        </Step>
       </ol>
 
       <section className="space-y-3 rounded-2xl border bg-card p-5 sm:p-6">

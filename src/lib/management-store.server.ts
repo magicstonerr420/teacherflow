@@ -9,7 +9,7 @@ const stable = (v: any) => JSON.stringify(v, (_k, x) => x && typeof x === 'objec
 export const managementKey = (v: any) => createHash('sha256').update(typeof v === 'string' ? v : stable(v)).digest('hex');
 export const managementFile = () => process.env['TEACHERFLOW_MANAGEMENT_DB'] || join(dirname(process.env['TEACHERFLOW_BETA_DB'] || '.local-runtime/beta.sqlite'), 'management.sqlite');
 export type OperationInput = { user: string; request: any; part: string; detail?: string; target?: string; source?: 'server' | 'browser' };
-type ProviderEvent = { model: string; kind: string; status?: number | undefined; ms: number; detail?: string; at: number };
+export type ProviderEvent = { model: string; kind: string; event?: 'request'|'queued'|'retry'|'fallback'|'validation'; status?: number | undefined; ms: number; detail?: string; at: number };
 export type ManagedOperation = { id: string; user: string; lesson: string; part: string; detail: string; target: string; source: string;
   status: string; issue: string; started: number; updated: number; finished: number | null; request: any;
   failure: ReturnType<typeof explainFailure> | null; providers: ProviderEvent[] };
@@ -60,7 +60,7 @@ export class ManagementStore {
         const earlier = "user=? AND lesson=? AND part=? AND detail=? AND target=? AND source=? AND started<=? AND rowid<(SELECT rowid FROM operations WHERE id=?) AND issue='open' AND status IN ('failed','interrupted')";
         const args = [row.user,row.lesson,row.part,row.detail,row.target,row.source,row.started,id];
         const prior = this.db.prepare(`SELECT count(*) AS n FROM operations WHERE ${earlier}`).get(...args) as any;
-        const recovered = row.status === 'interrupted' || prior.n > 0 || row.providers.some(p => (p.status ?? 0) >= 400 || p.detail);
+        const recovered = row.status === 'interrupted' || prior.n > 0 || row.providers.some(p => p.event !== 'queued' && ((p.status ?? 0) >= 400 || p.detail));
         this.db.prepare('UPDATE operations SET status=?,issue=?,finished=?,updated=? WHERE id=?').run(recovered ? 'recovered' : 'completed', recovered ? 'recovered' : 'none', at, at, id);
         this.db.prepare(`UPDATE operations SET issue='recovered' WHERE ${earlier}`).run(...args);
       }
@@ -131,6 +131,14 @@ export async function observeGeneration<T>(input: OperationInput, run: () => Pro
 export function recordProvider(model: string, kind: string, status: number | undefined, ms: number, error?: unknown) {
   const c = current.getStore(); if (!c) return;
   safely(s => s.provider(c.id, {model,kind,status,ms,...(error ? {detail:safeDiagnostic(error)} : {}),at:Date.now()}), undefined, c.file);
+}
+export function recordProviderEvent(event:Omit<ProviderEvent,'at'>) {
+  const c=current.getStore();if(!c)return;
+  safely(s=>{
+    // Content checks belong to the model that actually answered, including a backup.
+    const actual=event.event==='validation'?s.get(c.id)?.providers.slice().reverse().find(p=>(!p.event||p.event==='request')&&p.kind===event.kind&&p.status!==undefined&&p.status>=200&&p.status<300)?.model:undefined;
+    s.provider(c.id,{...event,...(actual?{model:actual}:{}),...(event.detail?{detail:safeDiagnostic(event.detail)}:{}),at:Date.now()});
+  },undefined,c.file);
 }
 export function consumeManagementRetry(user: string, part: string, target: string, operation: string) {
   return safely(s => s.consumeGrant(user,part,target,operation), false);
