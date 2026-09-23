@@ -48,6 +48,7 @@ const assert = require('node:assert/strict');
     await page.getByRole('button', { name: 'Refresh teachers' }).click();
     await page.getByRole('tab', { name: 'Budget', exact: true }).click();
     await page.getByRole('region', { name: 'Beta budget' }).getByText('$9.99', { exact: true }).waitFor();
+    await page.getByRole('tab', { name: /^Generation/ }).click();
     await page.getByRole('tab', { name: /^Issues/ }).click();
     await page.locator('details[aria-label="Runtime fixture lesson — Worksheet A"]').waitFor();
     assert.deepEqual(errors, []); assert.ok(external.every(url => url.startsWith('https://fonts.googleapis.com/')), 'Only remote fonts may be requested; all are blocked'); assert.ok(rpc.every(item => item.status === 200), 'All actual fixture RPC handlers succeed');
