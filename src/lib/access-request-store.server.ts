@@ -23,6 +23,10 @@ export class AccessRequestStore {
         first_attempt INTEGER, payload TEXT, error TEXT, provider_id TEXT
       );
     `);
+    const mailColumns = beta.db.prepare('PRAGMA table_info(approval_email_outbox)').all() as {name: string}[];
+    for (const name of ['provider', 'endpoint']) {
+      if (!mailColumns.some(column => column.name === name)) beta.db.exec(`ALTER TABLE approval_email_outbox ADD COLUMN ${name} TEXT`);
+    }
   }
   submit(input: unknown, client: string, now = Date.now()) {
     const data = accessRequestSchema.parse(input);

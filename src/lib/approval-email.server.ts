@@ -1,16 +1,10 @@
 import { betaStore, type BetaStore } from './beta-store.server.ts';
 import { AccessRequestStore } from './access-request-store.server.ts';
 import { SITE_ORIGIN } from '../config/contact.ts';
+import { approvalEmailConfiguration, approvalEmailEndpoint, sendApprovalEmail } from './approval-email-transport.server.ts';
+export { approvalEmailConfiguration } from './approval-email-transport.server.ts';
 
-export function approvalEmailConfiguration() {
-  const from = process.env['TEACHERFLOW_ALERT_FROM']?.trim() || '';
-  const missing = [
-    ...(!process.env['RESEND_API_KEY']?.trim() ? ['RESEND_API_KEY'] : []),
-    ...(!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(from) ? ['TEACHERFLOW_ALERT_FROM'] : []),
-  ];
-  return {configured: !missing.length, from, missing};
-}
-type Mail = {id: string; status: string; attempts: number; first_attempt: number | null; payload: string | null};
+type Mail = {id: string; status: string; attempts: number; first_attempt: number | null; payload: string | null; provider: string | null; endpoint: string | null};
 /** Frozen payload + provider idempotency make a lost response safe to retry. No invitation secret leaves the server. */
 export async function deliverApprovalEmails(beta: BetaStore, send: typeof fetch = fetch, now = Date.now()) {
   new AccessRequestStore(beta);
@@ -27,27 +21,31 @@ export async function deliverApprovalEmails(beta: BetaStore, send: typeof fetch 
       continue;
     }
     if (mail.first_attempt !== null && now - mail.first_attempt >= 22 * 3600000) {
-      beta.db.prepare("UPDATE approval_email_outbox SET status='review',lease=0,error='Delivery uncertain. Check Resend before contacting the teacher; automatic retries have stopped.' WHERE id=?").run(mail.id);
+      beta.db.prepare("UPDATE approval_email_outbox SET status='review',lease=0,error='Delivery uncertain. Check the email sender before contacting the teacher; automatic retries have stopped.' WHERE id=?").run(mail.id);
+      continue;
+    }
+    const endpoint = approvalEmailEndpoint(config.provider);
+    // Old attempted rows came from Resend. Never switch a possibly sent message to another relay.
+    const pinnedProvider = mail.provider || (mail.payload ? 'resend' : config.provider);
+    if (pinnedProvider !== config.provider || (mail.endpoint && mail.endpoint !== endpoint)) {
+      beta.db.prepare("UPDATE approval_email_outbox SET status='review',lease=0,error='Email sender changed after a delivery attempt. Check the original sender before resending.' WHERE id=?").run(mail.id);
       continue;
     }
     const payload = mail.payload || JSON.stringify({
       from: config.from, to: [request.email], subject: 'Your TeacherFlow beta access is approved',
       text: `Hi ${request.name},\n\nYour TeacherFlow beta access is approved.\n\nSign in with ${request.email} at ${SITE_ORIGIN}/request-access, then select "Check request status" to activate your invitation. Your beta includes three lesson slots.\n\nYou can explore the example lessons before creating your own.\n\nTeacherFlow`,
     });
-    beta.db.prepare('UPDATE approval_email_outbox SET payload=?,first_attempt=COALESCE(first_attempt,?),attempts=attempts+1 WHERE id=?').run(payload, now, mail.id);
+    beta.db.prepare('UPDATE approval_email_outbox SET payload=?,provider=?,endpoint=?,first_attempt=COALESCE(first_attempt,?),attempts=attempts+1 WHERE id=?').run(payload, config.provider, endpoint, now, mail.id);
     try {
-      const response = await send('https://api.resend.com/emails', {
-        method: 'POST', headers: {'Authorization': `Bearer ${process.env['RESEND_API_KEY']}`, 'Content-Type': 'application/json', 'Idempotency-Key': `teacherflow-approval/${mail.id}`},
-        body: payload, signal: AbortSignal.timeout(15000),
-      });
-      if (!response.ok) {
-        const retry = response.status === 429 || response.status >= 500;
-        beta.db.prepare('UPDATE approval_email_outbox SET status=?,lease=0,next=?,error=? WHERE id=?').run(retry ? 'queued' : 'review', now + Math.min(3600000, 60000 * 2 ** Math.min(mail.attempts, 6)), `Email provider returned HTTP ${response.status}. ${retry ? 'Retry scheduled.' : 'Check the verified sender and Resend configuration.'}`, mail.id);
+      const result = await sendApprovalEmail(config.provider, endpoint, `teacherflow-approval/${mail.id}`, payload, mail.first_attempt ?? now, now, send);
+      if (result.status !== 'accepted') {
+        beta.db.prepare('UPDATE approval_email_outbox SET status=?,lease=0,next=?,error=? WHERE id=?').run(result.status === 'retry' ? 'queued' : 'review', now + (result.delay ?? Math.min(3600000, 60000 * 2 ** Math.min(mail.attempts, 6))), result.error, mail.id);
+        // The relay checks its durable receipt before quota. A quota response proves no send was attempted,
+        // so waiting for tomorrow must not consume the uncertain-delivery retry window.
+        if (result.notAttempted) beta.db.prepare('UPDATE approval_email_outbox SET first_attempt=NULL WHERE id=?').run(mail.id);
         continue;
       }
-      const data = await response.json() as {id?: string};
-      if (typeof data.id !== 'string' || !data.id) throw Error('Missing provider receipt');
-      beta.db.prepare("UPDATE approval_email_outbox SET status='accepted',lease=0,error=NULL,provider_id=? WHERE id=?").run(data.id, mail.id);
+      beta.db.prepare("UPDATE approval_email_outbox SET status='accepted',lease=0,error=NULL,provider_id=? WHERE id=?").run(result.id, mail.id);
     } catch {
       beta.db.prepare("UPDATE approval_email_outbox SET lease=0,next=?,error='Provider response uncertain; retry uses the same email idempotency key.' WHERE id=?").run(now + Math.min(3600000, 60000 * 2 ** Math.min(mail.attempts, 6)), mail.id);
     }

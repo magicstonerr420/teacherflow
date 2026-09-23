@@ -1,6 +1,6 @@
 # TeacherFlow approval-email setup
 
-The approval flow is implemented and tested. Actual sending is not configured yet.
+The approval flow is implemented and tested. Actual sending is not configured yet. For the domain-free Gmail option, see [Gmail approval-email setup](gmail-approval-emails.md). The instructions below are for Resend; leave TEACHERFLOW_APPROVAL_EMAIL_PROVIDER unset or set it to resend for that provider.
 
 1. Add a domain or subdomain you own in Resend, add the DNS records Resend supplies, and wait for its verified status. A personal Gmail address or TeacherFlow's shared onrender.com hostname cannot be used as your owned sending domain. See [Resend's verified-domain instructions](https://resend.com/docs/dashboard/domains/introduction).
 2. Create a Resend API key with permission to send from that domain.

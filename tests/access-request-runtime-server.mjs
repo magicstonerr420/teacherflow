@@ -9,7 +9,7 @@ Object.assign(process.env, {
   TEACHERFLOW_BETA: 'true', TEACHERFLOW_OWNER_USER_ID: 'access-owner',
   TEACHERFLOW_BETA_DB: resolve(directory, 'beta.sqlite'), TEACHERFLOW_MANAGEMENT_DB: resolve(directory, 'management.sqlite'),
   TEACHERFLOW_BUDGET_DB: resolve(directory, 'budget.sqlite'), SUPABASE_URL: 'https://access-fixture.supabase.co',
-  SUPABASE_PUBLISHABLE_KEY: 'fixture-only', RESEND_API_KEY: '', OPENROUTER_API_KEY: '', LOVABLE_API_KEY: '',
+  SUPABASE_PUBLISHABLE_KEY: 'fixture-only', TEACHERFLOW_APPROVAL_EMAIL_PROVIDER: 'resend', RESEND_API_KEY: '', OPENROUTER_API_KEY: '', LOVABLE_API_KEY: '',
 });
 globalThis.fetch = async (input, init) => {
   const url = String(input instanceof Request ? input.url : input);

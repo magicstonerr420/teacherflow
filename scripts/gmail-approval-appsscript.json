@@ -1,0 +1,6 @@
+{
+  "timeZone": "America/Santo_Domingo",
+  "runtimeVersion": "V8",
+  "exceptionLogging": "NONE",
+  "oauthScopes": ["https://www.googleapis.com/auth/script.send_mail"]
+}
