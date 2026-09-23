@@ -1,4 +1,5 @@
 import { withBetaBudget } from './beta-budget.server.ts';
+import { observeGeneration } from './management-store.server.ts';
 import {alternateWorksheetIssue} from './worksheet-versions.ts';
 import { lessonImagePrompts } from './image-plan.ts';
 import { DatabaseSync } from 'node:sqlite';
@@ -9,11 +10,11 @@ import { dirname } from 'node:path';
 const phases = ['foundation','student','teacher','studentB','teacherB','presentation','activity','assessment','differentiation'];
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 const stable = (value: any): string => JSON.stringify(value, (_key, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
-type Job = { attempts: number; lease?: string; until?: number; value?: any };
+type Job = { attempts: number; retryCredits?: number; lease?: string; until?: number; value?: any };
 type Run = { request: any; parts: Record<string, Job>; images: Record<string, Job>; complete: boolean; alternateRepair?: Job; credited?: boolean; recording?: Job & { fingerprint?: string; choice?: string } };
 type Teacher = { runs: Record<string, Run>; email?: string; name?:string; joinedAt?: string; lastSeenAt?: string; revokedAt?: string };
 type Invite = { digest: string; user?: string; code?: string; label?: string; claimedAt?: string; deactivatedAt?: string };
-type State = { invites: Invite[]; teachers: Record<string, Teacher>; usedEmails?:Record<string,string>; allowanceResets?:Record<string,boolean>; inviteCreations?: Record<string,number>; accessHistory?: { action: string; actor: string; user?: string; seat: number; at: string }[] };
+type State = { managementActions?:Record<string,boolean>; invites: Invite[]; teachers: Record<string, Teacher>; usedEmails?:Record<string,string>; allowanceResets?:Record<string,boolean>; inviteCreations?: Record<string,number>; accessHistory?: { action: string; actor: string; user?: string; seat: number; at: string }[] };
 const revision = (invite: Invite) => hash('beta-seat:' + invite.digest + (invite.deactivatedAt??''));
 const allowanceRevision = (teacher: Teacher|undefined) => hash(stable(Object.entries(teacher?.runs??{}).map(([key,run])=>[key,!!run.credited,run.complete])));
 const emailKey = (email:string) => hash(email.trim().toLowerCase());
@@ -104,7 +105,7 @@ export class BetaStore {
         return {seat:index+1,revision:revision(invite),active:!invite.deactivatedAt,label:invite.label??'',user:invite.user??null,email:t?.email??null,name:t?.name||null,
           claimedAt:invite.claimedAt??t?.joinedAt??null,lastSeenAt:t?.lastSeenAt??null,
           remaining:invite.user?Math.max(0,3-counted.length):3,completed:counted.filter(r=>r.complete).length,
-          allowanceRevision:allowanceRevision(t),pending:runs.filter(r=>!r.complete).length,
+          allowanceRevision:allowanceRevision(t),pending:runs.filter(r=>!r.complete&&!r.credited).length,
           code:invite.user||invite.deactivatedAt?null:invite.code??null};
       }),
       removed:Object.entries(s.teachers).filter(([,t])=>t.revokedAt).map(([user,t])=>({user,email:t.email??null,name:t.name||null,revokedAt:t.revokedAt!,savedLessons:Object.keys(t.runs).length})),
@@ -148,7 +149,7 @@ export class BetaStore {
   resetAllowance(user: string) {
     return this.transact(s=>{
       const t=this.teacher(s,user);
-      if(Object.values(t.runs).some(r=>!r.complete))throw new Error('Finish any pending lessons before resetting the allowance.');
+      if(Object.values(t.runs).some(r=>!r.complete&&!r.credited))throw new Error('Finish any pending lessons before resetting the allowance.');
       for(const run of Object.values(t.runs))run.credited=true;
     });
   }
@@ -163,7 +164,7 @@ export class BetaStore {
       if(invite.user===actor)throw new Error('The owner does not need a lesson allowance reset.');
       const teacher=this.teacher(s,data.user);
       if(allowanceRevision(teacher)!==data.allowanceRevision)throw new Error('This allowance changed. Refresh teachers before resetting.');
-      if(Object.values(teacher.runs).some(run=>!run.complete))throw new Error('Finish any pending lessons before resetting the allowance.');
+      if(Object.values(teacher.runs).some(run=>!run.complete&&!run.credited))throw new Error('Finish any pending lessons before resetting the allowance.');
       for(const run of Object.values(teacher.runs))run.credited=true;
       (s.allowanceResets??={})[operation]=true;
       (s.accessHistory??=[]).push({action:'reset-allowance',actor,user:data.user,seat:data.seat,at:new Date().toISOString()});
@@ -185,7 +186,8 @@ export class BetaStore {
       const job = run.parts[stage] ??= {attempts:0};
       if (job.value !== undefined) return {cached:job.value};
       if ((job.until ?? 0)>Date.now()) throw new Error('This lesson part is already running. Please wait before retrying.');
-      if (job.attempts >= 3) throw new Error('This part reached the beta retry limit. Contact the beta organizer; your progress is saved.');
+      if (job.attempts >= 3 && !(job.retryCredits ?? 0)) throw new Error('This part reached the beta retry limit. Contact the beta organizer; your progress is saved.');
+      if (job.attempts >= 3) job.retryCredits!--;
       const prior: any = {};
       for (const p of phases.slice(0,index)) {
         const patch = run.parts[p]!.value;
@@ -197,6 +199,7 @@ export class BetaStore {
       return {lease:job.lease,prior};
     });
     if ('cached' in reservation) return reservation.cached;
+    return observeGeneration({user,request,part:stage}, async () => {
     try {
       const value = await withBetaBudget(user, () => generate(reservation.prior));
       this.transact(s => {
@@ -211,6 +214,7 @@ export class BetaStore {
       this.transact(s => {const job=this.retainedTeacher(s,user).runs[key]!.parts[stage]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});
       throw e;
     }
+    });
   }
   /** Read-only recovery after a dropped response: never reserve a slot or buy an image. */
   imageProgress(user: string, request: any, prompt: string) {
@@ -233,16 +237,19 @@ export class BetaStore {
       const job=run.images[imageKey] ??= {attempts:0};
       if(job.value!==undefined) return {cached:job.value as string};
       if((job.until??0)>Date.now()) throw new Error('This illustration is already running. Please wait.');
-      if(job.attempts>=2) throw new Error('This illustration reached the beta retry limit. Export without images or contact the organizer.');
+      if(job.attempts>=2 && !(job.retryCredits ?? 0)) throw new Error('This illustration reached the beta retry limit. Export without images or contact the organizer.');
+      if(job.attempts>=2)job.retryCredits!--;
       job.attempts++;job.lease=randomUUID();job.until=Date.now()+5*60_000;
       return {lease:job.lease};
     });
     if('cached' in reservation) return reservation.cached!;
+    return observeGeneration({user,request,part:'illustration',detail:prompt,target:imageKey}, async () => {
     try {
       const value=await withBetaBudget(user, generate);
       this.transact(s=>{const job=this.retainedTeacher(s,user).runs[key]!.images[imageKey]!;if(job.lease!==reservation.lease)throw new Error('Image request expired.');job.value=value;delete job.until;delete job.lease;});
       return value;
     }catch(e){this.transact(s=>{const job=this.retainedTeacher(s,user).runs[key]!.images[imageKey]!;if(job.lease===reservation.lease){delete job.until;delete job.lease;}});throw e;}
+    });
   }
   /** Repair an existing duplicate B without consuming a fourth lesson or reopening other AI work. */
   async repairAlternate(user:string, request:any, generate:(lesson:any)=>Promise<any>) {
@@ -253,10 +260,12 @@ export class BetaStore {
       const run=this.teacher(s,user).runs[key]!;
       const job=run.alternateRepair??={attempts:0};
       if((job.until??0)>Date.now())throw new Error('Version B repair is already running.');
-      if(job.attempts>=2)throw new Error('Version B repair needs organizer assistance after two unsuccessful attempts. Your lesson is retained.');
+      if(job.attempts>=2 && !(job.retryCredits??0))throw new Error('Version B repair needs organizer assistance after two unsuccessful attempts. Your lesson is retained.');
+      if(job.attempts>=2)job.retryCredits!--;
       job.attempts++;job.lease=randomUUID();job.until=Date.now()+10*60_000;
       return job.lease;
     });
+    return observeGeneration({user,request,part:'alternate'}, async () => {
     try {
       const patch=await withBetaBudget(user, () => generate(lesson));
       if(!patch?.worksheet?.studentB || alternateWorksheetIssue(lesson.worksheet.student,patch.worksheet.studentB))throw new Error('Version B repair did not produce a distinct worksheet.');
@@ -270,6 +279,7 @@ export class BetaStore {
       });
       return {worksheet:{...lesson.worksheet,studentB:patch.worksheet.studentB,teacherB:patch.worksheet.teacherB}};
     }catch(e){this.transact(s=>{const job=this.retainedTeacher(s,user).runs[key]!.alternateRepair!;if(job.lease===lease){delete job.until;delete job.lease;}});throw e;}
+    });
   }
   /** One recording per owned lesson, shared by every voice and script fingerprint. */
   async recording(user: string, request: any, fingerprint: string, choice: string, load: (id: string) => any, generate: (choice: string) => Promise<any>) {
@@ -291,7 +301,8 @@ export class BetaStore {
       }
       if ((job.until ?? 0) > Date.now()) throw new Error('This lesson recording is already running. Wait, then load the saved recording.');
       if (job.fingerprint && job.fingerprint !== fingerprint) throw new Error('This beta lesson already reserved its recording for a saved script. Contact the organizer to replace it.');
-      if (job.attempts >= 3) throw new Error('This recording reached the beta retry limit. Your script is saved; contact the organizer.');
+      if (job.attempts >= 3 && !(job.retryCredits ?? 0)) throw new Error('This recording reached the beta retry limit. Your script is saved; contact the organizer.');
+      if (job.attempts >= 3) job.retryCredits!--;
       job.attempts++; job.lease = randomUUID(); job.until = Date.now() + 10 * 60_000;
       job.fingerprint = fingerprint; job.choice ??= choice;
       return { lease: job.lease, choice: job.choice };
@@ -301,6 +312,7 @@ export class BetaStore {
       this.retainReading(user, request, saved => ({ ...saved, listening: { ...saved.listening, audio: value.audio } }));
       return value;
     }
+    return observeGeneration({user,request,part:'recording',detail:reservation.choice,target:fingerprint}, async () => {
     try {
       const value = await withBetaBudget(user, () => generate(reservation.choice));
       this.transact(s => {
@@ -317,6 +329,36 @@ export class BetaStore {
       });
       throw error;
     }
+    });
+  }
+  /** Metadata only: never return private invitation tokens or generated lesson contents. */
+  managementProgress() {
+    const s = JSON.parse((this.db.prepare('SELECT body FROM beta_state WHERE id=1').get() as any).body) as State;
+    return {
+      teachers:Object.entries(s.teachers).map(([user,t]) => ({user,name:t.name??'',email:t.email??'',revoked:!!t.revokedAt})),
+      lessons:Object.entries(s.teachers).flatMap(([user,t]) => Object.entries(t.runs).map(([key,r]) => ({user,key,request:r.request,complete:r.complete,credited:!!r.credited,
+        steps:phases.map(part=>({part,complete:r.parts[part]?.value!==undefined,attempts:r.parts[part]?.attempts??0,running:(r.parts[part]?.until??0)>Date.now()}))}))),
+      history:s.accessHistory??[],
+    };
+  }
+  managementRecovery(actor:string, input:{operation:string;user:string;lesson:string;action:'allow_retry'|'restore_slot';part:string;target:string}) {
+    return this.transact(s=>{
+      if (!actor) throw Error('Owner sign-in is required.');
+      const actions=s.managementActions??={}; if(actions[input.operation])return;
+      const run=this.teacher(s,input.user).runs[input.lesson]; if(!run)throw Error('This lesson no longer exists.');
+      const all=[...Object.values(run.parts),...Object.values(run.images),run.recording,run.alternateRepair].filter(Boolean) as Job[];
+      if(all.some(j=>(j.until??0)>Date.now()))throw Error('This lesson still has generation in progress. Wait before changing its allowance.');
+      if(input.action==='restore_slot') {
+        if(run.complete)throw Error('A completed lesson does not qualify for a failed-lesson slot return.');
+        run.credited=true;
+      }else{
+        const job=input.part==='illustration'?run.images[input.target]:input.part==='recording'?run.recording:input.part==='alternate'?run.alternateRepair:run.parts[input.part];
+        if(!job||job.value!==undefined)throw Error('This part has already completed or has no failed attempt to recover.');
+        job.retryCredits=Math.max(job.retryCredits??0,1);
+      }
+      actions[input.operation]=true;
+      (s.accessHistory??=[]).push({action:input.action,actor,user:input.user,seat:s.invites.findIndex(i=>i.user===input.user)+1,at:new Date().toISOString()});
+    });
   }
   readingLesson(user: string, request: any) {
     return this.transact(s => {

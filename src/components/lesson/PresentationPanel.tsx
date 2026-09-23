@@ -1,3 +1,4 @@
+import { trackClientGeneration } from '@/lib/generation-monitor';
 import { isYoungA1, pictureUrl } from "@/lib/young-learners";
 import { americanEnglishContent } from "@/lib/american-english";
 import { youngSlidePages } from "@/lib/young-slides";
@@ -199,6 +200,7 @@ export function PresentationActions({
     setFailed(false);
     setBlob(null);
     try {
+      await trackClientGeneration(request, 'export', async () => {
       setStatus("Loading PowerPoint export tools…");
       await loadPresentationTools();
       let images = { ...imagePreviews };
@@ -212,6 +214,7 @@ export function PresentationActions({
       const built = await buildPresentationBlob(lesson, request, images);
       setBlob(built);
       setOmittedCards([]);
+      });
     } catch (error) {
       setImageFailure(error instanceof IllustrationGenerationError);
       if (error instanceof IllustrationGenerationError) setImagePreviews(previous => ({ ...previous, ...error.images }));
@@ -231,7 +234,7 @@ export function PresentationActions({
     try {
       const images = withAvailable ? imagePreviews : {};
       const missing = missingFlashcardPictures(lesson, request, images);
-      setBlob(await buildPresentationBlob(lesson, request, images, { omitMissingFlashcards }));
+      setBlob(await trackClientGeneration(request, 'export', () => buildPresentationBlob(lesson, request, images, { omitMissingFlashcards })));
       setOmittedCards(omitMissingFlashcards ? missing.map(card => card.word) : []);
       setFailed(false);
     } catch (error) {

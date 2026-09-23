@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { consumeManagementRetry, observeGeneration } from './management-store.server.ts';
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
@@ -83,9 +84,10 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
       if (row?.result) { db.exec("COMMIT"); const saved = JSON.parse(row.result); return saved.status === 'ready' ? { ...saved, value: validateReading(saved.value, request.level) } : saved; }
       if (row?.until > Date.now()) { db.exec("COMMIT"); return { status: "failed", error: "This reading is already generating. Wait before reopening it." }; }
       const count = (db.prepare("SELECT COUNT(*) AS n FROM readings WHERE family=?").get(family) as any).n;
-      if (limited && !row && count >= 3) { db.exec("COMMIT"); return { status: "failed", error: "The beta reading retry limit was reached. Your lesson is retained; contact the organizer." }; }
+      if (limited && !row && count >= 3 && !consumeManagementRetry(scope,'reading',family,key)) { db.exec("COMMIT"); return { status: "failed", error: "The beta reading retry limit was reached. Your lesson is retained; contact the organizer." }; }
       db.prepare("INSERT INTO readings VALUES (?,?,NULL,?,?) ON CONFLICT(id) DO UPDATE SET lease=excluded.lease, until=excluded.until").run(key, family, lease, Date.now() + 600_000);
       db.exec("COMMIT");
+      const generate = async (): Promise<ReadingState> => {
       let result: ReadingState;
       try {
         let passage = passageSchema.parse(americanEnglishContent(await requestReadingOpenRouter({
@@ -128,8 +130,11 @@ export async function generateReading(request: LessonRequestInput, lesson: Parti
       } catch (error) {
         result = { status: "failed", error: `Reading generation failed: ${error instanceof Error ? error.message : "DeepSeek did not return a complete reading."}` };
       }
-      db.prepare("UPDATE readings SET result=?, lease=NULL, until=NULL WHERE id=? AND lease=?").run(JSON.stringify(result), key, lease);
+      const saved = db.prepare("UPDATE readings SET result=?, lease=NULL, until=NULL WHERE id=? AND lease=?").run(JSON.stringify(result), key, lease);
+      if (!saved.changes) throw Error("The reading request expired. Reopen the saved activity.");
       return result;
+      };
+      return await (limited ? observeGeneration({user:scope,request,part:'reading',target:family},generate) : generate());
     } finally { db.close(); }
   };
   const promise = work();

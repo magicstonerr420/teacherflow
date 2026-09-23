@@ -3,6 +3,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { recordProvider } from './management-store.server.ts';
 
 // Invoked only after server-side invitation/ownership checks. Owner calls have no scope.
 const context = new AsyncLocalStorage<string>();
@@ -32,6 +33,13 @@ export class BetaBudget {
     const sums = this.db.prepare("SELECT COALESCE(SUM(CASE WHEN charged IS NOT NULL THEN charged ELSE 0 END),0) AS charged, COALESCE(SUM(CASE WHEN charged IS NULL THEN reserved ELSE 0 END),0) AS held FROM budget_calls").get() as { charged: number; held: number };
     return { limitUsd: round.ceiling / 1e6, accountedUsd: sums.charged / 1e6, reservedUsd: sums.held / 1e6,
       remainingUsd: Math.max(0, (round.ceiling - sums.charged - sums.held) / 1e6), paused: !!round.paused };
+  }
+  breakdown() {
+    return this.db.prepare(`SELECT scope AS user,kind,model,COUNT(*) AS requests,
+      SUM(CASE WHEN charged IS NOT NULL THEN charged ELSE 0 END)/1000000.0 AS confirmedUsd,
+      SUM(CASE WHEN charged IS NULL THEN reserved ELSE 0 END)/1000000.0 AS reservedUsd,
+      SUM(CASE WHEN state='uncertain' THEN 1 ELSE 0 END) AS uncertain
+      FROM budget_calls GROUP BY scope,kind,model ORDER BY confirmedUsd DESC`).all() as {user:string;kind:string;model:string;requests:number;confirmedUsd:number;reservedUsd:number;uncertain:number}[];
   }
   reserve(scope: string, requestKey: string, kind: string, model: string, usd: number) {
     const amount = micros(usd);
@@ -145,8 +153,10 @@ export async function budgetFetch(url: string, options: RequestInit): Promise<Re
   try {
     id = budget.reserve(scope, hash(`${scope}:${url}:${payload}`), estimate.kind, body.model, estimate.reserve);
     let response: Response;
-    try { response = await fetch(url, { ...options, body: payload }); }
-    catch {
+    const started=Date.now();
+    try { response = await fetch(url, { ...options, body: payload }); recordProvider(body.model,estimate.kind,response.status,Date.now()-started); }
+    catch (error) {
+      recordProvider(body.model,estimate.kind,undefined,Date.now()-started,error);
       budget.settle(id);
       throw new BetaBudgetError('The provider connection was interrupted and the charge is uncertain. Your progress is saved. Contact the organizer before retrying this request.');
     }

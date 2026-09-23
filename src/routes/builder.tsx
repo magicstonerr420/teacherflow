@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { AlertCircle, ListPlus, Save, Sparkles, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { trackClientGeneration } from '@/lib/generation-monitor';
 
 import { AppShell } from "@/components/AppShell";
 import { QuickStartTip } from '@/components/QuickStartTip';
@@ -163,9 +164,9 @@ function Builder() {
         const stage = PHASES[i]!.key;
         activePart = PHASES[i]!.labels[0];
         setPhase(stage);
-        const result = (await runStage({
+        const result = (await trackClientGeneration(request,stage,()=>runStage({
           data: { request, stage, prior: assembled },
-        })) as Partial<LessonPackage>;
+        }))) as Partial<LessonPackage>;
         assembled = mergeLessonPatch(assembled, result);
         checkpoint.current = { request: requestKey, completed: i + 1, lesson: assembled };
         setCompleted(i + 1);

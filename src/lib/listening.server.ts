@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { consumeManagementRetry, observeGeneration } from './management-store.server.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -89,7 +90,7 @@ function database() {
   return db;
 }
 const pending = new Map<string, Promise<unknown>>();
-async function cached<T>(id: string, scope: string, limited: boolean, run: () => Promise<T>): Promise<T> {
+async function cached<T>(id: string, scope: string, limited: boolean, run: () => Promise<T>, part = 'listening', retryTarget = id, request?: LessonRequestInput): Promise<T> {
   const pendingKey = `${process.env['TEACHERFLOW_LISTENING_DB'] || process.env['TEACHERFLOW_BETA_DB'] || 'local'}:${id}`;
   const active = pending.get(pendingKey);
   if (active) return active as Promise<T>;
@@ -100,9 +101,10 @@ async function cached<T>(id: string, scope: string, limited: boolean, run: () =>
       const row = db.prepare('SELECT * FROM listening_jobs WHERE id=? AND scope=?').get(id, scope) as { result?: string; until?: number; attempts: number } | undefined;
       if (row?.result) { db.exec('COMMIT'); return JSON.parse(row.result) as T; }
       if ((row?.until ?? 0) > Date.now()) { db.exec('COMMIT'); throw new Error('This listening item is already generating. Wait a moment, then reopen it.'); }
-      if (limited && (row?.attempts ?? 0) >= 3) { db.exec('COMMIT'); throw new Error('This listening item reached the beta retry limit. Your existing materials are saved; contact the organizer.'); }
+      if (limited && (row?.attempts ?? 0) >= 3 && !consumeManagementRetry(scope,part,retryTarget,`${id}:${row?.attempts}`)) { db.exec('COMMIT'); throw new Error('This listening item reached the beta retry limit. Your existing materials are saved; contact the organizer.'); }
       db.prepare('INSERT INTO listening_jobs (id,scope,attempts,lease,until) VALUES (?,?,1,?,?) ON CONFLICT(id) DO UPDATE SET attempts=attempts+1,lease=excluded.lease,until=excluded.until').run(id, scope, lease, Date.now() + 600_000);
       db.exec('COMMIT');
+      const execute = async () => {
       try {
         const result = await run();
         const saved = db.prepare('UPDATE listening_jobs SET result=?,lease=NULL,until=NULL WHERE id=? AND scope=? AND lease=?').run(JSON.stringify(result), id, scope, lease);
@@ -112,6 +114,8 @@ async function cached<T>(id: string, scope: string, limited: boolean, run: () =>
         db.prepare('UPDATE listening_jobs SET lease=NULL,until=NULL WHERE id=? AND scope=? AND lease=?').run(id, scope, lease);
         throw error;
       }
+      };
+      return await (limited && request ? observeGeneration({user:scope,request,part,target:retryTarget},execute) : execute());
     } finally { db.close(); }
   };
   const promise = work(); pending.set(pendingKey, promise);
@@ -134,7 +138,7 @@ export async function generateListening(request: LessonRequestInput, lesson: Par
     if (isNoTechRequest(request.technologyAvailable)) result.teacherGuidance = result.teacherGuidance.replace('Read or play the story', 'Read the story aloud');
     return result;
   };
-  const result = await cached<ListeningState>(id, scope, limited, async () => {
+  const generate = async (): Promise<ListeningState> => {
     const args = { system: LISTENING_SYSTEM, schemaName: 'teacherflow_listening', schema: zodToJsonSchema(listeningSchema, { $refStrategy: 'none' }) };
     let value = await requestReadingOpenRouter({ ...args, input: JSON.stringify(context) });
     let issue = '';
@@ -154,7 +158,8 @@ export async function generateListening(request: LessonRequestInput, lesson: Par
     }
     try { return { status: 'ready' as const, value: validate(value), fingerprint: id }; }
     catch { throw new Error(CONTENT_ERROR); }
-  });
+  };
+  const result = await cached<ListeningState>(id, scope, limited, generate, 'listening', id, request);
   try { return result.status === 'ready' ? { ...result, value: validate(result.value) } : result; }
   catch { throw new Error(CONTENT_ERROR); }
 }
@@ -166,7 +171,7 @@ export async function generateListeningAudio(fingerprint: string, scope: string,
     const audio = await generateSpeech(script.value.script, choice);
     return { audio: { id, model: audio.model, voice: audio.voice, choice, mime: 'audio/mpeg', accent: 'en-US' } as ListeningAudio,
       dataUrl: `data:audio/mpeg;base64,${Buffer.from(audio.bytes).toString('base64')}` };
-  });
+  }, 'recording', fingerprint);
 }
 export function getListeningAudio(id: string, scope: string) {
   const result = lookup<{ audio: ListeningAudio; dataUrl: string }>(id, scope);

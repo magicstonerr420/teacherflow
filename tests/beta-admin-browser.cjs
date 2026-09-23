@@ -54,7 +54,12 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
    }
   `}));
   await page.route('**/src/lib/teacher-tools.functions.ts*',r=>r.fulfill({contentType:'application/javascript',body:'export const listTeacherFeedback=async()=>({entries:[],more:false});'}));
-  async function mount(owner=true,revoked=false,path='/beta-management',signedOut=false){
+  await page.route('**/src/lib/management.functions.ts*',r=>r.fulfill({contentType:'application/javascript',body:`
+   export const loadManagement=async()=>({operations:[],teachers:[],lessons:[],notes:[],audit:[],history:[],budget:{limitUsd:10,remainingUsd:9.8,accountedUsd:.2,reservedUsd:0,paused:false},spending:[],settings:{emailEnabled:false,dailySummary:false},email:{configured:false,to:'owner@example.test',missing:['RESEND_API_KEY','TEACHERFLOW_ALERT_FROM']},alerts:[]});
+   export const manageGeneration=async()=>{throw Error('Unexpected generation-management write');};
+   export const saveSupportNote=manageGeneration,saveManagementNotifications=manageGeneration;
+  `}));
+  async function mount(owner=true,revoked=false,path='/beta-management#teachers',signedOut=false){
    await page.goto(origin+'/beta-admin-test');
    await page.evaluate(async({owner,revoked,path,signedOut})=>{
     window.owner=owner;window.revoked=revoked;window.signedOut=signedOut;window.profileWrites=0;window.profileUser={id:owner?'owner-id':'teacher-id',email:'teacher@example.test',user_metadata:{full_name:'Test Teacher'}};window.lists=0;window.mutations=0;window.creates=0;window.resets=0;window.operations={};
@@ -63,8 +68,8 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
    },{owner,revoked,path,signedOut});
   }
   await mount();
-  await page.getByRole('heading',{name:'Beta management',exact:true}).waitFor();
-  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Admin',exact:true}).waitFor();
+  await page.getByRole('heading',{name:'Management',exact:true}).waitFor();
+  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Management',exact:true}).waitFor();
   assert.ok((await page.getByRole('region',{name:'Sharing invitations'}).innerText()).includes('WhatsApp'));
   const panel=page.getByRole('region',{name:'Beta teacher controls'});
   await panel.getByText('1 active teachers · 2 unused invitations',{exact:true}).waitFor();
@@ -93,7 +98,10 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   await first.getByRole('button',{name:'Copy invitation link',exact:true}).click();
   assert.match(await page.evaluate(()=>window.copiedInvitation),/\/builder#invite=fake-replacement-link$/);
   assert.ok((await panel.innerText()).includes('Removed teachers (1)'));
-  assert.ok((await page.getByRole('region',{name:'Beta budget'}).innerText()).includes('$9.80 available'));
+  await page.getByRole('tab',{name:'Budget',exact:true}).click();
+  await page.getByRole('region',{name:'Beta budget'}).getByText('$9.80',{exact:true}).waitFor();
+  await page.getByRole('tab',{name:'Teachers',exact:true}).click();
+  await panel.getByText('0 active teachers · 3 unused invitations',{exact:true}).waitFor();
   await fs.mkdir('.local-runtime/teacher-admin/ui',{recursive:true});
   await page.screenshot({path:'.local-runtime/teacher-admin/ui/owner-desktop.png',fullPage:true});
   // Recover a successful rotation even if the response is lost.
@@ -123,7 +131,10 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   await panel.getByRole('button',{name:'Retry create invitation'}).click();
   await panel.getByText('0 active teachers · 5 unused invitations',{exact:true}).waitFor();
   assert.equal(await page.evaluate(()=>window.roster.seats.length),5,'Creation retry recovers same invitation');
-  assert.ok((await page.getByRole('region',{name:'Beta budget'}).innerText()).includes('$9.80 available'));
+  await page.getByRole('tab',{name:'Budget',exact:true}).click();
+  await page.getByRole('region',{name:'Beta budget'}).getByText('$9.80',{exact:true}).waitFor();
+  await page.getByRole('tab',{name:'Teachers',exact:true}).click();
+  await panel.getByText('0 active teachers · 5 unused invitations',{exact:true}).waitFor();
   await page.screenshot({path:'.local-runtime/teacher-admin/ui/owner-desktop.png',fullPage:true});
   await page.setViewportSize({width:390,height:844});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'No horizontal overflow on phones');
@@ -142,7 +153,7 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   await page.getByRole('region',{name:'Owner workspace'}).waitFor();
   assert.equal(await panel.count(),0,'Builder contains no teacher management form');
   assert.equal(await page.getByRole('button',{name:'Create invitation',exact:true}).count(),0);
-  await go('Teachers & invitations','Admin');
+  await go('Teachers & invitations','Management');
   await panel.getByText('0 active teachers · 5 unused invitations',{exact:true}).waitFor();
   assert.equal(await page.evaluate(()=>window.testRouter.state.location.pathname),'/beta-management');
   // Profiles are available to teachers as well as the owner, and save only profile fields.
@@ -173,7 +184,7 @@ const origin=process.env.TEST_ORIGIN||'http://127.0.0.1:3003';
   await mount(false,false,'/builder');
   await page.getByRole('region',{name:'Teacher beta access'}).waitFor();
   assert.equal(await panel.count(),0);assert.equal(await page.evaluate(()=>window.lists),0,'Teacher UI never loads private roster');
-  assert.equal(await nav.getByRole('button',{name:'Admin',exact:true}).count(),0);
+  assert.equal(await nav.getByRole('button',{name:'Management',exact:true}).count(),0);
   await go('My profile','Account');
   await profile.getByLabel('Full name',{exact:true}).waitFor();
   await mount(false,false,'/beta-management');

@@ -9,10 +9,13 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
 
 const adminItems = [
+  {label:'Overview',hash:'overview'},
   {label:'Teachers & invitations',hash:'teachers'},
   {label:'Lesson allowances',hash:'lesson-allowances'},
-  {label:'Teacher feedback',hash:'feedback'},
-  {label:'Beta budget',hash:'budget'},
+  {label:'Generation activity',hash:'activity'},
+  {label:'Issues',hash:'issues'},
+  {label:'Budget',hash:'budget'},
+  {label:'Feedback',hash:'feedback'},
 ] as const;
 const activeProps = {className:'bg-accent text-accent-foreground', 'aria-current':'page' as const};
 
@@ -60,8 +63,8 @@ export function SiteNavigation() {
       {primaryLinks()}
       {isAuthenticated ? <>
         {beta?.owner && <DropdownMenu>
-          <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" className={location.pathname==='/beta-management'?'bg-accent':''}><ShieldCheck className="size-4"/>Admin<ChevronDown className="size-3.5"/></Button></DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56" aria-label="Admin">
+          <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" className={location.pathname==='/beta-management'?'bg-accent':''}><ShieldCheck className="size-4"/>Management<ChevronDown className="size-3.5"/></Button></DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56" aria-label="Management">
             {adminItems.map(item=><DropdownMenuItem key={item.hash} asChild><Link to="/beta-management" hash={item.hash}>{item.label}</Link></DropdownMenuItem>)}
           </DropdownMenuContent>
         </DropdownMenu>}
@@ -92,7 +95,7 @@ export function SiteNavigation() {
           <div className="flex flex-col gap-1">{primaryLinks(true)}</div>
           {isAuthenticated ? <>
             {beta?.owner && <section aria-labelledby="mobile-admin" className="border-t pt-4">
-              <h2 id="mobile-admin" className="mb-2 flex items-center gap-2 px-3 text-sm font-semibold text-muted-foreground"><ShieldCheck className="size-4"/>Admin</h2>
+              <h2 id="mobile-admin" className="mb-2 flex items-center gap-2 px-3 text-sm font-semibold text-muted-foreground"><ShieldCheck className="size-4"/>Management</h2>
               {adminItems.map(item=><Button key={item.hash} variant="ghost" size="sm" className="w-full justify-start py-5" asChild><Link to="/beta-management" hash={item.hash} onClick={closeAfterNavigation}>{item.label}</Link></Button>)}
             </section>}
             <section aria-labelledby="mobile-account" className="space-y-1 border-t pt-4">

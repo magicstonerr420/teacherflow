@@ -1,4 +1,5 @@
 import "./lib/error-capture";
+import { startManagementWorker } from './lib/management-alerts.server';
 import { configureHostedAuth } from "./lib/hosting-env.server";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
@@ -49,6 +50,7 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       configureHostedAuth();
+      startManagementWorker();
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       if (response.headers.get("content-type")?.includes("text/html")) {

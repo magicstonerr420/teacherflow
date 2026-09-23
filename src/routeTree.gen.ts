@@ -17,6 +17,7 @@ import { Route as BuilderRouteImport } from './routes/builder'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as QuickStartRouteImport } from './routes/quick-start'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
+import { Route as ApiGenerationEventsRouteImport } from './routes/api/generation-events'
 import { Route as LessonsIndexRouteImport } from './routes/lessons.index'
 import { Route as LessonsIdRouteImport } from './routes/lessons.$id'
 
@@ -60,6 +61,11 @@ const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
   path: '/api/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGenerationEventsRoute = ApiGenerationEventsRouteImport.update({
+  id: '/api/generation-events',
+  path: '/api/generation-events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LessonsIndexRoute = LessonsIndexRouteImport.update({
   id: '/lessons/',
   path: '/lessons/',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/lessons/': typeof LessonsIndexRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/lessons': typeof LessonsIndexRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/quick-start': typeof QuickStartRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/generation-events': typeof ApiGenerationEventsRoute
   '/lessons/$id': typeof LessonsIdRoute
   '/lessons/': typeof LessonsIndexRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quick-start'
     | '/api/generate-image'
+    | '/api/generation-events'
     | '/lessons/$id'
     | '/lessons/'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quick-start'
     | '/api/generate-image'
+    | '/api/generation-events'
     | '/lessons/$id'
     | '/lessons'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quick-start'
     | '/api/generate-image'
+    | '/api/generation-events'
     | '/lessons/$id'
     | '/lessons/'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   QuickStartRoute: typeof QuickStartRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
+  ApiGenerationEventsRoute: typeof ApiGenerationEventsRoute
   LessonsIdRoute: typeof LessonsIdRoute
   LessonsIndexRoute: typeof LessonsIndexRoute
 }
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/generation-events': {
+      id: '/api/generation-events'
+      path: '/api/generation-events'
+      fullPath: '/api/generation-events'
+      preLoaderRoute: typeof ApiGenerationEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lessons/': {
       id: '/lessons/'
       path: '/lessons'
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   QuickStartRoute: QuickStartRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
+  ApiGenerationEventsRoute: ApiGenerationEventsRoute,
   LessonsIdRoute: LessonsIdRoute,
   LessonsIndexRoute: LessonsIndexRoute,
 }

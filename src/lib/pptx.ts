@@ -1,3 +1,4 @@
+import { trackClientGeneration } from '@/lib/generation-monitor';
 import {repairDrawingParagraphs} from './pptx-xml';
 import { generationErrorMessage, isInterruptedResponse } from './generation-errors';
 import { recoverSavedImage } from './image-recovery';
@@ -770,6 +771,7 @@ export async function generateSlideImages(
         return json;
       };
       try {
+        await trackClientGeneration(request, 'illustration', async () => {
         let json;
         try { json = await send(); }
         catch (error) {
@@ -785,6 +787,7 @@ export async function generateSlideImages(
           throw Error(json.error || "The image service returned no usable picture.");
         images[prompt] = json.dataUrl;
         imageCache.set(key, json.dataUrl);
+        }, prompt);
       } catch (e) {
         errors.push(generationErrorMessage(e, 'illustrations'));
       }

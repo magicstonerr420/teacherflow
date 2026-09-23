@@ -9,6 +9,7 @@ import type { LessonPackage, LessonRequestInput } from '@/lib/lesson-schema';
 import type { ListeningState, VoiceChoice } from '@/lib/listening';
 import { ListeningAudioPlayer } from './ListeningAudioPlayer';
 import { generationErrorMessage, retryRetainedRequest } from '@/lib/generation-errors';
+import { trackClientGeneration } from '@/lib/generation-monitor';
 
 export function ListeningPanel({ lesson, request, onChange }: {
   lesson: LessonPackage; request: LessonRequestInput; onChange: (state: ListeningState) => Promise<void>;
@@ -56,7 +57,7 @@ export function ListeningPanel({ lesson, request, onChange }: {
       }
       if (!current) {
         setBusy('Writing the listening activity…');
-        const result = await retryRetainedRequest(() => runScript({ data: { request, lesson } }), recovery);
+        const result = await trackClientGeneration(request,'listening',()=>retryRetainedRequest(() => runScript({ data: { request, lesson } }), recovery));
         if (result.status !== 'ready') throw new Error(result.error);
         current = result;
         await change.current(current);
@@ -65,7 +66,7 @@ export function ListeningPanel({ lesson, request, onChange }: {
       part = 'recording';
       setBusy('Preparing your recording…');
       const fingerprint = current.fingerprint;
-      const result = await retryRetainedRequest(() => runAudio({ data: { request, fingerprint, choice } }), recovery);
+      const result = await trackClientGeneration(request,'recording',()=>retryRetainedRequest(() => runAudio({ data: { request, fingerprint, choice } }), recovery),choice);
       setAudio({ id: result.audio.id, url: result.dataUrl });
       await change.current({ ...current, audio: result.audio });
     } catch (err) { setError(generationErrorMessage(err, part)); }

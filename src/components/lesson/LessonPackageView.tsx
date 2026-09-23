@@ -22,6 +22,7 @@ import { buildLessonPackageZip, buildCompleteLessonPdf, safeSlug } from "@/lib/e
 import { regenerateSection, repairDuplicateVersionB } from "@/lib/lesson.functions";
 import { regenerateReading } from "@/lib/reading.functions";
 import { generationErrorMessage, isGenerationPending, retryRetainedRequest } from '@/lib/generation-errors';
+import { trackClientGeneration } from '@/lib/generation-monitor';
 import { applyReading, prepareLessonReading } from "@/lib/reading";
 import { ReadingPanel } from './ReadingPanel';
 import { ListeningPanel } from './ListeningPanel';
@@ -128,11 +129,11 @@ export function LessonPackageView({
     if (readingAttempt.current?.context !== context) readingAttempt.current = { context, operation: crypto.randomUUID() };
     const operation = readingAttempt.current.operation;
     try {
-      const result = await retryRetainedRequest(async () => {
+      const result = await trackClientGeneration(request,'reading',()=>retryRetainedRequest(async () => {
         const result = await runReading({ data: { request, lesson, operation } });
         if (result.status === 'failed' && isGenerationPending(result.error)) throw new Error(result.error);
         return result;
-      });
+      }));
       // Keep the operation on transport failure, including a later manual retry.
       readingAttempt.current = null;
       if (result.status === "failed") { setReadingError(result.error); return; }
