@@ -42,13 +42,16 @@ function AuthPage() {
   const [recovery,setRecovery]=useState(!!passwordPage);
   const [confirmPassword,setConfirmPassword]=useState('');
   const googleStatus = useServerFn(googleSignInStatus);
-  const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
+  const [googleAvailable, setGoogleAvailable] = useState<boolean | null | undefined>(undefined);
 
   useEffect(() => {
     let active = true;
+    // The status RPC may itself be interrupted. Keep browser OAuth available in that case.
+    const timer = setTimeout(() => { if (active) setGoogleAvailable(null); }, 7000);
     googleStatus().then(result => { if (active) setGoogleAvailable(result.available); })
-      .catch(() => { if (active) setGoogleAvailable(false); });
-    return () => { active = false; };
+      .catch(() => { if (active) setGoogleAvailable(null); })
+      .finally(() => clearTimeout(timer));
+    return () => { active = false; clearTimeout(timer); };
   }, [googleStatus]);
 
   useEffect(()=>{
@@ -92,7 +95,7 @@ function AuthPage() {
   }
 
   async function google() {
-    if (!googleAvailable || busy) return;
+    if (googleAvailable === false || googleAvailable === undefined || busy) return;
     setBusy(true);setNotice('');
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -202,10 +205,11 @@ function AuthPage() {
           <Button type="button" variant="outline" className="w-full" onClick={emailLink} disabled={busy}>Email me a sign-in link</Button>
           <Button type="button" variant="ghost" className="w-full" onClick={resetPassword} disabled={busy}>Set or reset my password</Button>
           <p className="text-xs text-muted-foreground">An email sign-in link works without a password. Your TeacherFlow password is separate from your email account password.</p>
-          <Button type="button" variant="outline" className="w-full" onClick={google} disabled={busy || !googleAvailable}>
-            {googleAvailable === null ? 'Checking Google sign-in…' : 'Continue with Google'}
+          <Button type="button" variant="outline" className="w-full" onClick={google} disabled={busy || googleAvailable === false || googleAvailable === undefined}>
+            {googleAvailable === undefined ? 'Checking Google sign-in…' : 'Continue with Google'}
           </Button>
           {googleAvailable === false && <p className="text-xs text-muted-foreground">Google sign-in is being set up. You can use email or try again later.</p>}
+          {googleAvailable === null && <p className="text-xs text-muted-foreground">We couldn’t check Google sign-in availability. You can still try Google or sign in with email.</p>}
         </form>}
         {notice.includes('sign-in code')?<div className="mt-4 space-y-2"><Label htmlFor="email-code">Email sign-in code (if provided)</Label><Input id="email-code" autoComplete="one-time-code" value={emailCode} onChange={e=>setEmailCode(e.target.value)} /><Button onClick={verifyCode} disabled={busy||!emailCode.trim()}>Verify code</Button></div>:null}
 

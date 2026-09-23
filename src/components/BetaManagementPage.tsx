@@ -17,6 +17,7 @@ export function BetaManagementPage() {
         <Button asChild><Link to="/auth" search={{redirect:'/beta-management'}}>Sign in to Management</Link></Button>
       </section> : error ? <section className="space-y-4 rounded-xl border bg-card p-5">
         <p role="alert">Could not verify owner access. Please try again.</p>
+        <p className="text-sm text-muted-foreground">If the check keeps failing, your session may have expired. Sign out and sign in again with your owner account, then retry.</p>
         <Button onClick={()=>void refresh()}>Retry access check</Button>
       </section> : !status?.enabled ? <p>Private beta management is not enabled on this site.</p> : !status.owner ? <section className="space-y-4 rounded-xl border bg-card p-5">
         <p role="status">This page is only available to the beta owner.</p>

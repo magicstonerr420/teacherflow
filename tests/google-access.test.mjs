@@ -58,7 +58,7 @@ test('Google identity alone cannot buy lessons, images, reading or audio; owner 
   }
 });
 
-test('Google readiness fails closed for missing credentials, bad redirects and unreachable providers',async()=>{
+test('Google readiness distinguishes provider configuration from temporary connection failures',async()=>{
   const redirect=location=>async(url,options)=>{
     assert.equal(url.origin,'https://identity.example.test');
     assert.equal(url.searchParams.get('provider'),'google');
@@ -69,7 +69,10 @@ test('Google readiness fails closed for missing credentials, bad redirects and u
   assert.equal(await checkGoogleProvider('https://identity.example.test',redirect('https://accounts.google.com/o/oauth2/v2/auth?client_id=test')),true);
   assert.equal(await checkGoogleProvider('https://identity.example.test',redirect('https://accounts.google.com.attacker.test/login')),false);
   assert.equal(await checkGoogleProvider('https://identity.example.test',async()=>Response.json({msg:'missing OAuth secret'},{status:400})),false);
-  assert.equal(await checkGoogleProvider('https://identity.example.test',async()=>{throw Error('Network failure');}),false);
+  assert.equal(await checkGoogleProvider('https://identity.example.test',async()=>{throw Error('Network failure');}),null);
+  for (const status of [408, 429, 500, 502, 503, 504]) {
+    assert.equal(await checkGoogleProvider('https://identity.example.test',async()=>new Response('Unavailable',{status})),null);
+  }
 });
 
 test('sign-in callbacks preserve local destinations and reject external redirects',()=>{
