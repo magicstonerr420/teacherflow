@@ -53,7 +53,6 @@ export default function PreviewLesson({ data, preview, section = 'overview' }: {
       </aside>
       <section className="min-w-0 space-y-5" aria-label={SECTIONS.find(s => s.key === active)?.label}>
         <h2 className="display-heading border-l-4 border-primary pl-3 text-2xl">{SECTIONS.find(s => s.key === active)?.label}</h2>
-        {active === 'overview' && figure && <figure className="space-y-4 overflow-hidden rounded-xl border bg-card p-4"><img src={asset('-illustration.jpg')} alt={figure.alt} width={1536} height={1024} className="w-full rounded-lg object-contain" /><figcaption className="space-y-3"><h3 className="font-semibold">Look and discuss</h3><LessonText>{figure.prompt}</LessonText><a className="inline-block text-sm text-primary underline" href={asset('-illustration.jpg')} download>Download lesson illustration</a></figcaption></figure>}
         {active === 'worksheet' ? <WorksheetHub worksheet={lesson.worksheet} request={request} answerKey={lesson.answerKey} readOnly />
         : active === 'presentation' ? <>
           <div className="flex flex-wrap gap-3"><Button asChild><a download href={asset('.pptx')}>Download student PowerPoint</a></Button><Button asChild variant="outline"><a download href={asset('-slides-guide.pdf')}>Presentation teacher guide</a></Button></div>
