@@ -2,6 +2,7 @@ import "./lib/error-capture";
 import { startManagementWorker } from './lib/management-alerts.server';
 import { startApprovalEmailWorker } from './lib/approval-email.server';
 import { configureHostedAuth } from "./lib/hosting-env.server";
+import { startRuntimeDiagnostics, reportSlowServerRequest } from './lib/runtime-diagnostics.server';
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -49,7 +50,9 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const startedAt = performance.now();
     try {
+      startRuntimeDiagnostics();
       configureHostedAuth();
       startManagementWorker();
       startApprovalEmailWorker();
@@ -62,6 +65,16 @@ export default {
       } else if (response.headers.get("content-type")?.includes("text/html")) {
         response.headers.set("Cache-Control", "no-cache");
       }
+      // Nitro strips HEAD bodies without canceling the TanStack SSR stream.
+      // Release its renderer, router state and lifetime timer before that happens.
+      if (request.method === "HEAD" && response.body) {
+        await response.body.cancel();
+        return new Response(null, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers,
+        });
+      }
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
@@ -69,6 +82,8 @@ export default {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
       });
+    } finally {
+      reportSlowServerRequest(request, startedAt);
     }
   },
 };
